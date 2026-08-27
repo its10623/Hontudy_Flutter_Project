@@ -65,7 +65,7 @@ class AppTheme {
         onSurface: AppColors.darkText,
         onSurfaceVariant: AppColors.darkTextSecondary,
         outline: AppColors.overlayNeutral,
-        outlineVariant: AppColors.border,
+        outlineVariant: AppColors.border.withAlpha(100),
       ),
     );
   }
