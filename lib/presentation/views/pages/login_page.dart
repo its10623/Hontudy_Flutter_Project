@@ -1,15 +1,14 @@
 import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter/material.dart';
-import 'package:hontudy/presentation/core/theme/text_type_extension.dart';
-import '../core/theme/theme.dart';
+import '../../core/theme/context_theme_extension.dart';
+import '../../core/theme/theme.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final colorTheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+
     final brightness = MediaQuery.of(context).platformBrightness;
     final isDarkMode = brightness == Brightness.dark;
 
@@ -21,53 +20,51 @@ class LoginPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 80,
-                height: 80,
+                width: 120,
+                height: 120,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/icons/hontudy_icon.png'),
                   ),
                 ),
               ),
-              const SizedBox(height: 30),
               Text.rich(
                 TextSpan(
                   children: [
                     TextSpan(
                       text: '혼터디',
-                      style: textTheme.displayLarge?.copyWith(
-                        color: colorTheme.primary,
+                      style: context.textStyles.displayLarge?.copyWith(
+                        color: context.colors.primary,
                       ),
                     ),
                     TextSpan(
                       text: '와 함께',
-                      style: textTheme.displayLarge,
+                      style: context.textStyles.displayLarge,
                     ),
                   ],
                 ),
               ),
               Text(
                 '지식을 쌓아보세요',
-                style: textTheme.displayLarge,
+                style: context.textStyles.displayLarge,
                 textAlign: TextAlign.left,
               ),
               const SizedBox(height: 12),
               Text(
                 '매일 몇 개의 문제로 실력을 확인하고,',
-                style: textTheme.bodyLarge?.copyWith(
-                  color: colorTheme.onSurfaceVariant,
+                style: context.textStyles.bodyLarge?.copyWith(
+                  color: context.colors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.left,
               ),
               Text(
                 '풀었던 문제는 노트에 차곡차곡 쌓여요',
-                style: textTheme.bodyLarge?.copyWith(
-                  color: colorTheme.onSurfaceVariant,
+                style: context.textStyles.bodyLarge?.copyWith(
+                  color: context.colors.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.left,
               ),
               Spacer(),
-
               SizedBox(
                 width: double.infinity,
                 child: GoogleAuthButton(
