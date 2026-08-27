@@ -14,8 +14,12 @@ dependencies:
   cupertino_icons: ^1.0.8
   flex_color_scheme: ^8.4.0
   flutter_launcher_icons: ^0.14.4
-  flutter_native_splash: ^2.4.8
+  another_flutter_splash_screen: ^1.2.1
   auth_buttons: ^3.0.3
+  flutter_gen_ai_chat_ui: ^2.15.0
+
+dependency_overrides:
+  google_fonts: ^8.1.0
 
 dev_dependencies:
   flutter_test:
@@ -27,18 +31,11 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/icons/hontudy_icon.png"
-  adaptive_icon_background: "#000000"
+  adaptive_icon_background: "#FFFFFF"
   adaptive_icon_foreground: "assets/icons/hontudy_icon.png"
   min_sdk_android: 23
-
-flutter_native_splash:
-  color: "#FFFFFF"
-  image: "assets/icons/hontudy_icon.png"
-  android: true
-  ios: true
-  android_12:
-    color: "#FFFFFF"
-    image: "assets/icons/hontudy_icon.png"
+  remove_alpha_ios: true
+  background_color_ios: "#FFFFFF"
 
 flutter:
 
