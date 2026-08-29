@@ -10,6 +10,7 @@ class AppColors {
   static const Color error = Color(0xFFFF4242);
   static const Color overlayNeutral = Color(0xFF70737C);
   static const Color border = Color(0xFFE1E2E4);
+  static const Color metadata = Color(0xFFFE9254);
 
   // Light
   static const Color primarySurface = Color(0xFFFAFBFF);
