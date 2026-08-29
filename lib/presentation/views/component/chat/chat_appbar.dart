@@ -33,7 +33,7 @@ class ChatAppbar extends StatelessWidget implements PreferredSizeWidget {
                 : null,
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 width: 40,
@@ -54,14 +54,36 @@ class ChatAppbar extends StatelessWidget implements PreferredSizeWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Text(
-                    '진단률$stepValue% · $currentState',
-                    style: context.captionSmall.copyWith(
-                      color: context.captionSmall.color?.withValues(alpha: 0.6),
-                    ),
-                  ),
+                  Text.rich(
+                      TextSpan(
+                        children: [
+                          if(stepValue != null)
+                            TextSpan(
+                            text: '진단률 $stepValue% · ',
+                            style: context.captionSmall.copyWith(
+                              color: context.captionSmall.color?.withValues(alpha: 0.6),
+                            )
+                          ),
+                          TextSpan(
+                              text: currentState,
+                              style: context.captionSmall.copyWith(
+                                color: context.captionSmall.color?.withValues(alpha: 0.6),
+                              )
+                          )
+                        ]
+                      )
+                  )
                 ],
               ),
+
+              if(onNote != null && onProfile != null)... [
+                Spacer(),
+                onNote!,
+                SizedBox(
+                  width: 10,
+                ),
+                onProfile!
+              ]
             ],
           ),
         ],
