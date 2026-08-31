@@ -17,6 +17,7 @@ dependencies:
   another_flutter_splash_screen: ^1.2.1
   auth_buttons: ^3.0.3
   flutter_gen_ai_chat_ui: ^2.15.0
+  speech_to_text: ^7.4.0
 
 dependency_overrides:
   google_fonts: ^8.1.0
