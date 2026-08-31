@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart';
+import 'package:hontudy/presentation/core/theme/app_colors.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
+import 'package:hontudy/presentation/views/component/mic_bottom_sheet.dart';
 
 class ChatBody extends StatefulWidget {
   final bool isMetadata;
@@ -22,6 +24,7 @@ class _ChatBodyState extends State<ChatBody> {
     paginationConfig: _pagination,
   );
   final _scrollController = ScrollController();
+  final _textController = TextEditingController();
   final _currentUser = ChatUser(id: 'user', firstName: 'User');
   final _aiUser = ChatUser(id: 'ai', firstName: '혼터디 AI');
   bool _isLoading = false;
@@ -35,18 +38,13 @@ class _ChatBodyState extends State<ChatBody> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _textController.dispose();
     super.dispose();
   }
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      debugPrint(
-          '[SCROLL DEBUG] hasClients=${_scrollController.hasClients}, '
-          'positions=${_scrollController.positions.length}');
       if (!_scrollController.hasClients) return;
-      debugPrint(
-          '[SCROLL DEBUG] maxScrollExtent=${_scrollController.position.maxScrollExtent}, '
-          'pixels=${_scrollController.position.pixels}');
       _scrollController.animateTo(
         _scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 300),
@@ -77,12 +75,29 @@ class _ChatBodyState extends State<ChatBody> {
                 children: [
                   if (widget.isMetadata) ...[
                     if (!isCurrentUser) ...[
-                      SizedBox(
+                      Container(
+                        margin: EdgeInsets.only(bottom: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.metadata,
+                          borderRadius: BorderRadius.circular(99),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Icon(Icons.access_time_rounded),
-                            Text(widget.metadata!),
+                            Icon(
+                              Icons.access_time_rounded,
+                              size: 18,
+                            ),
+                            SizedBox(width: 2),
+                            Text(
+                              widget.metadata!,
+                              style: context.textStyles.labelSmall,
+                            ),
                           ],
                         ),
                       ),
@@ -135,13 +150,11 @@ class _ChatBodyState extends State<ChatBody> {
         scrollBehaviorConfig: ScrollBehaviorConfig(
           autoScrollBehavior: AutoScrollBehavior.always,
         ),
-        scrollToBottomOptions: ScrollToBottomOptions(
-          bottomOffset: 10
-        ),
-
+        scrollToBottomOptions: ScrollToBottomOptions(bottomOffset: 10),
 
         loadingConfig: LoadingConfig(isLoading: _isLoading),
         inputOptions: InputOptions(
+          textController: _textController,
           materialColor: Colors.transparent,
           materialElevation: 0,
           containerDecoration: BoxDecoration(
@@ -191,7 +204,7 @@ class _ChatBodyState extends State<ChatBody> {
                 color: context.colors.primary,
                 child: InkWell(
                   onTap: onSend,
-                  child: Icon(Icons.send, color: context.colors.onPrimary),
+                  child: Icon(Icons.send_rounded, color: context.colors.onPrimary),
                 ),
               ),
             ),
@@ -209,7 +222,14 @@ class _ChatBodyState extends State<ChatBody> {
     );
   }
 
-  void _handleMicTap() {
+  Future<void> _handleMicTap() async {
+    final recognizedText = await showModalBottomSheet(
+      context: context,
+      builder: (_) => MicBottomSheet(),
+    );
+    if (recognizedText != null) {
+      _textController.text = recognizedText;
+    }
     // TODO: speech_to_text 연동 예정. 인식 결과는 즉시 전송하지 않고
     // 입력창 텍스트만 채워서 사용자가 확인/수정 후 직접 전송
   }
