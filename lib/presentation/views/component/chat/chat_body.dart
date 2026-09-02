@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart';
 import 'package:hontudy/presentation/core/theme/app_colors.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
-import 'package:hontudy/presentation/views/component/mic_bottom_sheet.dart';
+import 'package:hontudy/presentation/views/component/chat/mic_bottom_sheet.dart';
 
 class ChatBody extends StatefulWidget {
   final bool isMetadata;
@@ -223,15 +223,12 @@ class _ChatBodyState extends State<ChatBody> {
   }
 
   Future<void> _handleMicTap() async {
-    final recognizedText = await showModalBottomSheet(
+    // TODO: 음성 인식 연동 예정 (STT 방식 미정). 인식 결과는 즉시 전송하지
+    // 않고 입력창 텍스트만 채워서 사용자가 확인/수정 후 직접 전송해야 함.
+    await showModalBottomSheet(
       context: context,
       builder: (_) => MicBottomSheet(),
     );
-    if (recognizedText != null) {
-      _textController.text = recognizedText;
-    }
-    // TODO: speech_to_text 연동 예정. 인식 결과는 즉시 전송하지 않고
-    // 입력창 텍스트만 채워서 사용자가 확인/수정 후 직접 전송
   }
 
   Future<void> _handleSendMessage(ChatMessage message) async {

@@ -1,7 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
-
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class MicBottomSheet extends StatefulWidget {
   const MicBottomSheet({super.key});
@@ -11,86 +11,61 @@ class MicBottomSheet extends StatefulWidget {
 }
 
 class MicBottomSheetState extends State<MicBottomSheet> {
-  late stt.SpeechToText _speech;
+  final String _text = '';
   bool _isListening = false;
-  String _text = '';
-
-  String _confirmedText = '';
 
   @override
   void initState() {
+    _isListening = true;
     super.initState();
-
-    _speech = stt.SpeechToText();
-    _startListening();
   }
 
-  Future<void> _startListening() async {
-    final available = await _speech.initialize(
-      onStatus: (val) => print('status: $val'),
-      onError: (val) => print('error: $val'),
-    );
-    if (available) {
-      setState(() => _isListening = true);
-      final systemLocale = await _speech.systemLocale();
-      _speech.listen(
-        onResult: (result) => setState(() {
-          final live = _confirmedText.isEmpty
-              ? result.recognizedWords
-              : '$_confirmedText ${result.recognizedWords}';
-          _text = live;
-
-          if (result.finalResult) {
-            _confirmedText = live;
-          }
-        }),
-        listenOptions: stt.SpeechListenOptions(
-          localeId: systemLocale?.localeId,
-          listenMode: stt.ListenMode.dictation,
-          listenFor: const Duration(seconds: 60),
-          pauseFor: const Duration(seconds: 5),
-        ),
-      );
-    }
-  }
-
-  Future<void> _stopListening() async {
-    await _speech.stop();
-    Navigator.pop(context, _text);
+  void _stopListening() {
+    _isListening = false;
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 300,
+      height: _isListening ? 250 : 400,
       child: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            SizedBox(
-              height: 30,
-            ),
-            Expanded(child: _WaveFormBars()),
-            SizedBox(
-              height: 15,
-            ),
-            Expanded(child: Text('듣고 있어요...')),
-            Expanded(
-              child: MicButton(
+            if(_isListening)...[
+              SizedBox(height: 55, child: _WaveFormBars()),
+              Text('듣고 있어요...'),
+              MicButton(
                 onTap: () {
                   _stopListening();
+                  setState(() {
+
+                  });
                 },
               ),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Expanded(
-              child: Text(
+              Text(
                 '눌러서 인식 종료',
                 style: context.captionLarge,
               ),
-            ),
+            ] else...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    children: [
+                      Text('이렇게 말씀하셨어요',style: context.textStyles.headlineSmall,),
+                      Text(
+                        '틀린 부분은 눌러서 직접 수정 할 수 있어요',
+                        style: context.captionLarge,
+                      ),
+                    ],
+                  ),
+                  // TODO 녹음 시간 칩
+                ],
+              ),
+
+            ]
+
           ],
         ),
       ),
@@ -160,18 +135,20 @@ class _WaveFormBarsState extends State<_WaveFormBars>
       builder: (context, child) {
         final position = _controller.value * _barCount;
 
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(baseHeights.length, (i) {
-            final distance = (position - i).abs();
+        return Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(baseHeights.length, (i) {
+              final distance = (position - i).abs();
+              final t = (1 - distance / _falloffWidth).clamp(0.0, 1.0);
 
-            final t = (1 - distance / _falloffWidth).clamp(0.0, 1.0);
-
-            return waveBar(
-              height: baseHeights[i] * (1 + 0.5 * t),
-              color: Color.lerp(inactiveColor, activeColor, t)!,
-            );
-          }),
+              return waveBar(
+                height: baseHeights[i] * (1 + 0.5 * t),
+                color: Color.lerp(inactiveColor, activeColor, t)!,
+              );
+            }),
+          ),
         );
       },
     );
