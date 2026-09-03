@@ -11,7 +11,7 @@ class AppTheme {
     primary: AppColors.primary,
     primaryContainer: AppColors.primaryContainer,
     secondary: AppColors.primary,
-    error: AppColors.error,
+    error: AppColors.wrong,
   );
 
   static const _textTheme = TextTheme(

@@ -7,10 +7,14 @@ class AppColors {
   //base
   static const Color primary = Color(0xFF3366FF);
   static const Color onPrimary = Color(0xFFFFFFFF);
-  static const Color error = Color(0xFFFF4242);
+  static const Color wrong = Color(0xFFFF4242);
+  static const Color wrongSurface = Color(0xFFFDECEC);
   static const Color overlayNeutral = Color(0xFF70737C);
   static const Color border = Color(0xFFE1E2E4);
-  static const Color metadata = Color(0xFFFE9254);
+  static const Color metadata = Color(0xFFA8481A);
+  static const Color onMetadata = Color(0xFFF6D3BC);
+  static const Color metadataSurface = Color(0xFFFFF1E8);
+  static const Color quiz = Color(0xFFF2762E);
 
   // Light
   static const Color primarySurface = Color(0xFFFAFBFF);
