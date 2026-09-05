@@ -15,6 +15,7 @@ class AppColors {
   static const Color onMetadata = Color(0xFFF6D3BC);
   static const Color metadataSurface = Color(0xFFFFF1E8);
   static const Color quiz = Color(0xFFF2762E);
+  static const Color textHighlightAmber = Color(0xFFA8730B);
 
   // Light
   static const Color primarySurface = Color(0xFFFAFBFF);

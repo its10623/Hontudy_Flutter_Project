@@ -33,6 +33,7 @@ class AppTheme {
       colors: _colors,
       useMaterial3: true,
       textTheme: _textTheme,
+
     );
     return base.copyWith(
       colorScheme: base.colorScheme.copyWith(
