@@ -6,7 +6,7 @@ class AppColors {
 
   //base
   static const Color primary = Color(0xFF3366FF);
-  static const Color onPrimary = Color(0xFFFFFFFF);
+  static const Color onPrimary = Color(0xFFFAFBFF);
   static const Color wrong = Color(0xFFFF4242);
   static const Color wrongSurface = Color(0xFFFDECEC);
   static const Color overlayNeutral = Color(0xFF70737C);
@@ -20,7 +20,7 @@ class AppColors {
   // Light
   static const Color primarySurface = Color(0xFFFAFBFF);
   static const Color primaryContainer = Color(0xFFCCD9FF);
-  static const Color surface = Color(0xFFFFFFFF);
+  static const Color surface = Color(0xFFF4F4F4);
   static const Color surfaceAlt = Color(0xFFF7F7F8);
   static const Color text = Color(0xFF171717);
   static const Color textSecondary = Color(0xFF37383C);
