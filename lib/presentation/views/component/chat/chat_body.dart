@@ -3,6 +3,10 @@ import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart';
 import 'package:hontudy/presentation/core/theme/app_colors.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/views/component/chat/mic_bottom_sheet.dart';
+import 'package:hontudy/presentation/views/component/shimmer_wrapper.dart';
+
+import '../skeleton_box.dart';
+import 'filter_chip_gen_ui.dart';
 
 class ChatBody extends StatefulWidget {
   final bool isMetadata;
@@ -152,105 +156,64 @@ class _ChatBodyState extends State<ChatBody> {
         ),
         scrollToBottomOptions: ScrollToBottomOptions(bottomOffset: 10),
 
-        loadingConfig: LoadingConfig(isLoading: _isLoading),
-        inputOptions: InputOptions(
-          textController: _textController,
-          materialColor: Colors.transparent,
-          materialElevation: 0,
-          containerDecoration: BoxDecoration(
-            color: context.colors.surface,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: context.colors.surfaceContainerHighest.withValues(
-                  alpha: 0.8,
-                ),
-                blurRadius: 5,
-                offset: const Offset(2, 2),
-              ),
-            ],
+  // 사용자 채팅창 입력 옵션
+  InputOptions _inputOptions() {
+    return InputOptions(
+      textController: _textController,
+      materialColor: Colors.transparent,
+      materialElevation: 0,
+      containerDecoration: BoxDecoration(
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: context.colors.surfaceContainerHighest.withValues(
+              alpha: 0.8,
+            ),
+            blurRadius: 5,
+            offset: const Offset(2, 2),
           ),
-          containerPadding: const EdgeInsets.all(8),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: context.colors.surfaceContainerHighest.withAlpha(30),
-            hintText: '답변을 입력해주세요..',
-            hintStyle: context.textStyles.bodyLarge?.copyWith(
-              color: context.captionSmall.color?.withValues(alpha: 0.2),
-            ),
-            helperText: '다른 공부 고민이 있다면 자유롭게 말해주세요',
-            helperStyle: context.captionSmall.copyWith(
-              color: context.captionSmall.color?.withValues(alpha: 0.6),
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: BorderSide.none,
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(Icons.mic_none),
-              onPressed: _handleMicTap,
-            ),
-          ),
-          sendOnEnter: true,
-          sendButtonColor: context.colors.primary,
-          sendButtonBuilder: (onSend) => Transform.translate(
-            offset: const Offset(0, -12),
-            child: SizedBox(
-              width: 50,
-              height: 50,
-              child: Material(
-                shape: const CircleBorder(),
-                clipBehavior: Clip.antiAlias,
-                color: context.colors.primary,
-                child: InkWell(
-                  onTap: onSend,
-                  child: Icon(Icons.send_rounded, color: context.colors.onPrimary),
-                ),
-              ),
-            ),
-          ),
-        ),
-        welcomeMessageConfig: WelcomeMessageConfig(
-          title: '혼터디에 오신 것을 환영 합니다\n어떤 공부를 하고 싶으신가요?',
-          questionsSectionTitle: '카드를 선택해주세요',
-        ),
-        exampleQuestions: [
-          ExampleQuestion(question: "언어 공부 하고 싶습니다"),
-          ExampleQuestion(question: "CS 공부하고 싶습니다"),
         ],
       ),
-    );
-  }
-
-  Future<void> _handleMicTap() async {
-    // TODO: 음성 인식 연동 예정 (STT 방식 미정). 인식 결과는 즉시 전송하지
-    // 않고 입력창 텍스트만 채워서 사용자가 확인/수정 후 직접 전송해야 함.
-    await showModalBottomSheet(
-      context: context,
-      builder: (_) => MicBottomSheet(),
-    );
-  }
-
-  Future<void> _handleSendMessage(ChatMessage message) async {
-    _controller.addMessage(message);
-    _scrollToBottom();
-    setState(() => _isLoading = true);
-
-    try {
-      // Your AI service logic here
-      await Future.delayed(Duration(seconds: 1)); // Simulating API call
-
-      // Add AI response
-      _controller.addMessage(
-        ChatMessage(
-          text: "This is a response to: ${message.text}",
-          user: _aiUser,
-          createdAt: DateTime.now(),
+      containerPadding: const EdgeInsets.all(8),
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: context.colors.surfaceContainerHighest.withAlpha(30),
+        hintText: '답변을 입력해주세요..',
+        hintStyle: context.textStyles.bodyLarge?.copyWith(
+          color: context.captionSmall.color?.withValues(alpha: 0.2),
         ),
-      );
-      _scrollToBottom();
-    } finally {
-      setState(() => _isLoading = false);
-    }
+        helperText: '다른 공부 고민이 있다면 자유롭게 말해주세요',
+        helperStyle: context.captionSmall.copyWith(
+          color: context.captionSmall.color?.withValues(alpha: 0.6),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide.none,
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(Icons.mic_none),
+          onPressed: _handleMicTap,
+        ),
+      ),
+      sendOnEnter: true,
+      sendButtonColor: context.colors.primary,
+      sendButtonBuilder: (onSend) => Transform.translate(
+        offset: const Offset(0, -12),
+        child: SizedBox(
+          width: 50,
+          height: 50,
+          child: Material(
+            shape: const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+            color: context.colors.primary,
+            child: InkWell(
+              onTap: onSend,
+              child: Icon(Icons.send_rounded, color: context.colors.onPrimary),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
