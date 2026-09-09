@@ -41,10 +41,12 @@ class _PrimaryButtonState extends State<PrimaryButton> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            widget.icon,
-            size: 20,
-          ),
+          if(widget.icon != null) ...[
+            Icon(
+              widget.icon,
+              size: 20,
+            ),
+          ],
           SizedBox(width: 4),
           Text(
             widget.text,
