@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hontudy/presentation/views/component/app_divider.dart';
 
 import '../../../core/theme/context_theme_extension.dart';
 
@@ -26,12 +27,6 @@ class ChatAppbar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Column(
         children: [
-          Padding(
-            padding: EdgeInsetsGeometry.symmetric(horizontal: 10),
-            child: stepValue != null
-                ? _AnimatedStepIndicator(stepValue: stepValue!)
-                : null,
-          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -83,9 +78,18 @@ class ChatAppbar extends StatelessWidget implements PreferredSizeWidget {
                   width: 10,
                 ),
                 onProfile!
-              ]
+              ],
+              Spacer()
             ],
           ),
+          SizedBox(height: 4,),
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(horizontal: 10),
+            child: stepValue != null
+                ? _AnimatedStepIndicator(stepValue: stepValue!)
+                : null,
+          ),
+          SizedBox(height: 4,),
         ],
       ),
       bottom: PreferredSize(
