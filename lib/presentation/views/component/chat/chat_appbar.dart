@@ -90,11 +90,7 @@ class ChatAppbar extends StatelessWidget implements PreferredSizeWidget {
       ),
       bottom: PreferredSize(
         preferredSize: .fromHeight(1.0),
-        child: Divider(
-          height: 1.0,
-          thickness: 1.0,
-          color: context.colors.outlineVariant,
-        ),
+        child: AppDivider()
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hontudy/presentation/core/theme/app_colors.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
-import 'package:hontudy/presentation/views/component/divider.dart';
+import 'package:hontudy/presentation/views/component/app_divider.dart';
 import 'package:hontudy/presentation/views/component/primary_button.dart';
 
 class MicBottomSheet extends StatefulWidget {
