@@ -35,7 +35,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
         ),
         minimumSize: Size(double.infinity, 50),
         side: widget.color != ButtonColor.primary
-            ? BorderSide(width: 2, color: context.colors.outline.withAlpha(50))
+            ? BorderSide(width: 1, color: context.colors.outline.withAlpha(50))
             : null,
       ),
       child: Row(
@@ -50,7 +50,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           SizedBox(width: 4),
           Text(
             widget.text,
-            style: TextType.bodyLarge.copyWith(fontWeight: FontWeight.w500),
+            style: TextType.bodyLarge.copyWith(fontWeight: FontWeight.w600),
           ),
         ],
       ),
