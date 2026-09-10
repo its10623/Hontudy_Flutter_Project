@@ -4,7 +4,7 @@ import 'package:hontudy/presentation/core/theme/text_type.dart';
 import 'package:hontudy/presentation/views/component/chat/mic_bottom_sheet.dart';
 import 'package:hontudy/presentation/views/component/primary_button.dart';
 
-class AppDialog extends StatefulWidget {
+class DialogWidget extends StatefulWidget {
   final String title;
   final String? content;
   final String? secondaryText;
@@ -12,7 +12,7 @@ class AppDialog extends StatefulWidget {
   final VoidCallback primaryOnPressed;
   final String primaryText;
 
-  const AppDialog({
+  const DialogWidget({
     super.key,
     required this.title,
     this.content,
@@ -23,10 +23,10 @@ class AppDialog extends StatefulWidget {
   });
 
   @override
-  State<AppDialog> createState() => _AppDialogState();
+  State<DialogWidget> createState() => _DialogWidgetState();
 }
 
-class _AppDialogState extends State<AppDialog> {
+class _DialogWidgetState extends State<DialogWidget> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

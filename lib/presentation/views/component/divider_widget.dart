@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/context_theme_extension.dart';
 
-class AppDivider extends StatelessWidget {
-  const AppDivider({super.key});
+class DividerWidget extends StatelessWidget {
+  const DividerWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
