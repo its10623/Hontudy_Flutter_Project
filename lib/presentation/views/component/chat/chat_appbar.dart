@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hontudy/presentation/views/component/app_divider.dart';
+import 'package:hontudy/presentation/views/component/divider_widget.dart';
 
 import '../../../core/theme/context_theme_extension.dart';
+import '../progress_bar_widget.dart';
 
 class ChatAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String pageInfo;
@@ -115,12 +116,7 @@ class _AnimatedStepIndicator extends StatelessWidget {
       tween: Tween<double>(begin: 0, end: stepValue / 100.0),
       duration: const Duration(milliseconds: 800),
       builder: (context, value, child) {
-        return LinearProgressIndicator(
-          value: parseValue,
-          color: context.colors.primary,
-          backgroundColor: context.colors.surfaceContainerHighest.withAlpha(30),
-          borderRadius: BorderRadius.circular(99),
-        );
+        return ProgressBarWidget(value: parseValue);
       },
     );
   }
