@@ -5,3 +5,9 @@ linter:
     - require_trailing_commas
 formatter:
   trailing_commas: preserve
+analyzer:
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
