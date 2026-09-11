@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/core/theme/text_type.dart';
@@ -16,21 +18,37 @@ class NoteSummaryPage extends StatefulWidget {
 class _NoteSummaryPageState extends State<NoteSummaryPage> {
   final savedQuiz = 14;
   final wrongAnswer = 9;
-  final mainTitle = '네트워크';
-  final secondaryTitle = '전송 계층';
+  final mainTopic = '네트워크';
+  final secondaryTopic = '전송 계층';
   final currentFilter = '약한 순서';
   final List<List<dynamic>> wrongQuiz = [
-  ['SO_REUSEADDR로 포트를 즉시 재사용하는 이유', 3],
-  ['개방 주소법에서 클러스터링이 생기는 이유', 5],
-  ['은행원 알고리즘의 안전 상태 판단 기준', 7],
+    ['SO_REUSEADDR로 포트를 즉시 재사용하는 이유', 3],
+    ['개방 주소법에서 클러스터링이 생기는 이유', 5],
+    ['은행원 알고리즘의 안전 상태 판단 기준', 7],
+    ['은행원 알고리즘의 안전 상태 판단 기준', 7],
+    ['은행원 알고리즘의 안전 상태 판단 기준', 7],
+    ['은행원 알고리즘의 안전 상태 판단 기준', 7],
+    ['은행원 알고리즘의 안전 상태 판단 기준', 7],
+    ['은행원 알고리즘의 안전 상태 판단 기준', 7],
   ];
+
   @override
   Widget build(BuildContext context) {
     double circleIndicatorValue = ((savedQuiz - wrongAnswer) / savedQuiz)
         .toDouble();
     return Scaffold(
+      extendBody: true,
       backgroundColor: context.colors.surface,
-      bottomNavigationBar: BottomNavBar(),
+      bottomNavigationBar: ClipRRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
+          child: SafeArea(
+            child: BottomNavBar(
+              currentIndex: 1,
+            ),
+          ),
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: context.colors.surface,
         centerTitle: false,
@@ -76,7 +94,7 @@ class _NoteSummaryPageState extends State<NoteSummaryPage> {
                         ),
                       ),
                       Text(
-                        '$mainTitle · $secondaryTitle',
+                        '$mainTopic · $secondaryTopic',
                         style: TextType.titleSmall.copyWith(
                           color: context.colors.onPrimary,
                           fontWeight: FontWeight.w800,
@@ -139,11 +157,14 @@ class _NoteSummaryPageState extends State<NoteSummaryPage> {
                 ),
               ],
             ),
-            for(var i in wrongQuiz)... [
-              RecentWrongAnswerSection(wrongQuiz: i[0], onTap: () {}, timeAgo: i[1]),
-              if (i != wrongQuiz.length - 1)
-                const SizedBox(height: 12),
-            ]
+            for (var i in wrongQuiz) ...[
+              RecentWrongAnswerSection(
+                wrongQuiz: i[0],
+                onTap: () {},
+                timeAgo: i[1],
+              ),
+              if (i != wrongQuiz.length - 1) const SizedBox(height: 12),
+            ],
           ],
         ),
       ),
