@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/core/theme/text_type.dart';
 import 'package:hontudy/presentation/views/component/progress_bar_widget.dart';
@@ -33,7 +32,7 @@ class _TopicSummaryCardState extends State<TopicSummaryCard> {
         boxShadow: [
           BoxShadow(
             color: context.colors.outline.withAlpha(50),
-            blurRadius: 16,
+            blurRadius: 2,
             offset: const Offset(0, 4),
           ),
         ],
@@ -109,7 +108,7 @@ class _TopicMoreCardState extends State<TopicMoreCard> {
         boxShadow: [
           BoxShadow(
             color: context.colors.outline.withAlpha(50),
-            blurRadius: 16,
+            blurRadius: 4,
             offset: const Offset(0, 4),
           ),
         ],
