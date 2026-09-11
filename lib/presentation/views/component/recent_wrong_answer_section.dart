@@ -30,8 +30,8 @@ class _RecentWrongAnswerSectionState extends State<RecentWrongAnswerSection> {
         boxShadow: [
           BoxShadow(
             color: context.colors.outline.withAlpha(50),
-            blurRadius: 30,
-            offset: const Offset(0, 4),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -45,7 +45,7 @@ class _RecentWrongAnswerSectionState extends State<RecentWrongAnswerSection> {
           borderRadius: BorderRadius.circular(10),
           onTap: widget.onTap,
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Row(
               children: [
                 Icon(
@@ -54,13 +54,17 @@ class _RecentWrongAnswerSectionState extends State<RecentWrongAnswerSection> {
                   color: AppColors.wrong,
                 ),
                 SizedBox(width: 6,),
-                Text(
-                  widget.wrongQuiz,
-                  style: TextType.bodySmall.copyWith(
-                    fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Text(
+                    widget.wrongQuiz,
+                    style: TextType.bodySmall.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Spacer(),
+                SizedBox(width: 10,),
                 Text(
                   '${widget.timeAgo}일 전',
                   style: context.captionMedium,
