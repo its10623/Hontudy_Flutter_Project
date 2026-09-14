@@ -18,7 +18,7 @@ class AppColors {
   static const Color textHighlightAmber = Color(0xFFA8730B);
 
   // Light
-  static const Color primarySurface = Color(0xFFFAFBFF);
+  static const Color primarySurface = Color(0xFFFFFFFF);
   static const Color primaryContainer = Color(0xFFCCD9FF);
   static const Color surface = Color(0xFFF4F4F4);
   static const Color surfaceAlt = Color(0xFFF7F7F8);
