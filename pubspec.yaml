@@ -18,6 +18,7 @@ dependencies:
   auth_buttons: ^3.0.3
   flutter_gen_ai_chat_ui: ^2.15.0
   smooth_page_indicator: ^3.0.0
+  flutter_highlight: ^0.7.0
 
 dependency_overrides:
   google_fonts: ^8.1.0
@@ -44,7 +45,7 @@ flutter:
 
   assets:
     - assets/icons/
-
+    - assets/test.png
   fonts:
     - family: Pretendard
       fonts:
