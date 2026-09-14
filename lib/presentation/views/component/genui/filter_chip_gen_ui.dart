@@ -29,7 +29,7 @@ class _FilterChipGenUiState extends State<FilterChipGenUi> {
         child: Container(
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: context.colors.surface,
+            color: context.colors.surfaceContainerLowest,
             borderRadius: BorderRadius.all(Radius.circular(16)),
             border: Border.all(
               width: 1,
