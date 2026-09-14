@@ -11,7 +11,7 @@ class DividerWidget extends StatelessWidget {
     return Divider(
       height: 1.0,
       thickness: 1.0,
-      color: context.colors.outlineVariant,
+      color: context.colors.outlineVariant.withAlpha(100),
     );
   }
 }
