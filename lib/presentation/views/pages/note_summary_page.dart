@@ -57,7 +57,7 @@ class _NoteSummaryPageState extends State<NoteSummaryPage> {
           children: [
             Text(
               '노트',
-              style: TextType.titleLarge,
+              style: TextType.titleLarge.copyWith(letterSpacing: -0.5),
             ),
             Text(
               '주제별로 모인 $savedQuiz문제 · $currentFilter',
