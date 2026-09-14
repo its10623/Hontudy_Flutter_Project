@@ -21,19 +21,19 @@ class ChipWidget extends StatefulWidget {
 class _ChipWidgetState extends State<ChipWidget> {
   @override
   Widget build(BuildContext context) {
-    return Chip(
-      labelPadding: EdgeInsets.all(2.0),
-      label: Text(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+      decoration: BoxDecoration(
+        color: widget.backgroundColor ?? context.colors.primaryContainer.withAlpha(150),
+        borderRadius: BorderRadius.circular(99),
+      ),
+      child: Text(
         widget.label,
         style: TextType.captionMedium.copyWith(
           color: widget.textColor ?? context.colors.primary,
           fontWeight: FontWeight.w800,
         ),
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(99)),
-      side: BorderSide.none,
-      backgroundColor: widget.backgroundColor ?? context.colors.primaryContainer.withAlpha(150),
-      padding: EdgeInsets.symmetric(horizontal: 8,),
     );
   }
 }
