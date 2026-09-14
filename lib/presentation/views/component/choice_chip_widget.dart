@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
-import 'package:hontudy/presentation/core/theme/text_type.dart';
+
+import 'choice_chip_item.dart';
 
 class ChoiceChipWidget extends StatefulWidget {
   final int savedQuiz;
@@ -26,17 +26,14 @@ class _ChoiceChipWidgetState extends State<ChoiceChipWidget> {
       spacing: 8.0,
       children: [
         for (var i = 0; i < categories.length; i++)
-          ChoiceChip(
+          ChoiceChipItem(
             label: switch (categories[i]) {
               '전체' => Text('${categories[i]} ${widget.savedQuiz}'),
               '오답' => Text('${categories[i]} ${widget.wrongAnswer}'),
               '최신순' => Text(categories[i]),
-              (_) => Placeholder(),
+              (_) => const Placeholder(),
             },
-            showCheckmark: false,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(99)),
-            labelStyle: TextType.captionLarge.copyWith(fontWeight: FontWeight.w800) ,
-            selected: widget.selectedIndex == i,
+            isSelected: widget.selectedIndex == i,
             onSelected: (bool selected) {
               setState(() {
                 widget.selectedIndex = selected ? i : widget.selectedIndex;
