@@ -14,6 +14,7 @@ class GenUiBox extends StatelessWidget {
         child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 350),
             child: Container(
+              margin: EdgeInsets.symmetric(vertical: 16),
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: context.colors.surfaceContainerLowest,
