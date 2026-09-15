@@ -157,13 +157,13 @@ class _NoteSummaryPageState extends State<NoteSummaryPage> {
                 ),
               ],
             ),
-            for (var i in wrongQuiz) ...[
+            for (var index = 0; index < wrongQuiz.length; index++) ...[
               RecentWrongAnswerSection(
-                wrongQuiz: i[0],
+                wrongQuiz: wrongQuiz[index][0],
                 onTap: () {},
-                timeAgo: i[1],
+                  timeAgo: wrongQuiz[index][1],
               ),
-              if (i != wrongQuiz.length - 1) const SizedBox(height: 12),
+              if (index != wrongQuiz.length - 1) const SizedBox(height: 12),
             ],
           ],
         ),
