@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'quiz.dart';
+part of 'category.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,45 +13,45 @@ part of 'quiz.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
-mixin _$Quiz {
+mixin _$Category {
 
 
-/// Create a copy of Quiz
+/// Create a copy of Category
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$QuizCopyWith<Quiz> get copyWith => _$QuizCopyWithImpl<Quiz>(this as Quiz, _$identity);
+$CategoryCopyWith<Category> get copyWith => _$CategoryCopyWithImpl<Category>(this as Category, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  final _this = this as Quiz;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Quiz&&(identical(other.questionText, _this.questionText) || other.questionText == _this.questionText)&&(identical(other.category, _this.category) || other.category == _this.category)&&(identical(other.difficulty, _this.difficulty) || other.difficulty == _this.difficulty)&&(identical(other.widgetType, _this.widgetType) || other.widgetType == _this.widgetType)&&const DeepCollectionEquality().equals(other.widgetContent, _this.widgetContent)&&(identical(other.referenceAnswer, _this.referenceAnswer) || other.referenceAnswer == _this.referenceAnswer));
+  final _this = this as Category;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Category&&(identical(other.main, _this.main) || other.main == _this.main)&&(identical(other.topic, _this.topic) || other.topic == _this.topic)&&(identical(other.subTopic, _this.subTopic) || other.subTopic == _this.subTopic));
 }
 
 
 @override
 int get hashCode {
-  final _this = this as Quiz;
-  return Object.hash(runtimeType,_this.questionText,_this.category,_this.difficulty,_this.widgetType,const DeepCollectionEquality().hash(_this.widgetContent),_this.referenceAnswer);
+  final _this = this as Category;
+  return Object.hash(runtimeType,_this.main,_this.topic,_this.subTopic);
 }
 
 @override
 String toString() {
-  final _this = this as Quiz;
-  return 'Quiz(questionText: ${_this.questionText}, category: ${_this.category}, difficulty: ${_this.difficulty}, widgetType: ${_this.widgetType}, widgetContent: ${_this.widgetContent}, referenceAnswer: ${_this.referenceAnswer})';
+  final _this = this as Category;
+  return 'Category(main: ${_this.main}, topic: ${_this.topic}, subTopic: ${_this.subTopic})';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $QuizCopyWith<$Res>  {
-  factory $QuizCopyWith(Quiz value, $Res Function(Quiz) _then) = _$QuizCopyWithImpl;
+abstract mixin class $CategoryCopyWith<$Res>  {
+  factory $CategoryCopyWith(Category value, $Res Function(Category) _then) = _$CategoryCopyWithImpl;
 @useResult
 $Res call({
- String questionText, Category category, String difficulty, String widgetType, Map<String, dynamic>? widgetContent, String referenceAnswer
+ String main, String topic, String subTopic
 });
 
 
@@ -59,23 +59,20 @@ $Res call({
 
 }
 /// @nodoc
-class _$QuizCopyWithImpl<$Res>
-    implements $QuizCopyWith<$Res> {
-  _$QuizCopyWithImpl(this._self, this._then);
+class _$CategoryCopyWithImpl<$Res>
+    implements $CategoryCopyWith<$Res> {
+  _$CategoryCopyWithImpl(this._self, this._then);
 
-  final Quiz _self;
-  final $Res Function(Quiz) _then;
+  final Category _self;
+  final $Res Function(Category) _then;
 
-/// Create a copy of Quiz
+/// Create a copy of Category
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? questionText = null,Object? category = null,Object? difficulty = null,Object? widgetType = null,Object? widgetContent = freezed,Object? referenceAnswer = null,}) {
-  return _then(Quiz(
-questionText: null == questionText ? _self.questionText : questionText // ignore: cast_nullable_to_non_nullable
-as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
-as Category,difficulty: null == difficulty ? _self.difficulty : difficulty // ignore: cast_nullable_to_non_nullable
-as String,widgetType: null == widgetType ? _self.widgetType : widgetType // ignore: cast_nullable_to_non_nullable
-as String,widgetContent: freezed == widgetContent ? _self.widgetContent : widgetContent // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,referenceAnswer: null == referenceAnswer ? _self.referenceAnswer : referenceAnswer // ignore: cast_nullable_to_non_nullable
+@pragma('vm:prefer-inline') @override $Res call({Object? main = null,Object? topic = null,Object? subTopic = null,}) {
+  return _then(Category(
+main: null == main ? _self.main : main // ignore: cast_nullable_to_non_nullable
+as String,topic: null == topic ? _self.topic : topic // ignore: cast_nullable_to_non_nullable
+as String,subTopic: null == subTopic ? _self.subTopic : subTopic // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -83,8 +80,8 @@ as String,
 }
 
 
-/// Adds pattern-matching-related methods to [Quiz].
-extension QuizPatterns on Quiz {
+/// Adds pattern-matching-related methods to [Category].
+extension CategoryPatterns on Category {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
