@@ -4,16 +4,14 @@ part 'diagnosis_profile.freezed.dart';
 
 @freezed
 class DiagnosisProfile with _$DiagnosisProfile {
-  final String background;//전공자
-  final int difficultyScore;//2
-  final List<String> purposeTags;//취업
-  final List<String> weakAreas;//network, architecture, math
+  final String background;
+  final int difficultyScore;
+  final List<String> purposeTags;
 
   const DiagnosisProfile({
     required this.background,
     required this.difficultyScore,
     required this.purposeTags,
-    required this.weakAreas,
   });
 }
 
@@ -21,6 +19,7 @@ class DiagnosisProfile with _$DiagnosisProfile {
 class DiagnosisResult with _$DiagnosisResult {
   final DiagnosisProfile profile;
   final String? backgroundDetail;
+  final List<String> weakAreas;
   final String reasoning;
   final int confidence;
   //uid
@@ -28,6 +27,7 @@ class DiagnosisResult with _$DiagnosisResult {
   const DiagnosisResult({
     required this.profile,
     this.backgroundDetail,
+    required this.weakAreas,
     required this.reasoning,
     required this.confidence,
   });
