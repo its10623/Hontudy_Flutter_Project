@@ -11,7 +11,7 @@ class User with _$User {
   final String? photoUrl;
   final AuthProvider authProvider;
 
-  User({
+  const User({
     required this.uid,
     required this.email,
     required this.displayName,
@@ -21,3 +21,5 @@ class User with _$User {
 }
 
 enum AuthProvider { google, apple }
+
+typedef AuthSignInResult = ({User user, bool isNewUser});
