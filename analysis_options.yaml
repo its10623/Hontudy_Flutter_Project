@@ -6,6 +6,8 @@ linter:
 formatter:
   trailing_commas: preserve
 analyzer:
+  plugin:
+    - custom_lint
   exclude:
     - build/**
     - android/**
