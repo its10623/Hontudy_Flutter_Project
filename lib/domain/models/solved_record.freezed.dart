@@ -27,20 +27,20 @@ $SolvedRecordCopyWith<SolvedRecord> get copyWith => _$SolvedRecordCopyWithImpl<S
 @override
 bool operator ==(Object other) {
   final _this = this as SolvedRecord;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SolvedRecord&&(identical(other.quiz, _this.quiz) || other.quiz == _this.quiz)&&(identical(other.userAnswer, _this.userAnswer) || other.userAnswer == _this.userAnswer)&&(identical(other.answerFeedback, _this.answerFeedback) || other.answerFeedback == _this.answerFeedback)&&(identical(other.timestamp, _this.timestamp) || other.timestamp == _this.timestamp));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SolvedRecord&&(identical(other.quiz, _this.quiz) || other.quiz == _this.quiz)&&(identical(other.userAnswer, _this.userAnswer) || other.userAnswer == _this.userAnswer)&&(identical(other.quizFeedback, _this.quizFeedback) || other.quizFeedback == _this.quizFeedback)&&(identical(other.timestamp, _this.timestamp) || other.timestamp == _this.timestamp));
 }
 
 
 @override
 int get hashCode {
   final _this = this as SolvedRecord;
-  return Object.hash(runtimeType,_this.quiz,_this.userAnswer,_this.answerFeedback,_this.timestamp);
+  return Object.hash(runtimeType,_this.quiz,_this.userAnswer,_this.quizFeedback,_this.timestamp);
 }
 
 @override
 String toString() {
   final _this = this as SolvedRecord;
-  return 'SolvedRecord(quiz: ${_this.quiz}, userAnswer: ${_this.userAnswer}, answerFeedback: ${_this.answerFeedback}, timestamp: ${_this.timestamp})';
+  return 'SolvedRecord(quiz: ${_this.quiz}, userAnswer: ${_this.userAnswer}, quizFeedback: ${_this.quizFeedback}, timestamp: ${_this.timestamp})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $SolvedRecordCopyWith<$Res>  {
   factory $SolvedRecordCopyWith(SolvedRecord value, $Res Function(SolvedRecord) _then) = _$SolvedRecordCopyWithImpl;
 @useResult
 $Res call({
- Quiz quiz, String userAnswer, AnswerFeedback answerFeedback, DateTime timestamp
+ Quiz quiz, String userAnswer, DateTime timestamp, QuizFeedback quizFeedback
 });
 
 
@@ -68,13 +68,13 @@ class _$SolvedRecordCopyWithImpl<$Res>
 
 /// Create a copy of SolvedRecord
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? quiz = null,Object? userAnswer = null,Object? answerFeedback = null,Object? timestamp = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? quiz = null,Object? userAnswer = null,Object? timestamp = null,Object? quizFeedback = null,}) {
   return _then(SolvedRecord(
 quiz: null == quiz ? _self.quiz : quiz // ignore: cast_nullable_to_non_nullable
 as Quiz,userAnswer: null == userAnswer ? _self.userAnswer : userAnswer // ignore: cast_nullable_to_non_nullable
-as String,answerFeedback: null == answerFeedback ? _self.answerFeedback : answerFeedback // ignore: cast_nullable_to_non_nullable
-as AnswerFeedback,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as String,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
+as DateTime,quizFeedback: null == quizFeedback ? _self.quizFeedback : quizFeedback // ignore: cast_nullable_to_non_nullable
+as QuizFeedback,
   ));
 }
 
