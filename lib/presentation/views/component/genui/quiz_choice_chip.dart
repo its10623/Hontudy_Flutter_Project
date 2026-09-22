@@ -84,13 +84,12 @@ class _QuizOptionRow extends StatelessWidget {
                 radius: 12,
                 backgroundColor: isSelected
                     ? context.colors.primary
-                    : context.colors.outlineVariant.withAlpha(100),
+                    : context.colors.outline.withAlpha(100),
                 child: Text(
                   '${index + 1}',
                   style: TextType.captionLarge.copyWith(
                     color: isSelected
-                        ? context.colors.onPrimary
-                        : context.colors.outline,
+                        ? context.colors.onPrimary : null,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
