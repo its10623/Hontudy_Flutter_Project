@@ -27,20 +27,20 @@ $DiagnosisProfileCopyWith<DiagnosisProfile> get copyWith => _$DiagnosisProfileCo
 @override
 bool operator ==(Object other) {
   final _this = this as DiagnosisProfile;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiagnosisProfile&&(identical(other.background, _this.background) || other.background == _this.background)&&(identical(other.difficultyScore, _this.difficultyScore) || other.difficultyScore == _this.difficultyScore)&&const DeepCollectionEquality().equals(other.purposeTags, _this.purposeTags));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiagnosisProfile&&(identical(other.background, _this.background) || other.background == _this.background)&&(identical(other.difficultyScore, _this.difficultyScore) || other.difficultyScore == _this.difficultyScore)&&const DeepCollectionEquality().equals(other.purposeTags, _this.purposeTags)&&const DeepCollectionEquality().equals(other.weakAreas, _this.weakAreas)&&(identical(other.timestamp, _this.timestamp) || other.timestamp == _this.timestamp));
 }
 
 
 @override
 int get hashCode {
   final _this = this as DiagnosisProfile;
-  return Object.hash(runtimeType,_this.background,_this.difficultyScore,const DeepCollectionEquality().hash(_this.purposeTags));
+  return Object.hash(runtimeType,_this.background,_this.difficultyScore,const DeepCollectionEquality().hash(_this.purposeTags),const DeepCollectionEquality().hash(_this.weakAreas),_this.timestamp);
 }
 
 @override
 String toString() {
   final _this = this as DiagnosisProfile;
-  return 'DiagnosisProfile(background: ${_this.background}, difficultyScore: ${_this.difficultyScore}, purposeTags: ${_this.purposeTags})';
+  return 'DiagnosisProfile(background: ${_this.background}, difficultyScore: ${_this.difficultyScore}, purposeTags: ${_this.purposeTags}, weakAreas: ${_this.weakAreas}, timestamp: ${_this.timestamp})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $DiagnosisProfileCopyWith<$Res>  {
   factory $DiagnosisProfileCopyWith(DiagnosisProfile value, $Res Function(DiagnosisProfile) _then) = _$DiagnosisProfileCopyWithImpl;
 @useResult
 $Res call({
- String background, int difficultyScore, List<String> purposeTags
+ String background, int difficultyScore, List<String> purposeTags, List<String> weakAreas, DateTime timestamp
 });
 
 
@@ -68,12 +68,14 @@ class _$DiagnosisProfileCopyWithImpl<$Res>
 
 /// Create a copy of DiagnosisProfile
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? background = null,Object? difficultyScore = null,Object? purposeTags = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? background = null,Object? difficultyScore = null,Object? purposeTags = null,Object? weakAreas = null,Object? timestamp = null,}) {
   return _then(DiagnosisProfile(
 background: null == background ? _self.background : background // ignore: cast_nullable_to_non_nullable
 as String,difficultyScore: null == difficultyScore ? _self.difficultyScore : difficultyScore // ignore: cast_nullable_to_non_nullable
 as int,purposeTags: null == purposeTags ? _self.purposeTags : purposeTags // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,weakAreas: null == weakAreas ? _self.weakAreas : weakAreas // ignore: cast_nullable_to_non_nullable
+as List<String>,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
+as DateTime,
   ));
 }
 
@@ -219,20 +221,20 @@ $DiagnosisResultCopyWith<DiagnosisResult> get copyWith => _$DiagnosisResultCopyW
 @override
 bool operator ==(Object other) {
   final _this = this as DiagnosisResult;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiagnosisResult&&(identical(other.profile, _this.profile) || other.profile == _this.profile)&&(identical(other.backgroundDetail, _this.backgroundDetail) || other.backgroundDetail == _this.backgroundDetail)&&const DeepCollectionEquality().equals(other.weakAreas, _this.weakAreas)&&(identical(other.reasoning, _this.reasoning) || other.reasoning == _this.reasoning)&&(identical(other.confidence, _this.confidence) || other.confidence == _this.confidence));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiagnosisResult&&(identical(other.profile, _this.profile) || other.profile == _this.profile)&&(identical(other.backgroundDetail, _this.backgroundDetail) || other.backgroundDetail == _this.backgroundDetail)&&(identical(other.reasoning, _this.reasoning) || other.reasoning == _this.reasoning)&&(identical(other.confidence, _this.confidence) || other.confidence == _this.confidence));
 }
 
 
 @override
 int get hashCode {
   final _this = this as DiagnosisResult;
-  return Object.hash(runtimeType,_this.profile,_this.backgroundDetail,const DeepCollectionEquality().hash(_this.weakAreas),_this.reasoning,_this.confidence);
+  return Object.hash(runtimeType,_this.profile,_this.backgroundDetail,_this.reasoning,_this.confidence);
 }
 
 @override
 String toString() {
   final _this = this as DiagnosisResult;
-  return 'DiagnosisResult(profile: ${_this.profile}, backgroundDetail: ${_this.backgroundDetail}, weakAreas: ${_this.weakAreas}, reasoning: ${_this.reasoning}, confidence: ${_this.confidence})';
+  return 'DiagnosisResult(profile: ${_this.profile}, backgroundDetail: ${_this.backgroundDetail}, reasoning: ${_this.reasoning}, confidence: ${_this.confidence})';
 }
 
 
@@ -243,7 +245,7 @@ abstract mixin class $DiagnosisResultCopyWith<$Res>  {
   factory $DiagnosisResultCopyWith(DiagnosisResult value, $Res Function(DiagnosisResult) _then) = _$DiagnosisResultCopyWithImpl;
 @useResult
 $Res call({
- DiagnosisProfile profile, String? backgroundDetail, List<String> weakAreas, String reasoning, int confidence
+ DiagnosisProfile profile, String? backgroundDetail, String reasoning, int confidence
 });
 
 
@@ -260,12 +262,11 @@ class _$DiagnosisResultCopyWithImpl<$Res>
 
 /// Create a copy of DiagnosisResult
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? profile = null,Object? backgroundDetail = freezed,Object? weakAreas = null,Object? reasoning = null,Object? confidence = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? profile = null,Object? backgroundDetail = freezed,Object? reasoning = null,Object? confidence = null,}) {
   return _then(DiagnosisResult(
 profile: null == profile ? _self.profile : profile // ignore: cast_nullable_to_non_nullable
 as DiagnosisProfile,backgroundDetail: freezed == backgroundDetail ? _self.backgroundDetail : backgroundDetail // ignore: cast_nullable_to_non_nullable
-as String?,weakAreas: null == weakAreas ? _self.weakAreas : weakAreas // ignore: cast_nullable_to_non_nullable
-as List<String>,reasoning: null == reasoning ? _self.reasoning : reasoning // ignore: cast_nullable_to_non_nullable
+as String?,reasoning: null == reasoning ? _self.reasoning : reasoning // ignore: cast_nullable_to_non_nullable
 as String,confidence: null == confidence ? _self.confidence : confidence // ignore: cast_nullable_to_non_nullable
 as int,
   ));
