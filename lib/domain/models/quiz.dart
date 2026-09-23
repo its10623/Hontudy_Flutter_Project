@@ -1,7 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'category.dart';
-
 part 'quiz.freezed.dart';
 
 @freezed
@@ -24,6 +22,19 @@ class Quiz with _$Quiz {
     this.imageUrl,
     this.codeSnippet,
     required this.qid,
+  });
+}
+
+@freezed
+class Category with _$Category {
+  final String main;
+  final String topic;
+  final String subTopic;
+
+  const Category({
+    required this.main,
+    required this.topic,
+    required this.subTopic,
   });
 }
 
