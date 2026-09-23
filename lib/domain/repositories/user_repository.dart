@@ -13,4 +13,6 @@ abstract class UserRepository {
   AsyncResult<void> deleteAccount();
   AsyncResult<void> reauthenticateWithGoogle();
   AsyncResult<void> reauthenticateWithApple();
+  AsyncResult<void> saveTermsAgreement();
+  AsyncResult<bool> fetchTermsAgreement();
 }
