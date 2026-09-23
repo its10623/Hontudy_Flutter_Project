@@ -39,6 +39,7 @@ dependencies:
   sign_in_with_apple: ^8.2.0
   crypto: ^3.0.7
   cloud_firestore: ^6.10.0
+  shared_preferences: ^2.5.5
 
 dependency_overrides:
   google_fonts: ^8.1.0
