@@ -2,7 +2,7 @@ import 'package:result_dart/result_dart.dart';
 
 import '../models/solved_record.dart';
 
-enum NoteFilter { all, wrongOnly }
+enum NoteFilter { all, correctOnly, wrongOnly }
 
 abstract class NoteRepository {
   AsyncResult<void> saveSolvedRecord(SolvedRecord record);
