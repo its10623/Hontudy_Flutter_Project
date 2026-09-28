@@ -1,14 +1,11 @@
 import 'package:hontudy/domain/repositories/user_repository.dart';
 import 'package:hontudy/domain/models/user.dart';
 import 'package:result_dart/result_dart.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart' hide AsyncResult;
 
 import '../result_guard.dart';
 import '../services/remotes/auth_service.dart';
 import '../services/remotes/firestore_service.dart';
 import '../user_mapper.dart';
-
-part 'user_repository_impl.g.dart';
 
 class UserRepositoryImpl implements UserRepository {
   final AuthService _authService;
@@ -110,14 +107,4 @@ class UserRepositoryImpl implements UserRepository {
   AsyncResult<bool> fetchTermsAgreement() {
     return guardAsync(() => _firestoreService.fetchTermsAgreement(_requireUid()));
   }
-}
-
-@riverpod
-UserRepository userRepository(Ref ref) {
-  final authService = ref.watch(authServiceProvider);
-  final firestoreService = ref.watch(firestoreServiceProvider);
-  return UserRepositoryImpl(
-    authService: authService,
-    firestoreService: firestoreService,
-  );
 }
