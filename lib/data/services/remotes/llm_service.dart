@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:hontudy/data/prompt_builder.dart';
 
-part 'llm_service.g.dart';
+const defaultLlmModel = String.fromEnvironment(
+  'OPENAI_MODEL',
+  defaultValue: 'gpt-5.6-luna',
+);
 
 class LlmService {
   final Dio _dio;
