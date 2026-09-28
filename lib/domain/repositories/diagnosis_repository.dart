@@ -9,4 +9,5 @@ abstract class DiagnosisRepository {
   AsyncResult<void> saveDiagnosisProfile(DiagnosisProfile profile);
   AsyncResult<(DiagnosisProfile?,)> fetchDiagnosisProfile();
   AsyncResult<List<DiagnosisProfile>> fetchDiagnosisProfileHistory();
+  AsyncResult<void> deleteDiagnosisProfile();
 }
