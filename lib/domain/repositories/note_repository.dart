@@ -11,4 +11,5 @@ abstract class NoteRepository {
     required NoteFilter filter,
     int? limit,
   });
+  AsyncResult<void> deleteSolvedRecordHistory();
 }
