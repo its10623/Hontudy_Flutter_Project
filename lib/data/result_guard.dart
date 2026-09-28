@@ -6,6 +6,6 @@ Future<ResultDart<S, Exception>> guardAsync<S extends Object>(
   try {
     return Success(await action());
   } catch (e) {
-    return Failure(Exception(e.toString()));
+    return Failure(e is Exception ? e : Exception(e.toString()));
   }
 }
