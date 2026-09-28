@@ -14,7 +14,6 @@ class DiagnosisTurn with _$DiagnosisTurn {
     required this.nextAction,
     required this.questionText, required this.diagnosisContent,
   });
-
 }
 
 @freezed

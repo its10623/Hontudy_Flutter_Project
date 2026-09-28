@@ -31,7 +31,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
         backgroundColor: _backgroundColor(context),
         foregroundColor: _foregroundColor(context),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
         minimumSize: Size(double.infinity, 50),
         side: widget.color != ButtonColor.primary
