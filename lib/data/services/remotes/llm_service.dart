@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:hontudy/data/network/dio/dio_client.dart';
 import 'package:hontudy/data/prompt_builder.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'llm_service.g.dart';
 
@@ -48,10 +46,4 @@ class LlmService {
     final String transcribedText = response.data['text'];
     return transcribedText;
   }
-}
-
-@riverpod
-LlmService llmService(Ref ref) {
-  final dio = ref.watch(dioProvider);
-  return LlmService(dio);
 }

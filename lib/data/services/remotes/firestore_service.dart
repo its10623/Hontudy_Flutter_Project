@@ -1,13 +1,10 @@
-동import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hontudy/data/dto/diagnosis_profile_dto.dart';
 import 'package:hontudy/data/dto/solved_record_dto.dart';
 import 'package:hontudy/domain/models/diagnosis_profile.dart';
 import 'package:hontudy/domain/models/solved_record.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../domain/repositories/note_repository.dart';
-
-part 'firestore_service.g.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore;
@@ -119,9 +116,4 @@ class FirestoreService {
     }
     return batch.commit();
   }
-}
-
-@riverpod
-FirestoreService firestoreService(Ref ref) {
-  return FirestoreService(FirebaseFirestore.instance);
 }

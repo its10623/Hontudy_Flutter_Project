@@ -4,10 +4,7 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-
-part 'auth_service.g.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth;
@@ -96,9 +93,4 @@ class AuthService {
   String _sha256ofString(String input) {
     return sha256.convert(utf8.encode(input)).toString();
   }
-}
-
-@riverpod
-AuthService authService(Ref ref) {
-  return AuthService(FirebaseAuth.instance, GoogleSignIn.instance);
 }
