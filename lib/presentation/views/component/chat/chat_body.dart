@@ -3,10 +3,16 @@ import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart';
 import 'package:hontudy/presentation/core/theme/app_colors.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/views/component/chat/mic_bottom_sheet.dart';
+import 'package:hontudy/presentation/views/component/genui/answer_feeback.dart';
+import 'package:hontudy/presentation/views/component/genui/code_block.dart';
+import 'package:hontudy/presentation/views/component/genui/diagnosis_choice_chip.dart';
+import 'package:hontudy/presentation/views/component/genui/image_widget.dart';
+import 'package:hontudy/presentation/views/component/genui/quiz_choice_chip.dart';
+import 'package:hontudy/presentation/views/component/genui/summary_confirm.dart';
 import 'package:hontudy/presentation/views/component/shimmer_wrapper.dart';
 
 import '../skeleton_box.dart';
-import 'filter_chip_gen_ui.dart';
+import '../genui/filter_chip_gen_ui.dart';
 
 class ChatBody extends StatefulWidget {
   final bool isMetadata;
@@ -32,6 +38,7 @@ class _ChatBodyState extends State<ChatBody> {
   final _currentUser = ChatUser(id: 'user', firstName: 'User');
   final _aiUser = ChatUser(id: 'ai', firstName: '혼터디 AI');
   bool _isLoading = false;
+  bool _isChecked = false;
 
   @override
   void initState() {
@@ -89,13 +96,36 @@ class _ChatBodyState extends State<ChatBody> {
           ExampleQuestion(question: "CS 공부하고 싶습니다"),
         ],
         resultRenderers: {
-          'choice_chip': (context, data) => FilterChipGenUi(data: data),
+          'choice_chips': (context, data) => FilterChipGenUi(data: data),
+          'single_choice_list': (context, data) => DiagnosisChoiceChip(data: data),
+          'summary_confirm': (context, data) => SummaryConfirm(
+            data: data,
+            isChecked: _isChecked,
+            onChanged: (value) {
+              setState(() {
+                _isChecked = value ?? false;
+              });
+            },
+          ),
+          'single_choice_question': (context, data) => QuizChoiceChip(
+            data: data,
+          ),
+          'image_diagram': (context, data) => ImageWidget(
+            data: data,
+          ),
+          'code_block': (context, data) => CodeBlock(data: data),
+          'answer_feedback': (context, data) => AnswerFeedback(
+            answerResult: data['answerResult'] == 'correct' ? AnswerResult.correct : AnswerResult.wrong,
+            wrongAnswerNote: data['wrongAnswer'].toString(),
+            explanation: data['explanation'].toString(),
+            keyPoint: data['keyPoint'],
+          ),
         },
         resultLoadingRenderers: {
           'genui_loading': (context, data) => Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: context.colors.surface,
+              color: context.colors.surfaceContainerLowest,
               borderRadius: BorderRadius.all(Radius.circular(16)),
               border: Border.all(
                 width: 1,
@@ -173,8 +203,6 @@ class _ChatBodyState extends State<ChatBody> {
   }
 
   Future<void> _handleMicTap() async {
-    // TODO: 음성 인식 연동 예정 (STT 방식 미정). 인식 결과는 즉시 전송하지
-    // 않고 입력창 텍스트만 채워서 사용자가 확인/수정 후 직접 전송해야 함.
     await showModalBottomSheet(
       context: context,
       builder: (_) => MicBottomSheet(),
@@ -220,10 +248,69 @@ class _ChatBodyState extends State<ChatBody> {
 
     final mockCatalog = <(String, Map<String, dynamic>)>[
       (
-        'choice_chip',
+        'choice_chips',
         {
           'prompt': '좋아요. 그럼 아래 중에서 지금 가장 자신 없는 영역을 골라주세요. 여러 개도 괜찮습니다.',
           'options': ['네트워크', '알고리즘', '자료구조', '데이터베이스'],
+        },
+      ),
+      (
+        'summary_confirm',
+        {
+          'prompt': '정리해보면 이렇습니다. 맞으면 그대로 시작할게요.',
+          'options': ['비전공자', '2/5', '취업·이직 준비', '운영체제, 네트워크'],
+        },
+      ),
+      (
+        'single_choice_list',
+        {
+          'prompt': '지금 목표에 가장 가까운 하나를 골라주세요.',
+          'options': ['취업 준비', '이직 준비', '학점/시험 대비', '실무 역량 강화'],
+        },
+      ),
+      (
+        'single_choice_question',
+        {
+          'prompt': '다음 중 TCP(Transmission Control Protocol)의 특징으로 올바르지 않은 것은?',
+          'options': [
+            '연결 지향형 프로토콜로 데이터의 신뢰성을 보장한다.',
+            '3-Way Handshake 과정을 통해 통신 전 연결을 설정한다.',
+            '수신 확인(ACK) 절차가 없어 UDP보다 전송 속도가 빠르다.', // 정답 (오답인 설명)
+            '네트워크 혼잡 상태에 따라 전송량을 조절하는 혼잡 제어 기능이 있다.',
+            '수신자의 버퍼 크기에 맞춰 전송 속도를 조절하는 흐름 제어 기능이 있다.',
+          ],
+        },
+      ),
+      (
+        'image_diagram',
+        {
+          'caption': 'TCP 통신 과정을 패러디한 클라이언트와 서버 간의 동적 UI 협상 흐름도',
+        },
+      ),
+      (
+        'code_block',
+        {
+          'language': 'dart',
+          'code': '''
+for (int i = 0; i < 3; i++) {
+  print('현재 인덱스: \$i');
+}
+
+// 2. 리스트 요소 순회에 직관적인 for-in문
+final subjects = ['OS', 'Network', 'DB'];
+for (String subject in subjects) {
+  print('과목명: \$subject');
+}
+              ''',
+        },
+      ),
+      (
+        'answer_feedback',
+        {
+          'verdict': 'wrong',
+          'verdictNote': '정답은 3번입니다',
+          'explanation': 'TCP는 ACK 기반의 수신 확인 절차가 있어 UDP보다 속도가 느립니다.',
+          'keyPoint': 'TCP=신뢰성(느림), UDP=속도(비신뢰성)',
         },
       ),
     ];
@@ -243,6 +330,7 @@ class _ChatBodyState extends State<ChatBody> {
   // 채팅 버블내 메세지 옵션
   MessageOptions _messageOptions() {
     return MessageOptions(
+      containerColor: context.colors.surfaceContainerLowest,
       showUserName: false,
       showTime: false,
       bubbleBuilder: (context, message, isCurrentUser, defaultBubble) => Column(
@@ -329,7 +417,7 @@ class _ChatBodyState extends State<ChatBody> {
       materialColor: Colors.transparent,
       materialElevation: 0,
       containerDecoration: BoxDecoration(
-        color: context.colors.surface,
+        color: context.colors.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
