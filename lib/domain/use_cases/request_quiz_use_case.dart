@@ -44,7 +44,7 @@ class RequestQuizUseCase {
       (record) => record.$1,
       (failure) => throw failure,
     );
-    if (profile == null) throw DiagnosisProfileEmptyException;
+    if (profile == null) throw DiagnosisProfileEmptyException();
 
     final keywords = List<String>.from(excludeKeywords);
     for (var attempt = 0; attempt < _maxRetries; attempt++) {
