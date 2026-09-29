@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../core/theme/context_theme_extension.dart';
 import '../../core/theme/theme.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class SignInPage extends StatelessWidget {
+  const SignInPage({super.key});
 
   @override
   Widget build(BuildContext context) {

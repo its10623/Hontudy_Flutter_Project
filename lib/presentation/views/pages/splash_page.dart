@@ -1,7 +1,7 @@
 
 import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:hontudy/presentation/views/pages/login_page.dart';
+import 'package:hontudy/presentation/views/pages/sign_in_page.dart';
 import '../../core/theme/context_theme_extension.dart';
 
 class SplashPage extends StatelessWidget {
@@ -12,7 +12,7 @@ class SplashPage extends StatelessWidget {
     return FlutterSplashScreen.fadeIn(
       // 추후 백그라운드 작업 구현할 경우 asyncNavigationCallback을 통해 스플래시 백그라운드 작업 최적화
       duration: const Duration(milliseconds: 2000),
-      nextScreen: const LoginPage(),
+      nextScreen: const SignInPage(),
       backgroundColor: context.colors.surface,
       setStateTimer: Duration.zero,
       animationDuration: const Duration(milliseconds: 800),
