@@ -1,3 +1,5 @@
+import 'package:hontudy/domain/use_cases/delete_account_use_case.dart';
+import 'package:hontudy/domain/use_cases/sign_in_use_case.dart';
 import 'package:hontudy/domain/use_cases/submit_quiz_answer_use_case.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -20,5 +22,21 @@ SubmitQuizAnswerUseCase submitQuizAnswerUseCase(Ref ref) {
   return SubmitQuizAnswerUseCase(
     quizRepository: ref.watch(quizRepositoryProvider),
     noteRepository: ref.watch(noteRepositoryProvider),
+  );
+}
+
+@riverpod
+DeleteAccountUseCase deleteAccountUseCase(Ref ref) {
+  return DeleteAccountUseCase(
+    userRepository: ref.watch(userRepositoryProvider),
+    diagnosisRepository: ref.watch(diagnosisRepositoryProvider),
+    noteRepository: ref.watch(noteRepositoryProvider),
+  );
+}
+
+@riverpod
+SignInUseCase signInUseCase(Ref ref) {
+  return SignInUseCase(
+    userRepository: ref.watch(userRepositoryProvider),
   );
 }

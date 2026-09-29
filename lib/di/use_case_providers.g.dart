@@ -104,3 +104,92 @@ final class SubmitQuizAnswerUseCaseProvider
 
 String _$submitQuizAnswerUseCaseHash() =>
     r'a94918121ec0c55266d7ee3d263289239d6a07f4';
+
+@ProviderFor(deleteAccountUseCase)
+final deleteAccountUseCaseProvider = DeleteAccountUseCaseProvider._();
+
+final class DeleteAccountUseCaseProvider
+    extends
+        $FunctionalProvider<
+          DeleteAccountUseCase,
+          DeleteAccountUseCase,
+          DeleteAccountUseCase
+        >
+    with $Provider<DeleteAccountUseCase> {
+  DeleteAccountUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteAccountUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteAccountUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<DeleteAccountUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  DeleteAccountUseCase create(Ref ref) {
+    return deleteAccountUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DeleteAccountUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DeleteAccountUseCase>(value),
+    );
+  }
+}
+
+String _$deleteAccountUseCaseHash() =>
+    r'54d620a72199e4d6a155d437015bc20310108671';
+
+@ProviderFor(signInUseCase)
+final signInUseCaseProvider = SignInUseCaseProvider._();
+
+final class SignInUseCaseProvider
+    extends $FunctionalProvider<SignInUseCase, SignInUseCase, SignInUseCase>
+    with $Provider<SignInUseCase> {
+  SignInUseCaseProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'signInUseCaseProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$signInUseCaseHash();
+
+  @$internal
+  @override
+  $ProviderElement<SignInUseCase> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  SignInUseCase create(Ref ref) {
+    return signInUseCase(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SignInUseCase value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SignInUseCase>(value),
+    );
+  }
+}
+
+String _$signInUseCaseHash() => r'd58e8797473f839b8f9a53642dc6628c6da636cc';
