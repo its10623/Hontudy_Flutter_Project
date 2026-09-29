@@ -63,3 +63,4 @@ android/key.properties
 # AI 에이전트용 내부 가이드 — 비공개 유지
 AGENTS.md
 .hotswan/
+.claude/commands/answer.md
