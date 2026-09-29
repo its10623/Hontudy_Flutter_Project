@@ -137,7 +137,7 @@ final class QuizRepositoryProvider
   }
 }
 
-String _$quizRepositoryHash() => r'9814715f331be2d44f822949d1c5afe8806c55de';
+String _$quizRepositoryHash() => r'9699bc516ec4417de349d9822d1a8bdbf3e48de7';
 
 @ProviderFor(noteRepository)
 final noteRepositoryProvider = NoteRepositoryProvider._();

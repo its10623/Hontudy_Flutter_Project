@@ -31,7 +31,10 @@ DiagnosisRepository diagnosisRepository(Ref ref) {
 
 @riverpod
 QuizRepository quizRepository(Ref ref) {
-  return QuizRepositoryImpl(llm: ref.watch(llmServiceProvider));
+  return QuizRepositoryImpl(
+    llm: ref.watch(llmServiceProvider),
+    geminiImageService: ref.watch(geminiImageServiceProvider),
+  );
 }
 
 @riverpod

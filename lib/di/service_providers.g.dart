@@ -135,4 +135,52 @@ final class LlmServiceProvider
   }
 }
 
-String _$llmServiceHash() => r'7673ffcf4ade6d1a391a0cf5b84ccc30225b8b50';
+String _$llmServiceHash() => r'901a98eecedc42950f956d25ca43f9c523a0a0af';
+
+@ProviderFor(geminiImageService)
+final geminiImageServiceProvider = GeminiImageServiceProvider._();
+
+final class GeminiImageServiceProvider
+    extends
+        $FunctionalProvider<
+          GeminiImageService,
+          GeminiImageService,
+          GeminiImageService
+        >
+    with $Provider<GeminiImageService> {
+  GeminiImageServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'geminiImageServiceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$geminiImageServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<GeminiImageService> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GeminiImageService create(Ref ref) {
+    return geminiImageService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GeminiImageService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GeminiImageService>(value),
+    );
+  }
+}
+
+String _$geminiImageServiceHash() =>
+    r'f5d72b7a85422fa4579605fc244e4528999e24e4';

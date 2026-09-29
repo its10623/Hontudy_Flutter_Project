@@ -8,12 +8,14 @@ import 'package:result_dart/result_dart.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../domain/exceptions.dart';
+import '../services/remotes/gemini_image_service.dart';
 import '../services/remotes/llm_service.dart';
 
 class QuizRepositoryImpl implements QuizRepository {
   final LlmService _llm;
+  final GeminiImageService _geminiImageService;
 
-  QuizRepositoryImpl({required this._llm});
+  QuizRepositoryImpl({required this._llm, required this._geminiImageService});
 
   @override
   AsyncResult<Quiz> requestQuiz({
@@ -37,7 +39,7 @@ class QuizRepositoryImpl implements QuizRepository {
         throw QuizDomainExhaustedException();
       }
 
-      return _quizFromJson(json);
+      return await _quizFromJson(json);
     });
   }
 
@@ -58,11 +60,11 @@ class QuizRepositoryImpl implements QuizRepository {
         ],
         temperature: 0.2,
       );
-      return _quizFeedbackFromJson(json);
+      return await _quizFeedbackFromJson(json);
     });
   }
 
-  Quiz _quizFromJson(Map<String, dynamic> json) {
+  Future<Quiz> _quizFromJson(Map<String, dynamic> json) async {
     final category = json['category'] as Map<String, dynamic>;
     final widgetType = json['widget_type'] as String;
     final widgetContent = json['widget_content'] as Map<String, dynamic>?;
@@ -83,6 +85,17 @@ class QuizRepositoryImpl implements QuizRepository {
         ? quizContent.options[quizContent.correctIndex]
         : json['reference_answer'] as String;
 
+    String? imageUrl;
+    if (widgetType == 'image_diagram' && widgetContent != null) {
+      final imagePrompt = widgetContent['image_prompt'] as String?;
+      if (imagePrompt != null) {
+        imageUrl = await _geminiImageService.generateImage(
+          model: defaultGeminiImageModel,
+          prompt: imagePrompt,
+        );
+      }
+    }
+
     return Quiz(
       qid: const Uuid().v4(),
       questionText: json['question_text'] as String,
@@ -100,19 +113,25 @@ class QuizRepositoryImpl implements QuizRepository {
               code: widgetContent['code'] as String,
             )
           : null,
-      imageUrl: widgetType == 'image_diagram' && widgetContent != null
-          ? widgetContent['image_url'] as String?
-          : null,
+      imageUrl: imageUrl,
     );
   }
 
-  QuizFeedback _quizFeedbackFromJson(Map<String, dynamic> json) {
+  Future<QuizFeedback> _quizFeedbackFromJson(Map<String, dynamic> json) async {
     final codeBlock = json['code_block'] as Map<String, dynamic>?;
+    final imagePrompt = json['image_prompt'] as String?;
+    final imageUrl = imagePrompt == null
+        ? null
+        : await _geminiImageService.generateImage(
+            model: defaultGeminiImageModel,
+            prompt: imagePrompt,
+          );
+
     return QuizFeedback(
       isCorrect: json['is_correct'] as bool,
       feedbackText: json['feedback_text'] as String,
       keyPoint: json['key_point'] as String?,
-      imageUrl: json['image_url'] as String?,
+      imageUrl: imageUrl,
       codeSnippet: codeBlock == null
           ? null
           : CodeSnippet(

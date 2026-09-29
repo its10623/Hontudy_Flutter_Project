@@ -183,6 +183,7 @@ ${_constraints([
       '아래 제외 키워드에 해당하는 주제는 출제하지 마세요: ${excludeKeywords.join(', ')}',
       '제외 키워드를 다 피해서 이 서브주제 내에서 더 이상 출제할 개념이 없다면, 억지로 애매하거나 중복된 문제를 만들지 말고 is_exhausted: true만 반환하세요 (이 경우 다른 필드는 비워도 됨)',
       'widget_type이 single_choice_question이면 correct_index로만 정답을 표기하고 reference_answer는 null로 두세요. 그 외 위젯 타입(short_answer_input/code_block/math_formula/image_diagram)은 reference_answer에 모범 답안을 문장으로 작성하세요',
+      'widget_type이 image_diagram이면 widget_content에 실제 이미지 URL이 아니라 이미지 생성 AI에게 넘길 설명 텍스트를 image_prompt 필드로 채우세요 (예: {"image_prompt": "이진 탐색 트리 구조를 보여주는 다이어그램"})',
     ])}
 ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
       'is_exhausted': 'boolean — true면 아래 필드 생략 가능',
@@ -190,7 +191,7 @@ ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
       'difficulty': '하 | 중하 | 중 | 중상 | 상',
       'widget_type': 'code_block | image_diagram | math_formula | single_choice_question | short_answer_input',
       'question_text': 'string',
-      'widget_content': 'object | null',
+      'widget_content': 'object | null — image_diagram이면 { "image_prompt": string }',
       'choices': ['string', '...'],
       'correct_index': 'number (0~4) | null',
       'reference_answer': 'string | null',
@@ -218,7 +219,7 @@ ${_constraints([
       '중요한 단어/문장은 Bold 처리',
       '이해를 돕는 짧은 코드 블럭/수식 활용 가능',
       '불필요한 서론 없이 바로 피드백',
-      '이해를 돕는 데 시각 자료(다이어그램)가 유용하면 image_url을 채우고, 코드 예시가 유용하면 code_block을 채우세요 — 상호배타적이지 않으므로 둘 다 필요하면 둘 다 채워도 됨. 필요 없으면 각각 null',
+      '이해를 돕는 데 시각 자료(다이어그램)가 유용하면 image_prompt(실제 URL이 아니라 이미지 생성 AI에게 넘길 설명 텍스트)를 채우고, 코드 예시가 유용하면 code_block을 채우세요 — 상호배타적이지 않으므로 둘 다 필요하면 둘 다 채워도 됨. 필요 없으면 각각 null',
       '설명이 길어질 경우, 핵심만 한 줄로 요약한 key_point를 추가로 제공하세요 (짧은 설명이면 null로 생략 가능)',
     ])}
 ${_encapsulateUserInput('user_response', userAnswer)}
@@ -228,7 +229,7 @@ ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
       'feedback_text': 'string (마크다운 Bold 포함)',
       'key_point': 'string | null — 핵심 요약 1줄, 짧은 설명이면 생략',
       'code_block': '{ "language": string, "code": string } | null',
-      'image_url': 'string | null',
+      'image_prompt': 'string | null — 실제 URL이 아니라 이미지 생성 AI에게 넘길 설명 텍스트',
     })}
 ''';
   }

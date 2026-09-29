@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 class DioInterceptor extends Interceptor {
-  final Set<String> sensitiveKeys = {'authorization', 'content'};
+  final Set<String> sensitiveKeys = {'authorization', 'content', 'x-goog-api-key'};
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {

@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../data/network/dio/dio_client.dart';
 import '../data/services/remotes/auth_service.dart';
 import '../data/services/remotes/firestore_service.dart';
+import '../data/services/remotes/gemini_image_service.dart';
 import '../data/services/remotes/llm_service.dart';
 
 part 'service_providers.g.dart';
@@ -22,6 +23,12 @@ FirestoreService firestoreService(Ref ref) {
 
 @riverpod
 LlmService llmService(Ref ref) {
-  final dio = ref.watch(dioProvider);
+  final dio = ref.watch(openaiDioProvider);
   return LlmService(dio);
+}
+
+@riverpod
+GeminiImageService geminiImageService(Ref ref) {
+  final dio = ref.watch(geminiDioProvider);
+  return GeminiImageService(dio);
 }
