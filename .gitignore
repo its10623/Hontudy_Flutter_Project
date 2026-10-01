@@ -64,3 +64,4 @@ android/key.properties
 AGENTS.md
 .hotswan/
 .claude/commands/answer.md
+.claude/commands/commit.md
