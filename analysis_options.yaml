@@ -3,11 +3,16 @@ include: package:flutter_lints/flutter.yaml
 linter:
   rules:
     - require_trailing_commas
+    - unawaited_futures
+    - prefer_const_constructors
+    - prefer_const_literals_to_create_immutables
+    - prefer_const_declarations
+    - only_throw_errors
 formatter:
   trailing_commas: preserve
+plugins:
+  riverpod_lint: ^3.1.9
 analyzer:
-  plugin:
-    - custom_lint
   exclude:
     - build/**
     - android/**
