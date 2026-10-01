@@ -34,9 +34,9 @@ class ChatAppbar extends StatelessWidget implements PreferredSizeWidget {
               Container(
                 width: 40,
                 height: 40,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: const AssetImage('assets/icons/ai_icon.png'),
+                    image: AssetImage('assets/icons/ai_icon.png'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -51,51 +51,59 @@ class ChatAppbar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ),
                   Text.rich(
-                      TextSpan(
-                        children: [
-                          if(stepValue != null)
-                            TextSpan(
+                    TextSpan(
+                      children: [
+                        if (stepValue != null)
+                          TextSpan(
                             text: '진단률 $stepValue% · ',
                             style: context.captionSmall.copyWith(
-                              color: context.captionSmall.color?.withValues(alpha: 0.6),
-                            )
+                              color: context.captionSmall.color?.withValues(
+                                alpha: 0.6,
+                              ),
+                            ),
                           ),
-                          TextSpan(
-                              text: currentState,
-                              style: context.captionSmall.copyWith(
-                                color: context.captionSmall.color?.withValues(alpha: 0.6),
-                              )
-                          )
-                        ]
-                      )
-                  )
+                        TextSpan(
+                          text: currentState,
+                          style: context.captionSmall.copyWith(
+                            color: context.captionSmall.color?.withValues(
+                              alpha: 0.6,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
 
-              if(onNote != null && onProfile != null)... [
-                Spacer(),
+              if (onNote != null && onProfile != null) ...[
+                const Spacer(),
                 onNote!,
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
-                onProfile!
+                onProfile!,
               ],
-              Spacer()
+              const Spacer(),
             ],
           ),
-          SizedBox(height: 4,),
+          const SizedBox(
+            height: 4,
+          ),
           Padding(
-            padding: EdgeInsetsGeometry.symmetric(horizontal: 10),
+            padding: const EdgeInsetsGeometry.symmetric(horizontal: 10),
             child: stepValue != null
                 ? _AnimatedStepIndicator(stepValue: stepValue!)
                 : null,
           ),
-          SizedBox(height: 4,),
+          const SizedBox(
+            height: 4,
+          ),
         ],
       ),
-      bottom: PreferredSize(
+      bottom: const PreferredSize(
         preferredSize: .fromHeight(1.0),
-        child: DividerWidget()
+        child: DividerWidget(),
       ),
     );
   }

@@ -151,7 +151,7 @@ class CodeSnippetMapper {
 class QuizContentMapper {
   static QuizContent toDomain(QuizContentDto dto) {
     return switch (dto.widgetType) {
-      'short_answer_input' => QuizContent.shortAnswer(),
+      'short_answer_input' => const QuizContent.shortAnswer(),
       'single_choice_question' => QuizContent.singleChoice(
         options: List<String>.from(dto.content['options'] as List),
         correctIndex: dto.content['correctIndex'] as int,

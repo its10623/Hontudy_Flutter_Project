@@ -36,7 +36,7 @@ class ImageWidget extends StatelessWidget {
           const SizedBox(
             height: 8,
           ),
-          DividerWidget(),
+          const DividerWidget(),
           AspectRatio(
             aspectRatio: 16 / 9,
             child: ClipRRect(

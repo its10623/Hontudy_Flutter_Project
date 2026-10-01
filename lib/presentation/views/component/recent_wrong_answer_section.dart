@@ -48,12 +48,14 @@ class _RecentWrongAnswerSectionState extends State<RecentWrongAnswerSection> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.circle,
                   size: 8,
                   color: AppColors.wrong,
                 ),
-                SizedBox(width: 6,),
+                const SizedBox(
+                  width: 6,
+                ),
                 Expanded(
                   child: Text(
                     widget.wrongQuiz,
@@ -64,7 +66,9 @@ class _RecentWrongAnswerSectionState extends State<RecentWrongAnswerSection> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                SizedBox(width: 10,),
+                const SizedBox(
+                  width: 10,
+                ),
                 Text(
                   '${widget.timeAgo}일 전',
                   style: context.captionMedium,

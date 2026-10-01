@@ -58,21 +58,21 @@ class _TopicSummaryCardState extends State<TopicSummaryCard> {
                     color: context.colors.surfaceContainerLowest,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Placeholder(),
+                  child: const Placeholder(),
                 ),
-                Spacer(),
+                const Spacer(),
                 Text(
                   widget.topic,
                   style: TextType.bodyLarge.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Text(
                   '${widget.savedQuiz} 문제 · 오답 ${widget.wrongAnswer}개',
                   style: context.captionMedium,
                 ),
-                Spacer(),
+                const Spacer(),
                 ProgressBarWidget(
                   value: parseValue,
                 ),
@@ -128,7 +128,7 @@ class _TopicMoreCardState extends State<TopicMoreCard> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Spacer(),
+                const Spacer(),
                 Text(
                   '아직 풀지않은',
                   style: TextType.bodyLarge.copyWith(
@@ -141,7 +141,7 @@ class _TopicMoreCardState extends State<TopicMoreCard> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Text(
                   '자세히 보기',
                   style: TextType.captionLarge.copyWith(
@@ -149,7 +149,7 @@ class _TopicMoreCardState extends State<TopicMoreCard> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
               ],
             ),
           ),

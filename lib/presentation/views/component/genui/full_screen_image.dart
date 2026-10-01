@@ -5,7 +5,8 @@ class FullScreenImagePage extends StatelessWidget {
   final String assetImage;
 
   const FullScreenImagePage({
-    super.key, required this.assetImage,
+    super.key,
+    required this.assetImage,
   });
 
   @override
@@ -20,7 +21,7 @@ class FullScreenImagePage extends StatelessWidget {
       body: Center(
         child: InteractiveViewer(
           panEnabled: true,
-          boundaryMargin: EdgeInsets.all(20),
+          boundaryMargin: const EdgeInsets.all(20),
           minScale: 0.5,
           maxScale: 4.0,
           child: Image.asset(assetImage),

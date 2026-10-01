@@ -1,6 +1,5 @@
 import 'package:hontudy/domain/repositories/diagnosis_repository.dart';
 import 'package:hontudy/domain/repositories/user_repository.dart';
-import 'package:result_dart/result_dart.dart';
 
 import '../repositories/note_repository.dart';
 

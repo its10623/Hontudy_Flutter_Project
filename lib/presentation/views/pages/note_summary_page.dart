@@ -42,7 +42,7 @@ class _NoteSummaryPageState extends State<NoteSummaryPage> {
       bottomNavigationBar: ClipRRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
-          child: SafeArea(
+          child: const SafeArea(
             child: BottomNavBar(
               currentIndex: 1,
             ),
@@ -65,7 +65,7 @@ class _NoteSummaryPageState extends State<NoteSummaryPage> {
             ),
           ],
         ),
-        bottom: PreferredSize(
+        bottom: const PreferredSize(
           preferredSize: .fromHeight(1.0),
           child: DividerWidget(),
         ),
@@ -75,7 +75,7 @@ class _NoteSummaryPageState extends State<NoteSummaryPage> {
         child: ListView(
           children: [
             Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: context.colors.primary,
                 borderRadius: BorderRadius.circular(16),
@@ -134,14 +134,14 @@ class _NoteSummaryPageState extends State<NoteSummaryPage> {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
-            _TopicSummaryGrid(),
+            const _TopicSummaryGrid(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   '최근 틀린 문제',
                   style: TextType.captionMedium,
                 ),
@@ -161,7 +161,7 @@ class _NoteSummaryPageState extends State<NoteSummaryPage> {
               RecentWrongAnswerSection(
                 wrongQuiz: wrongQuiz[index][0],
                 onTap: () {},
-                  timeAgo: wrongQuiz[index][1],
+                timeAgo: wrongQuiz[index][1],
               ),
               if (index != wrongQuiz.length - 1) const SizedBox(height: 12),
             ],
@@ -189,7 +189,7 @@ class _TopicSummaryGridState extends State<_TopicSummaryGrid> {
     ];
     return GridView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: 4,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,

@@ -43,8 +43,8 @@ class CodeBlock extends StatelessWidget {
                 child: Text(
                   language,
                   style: GoogleFonts.firaCode(
-                      fontSize: 14,
-                      color: context.colors.outline
+                    fontSize: 14,
+                    color: context.colors.outline,
                   ),
                 ),
               ),
@@ -65,14 +65,19 @@ class CodeBlock extends StatelessWidget {
               ),
             ],
           ),
-          DividerWidget(),
+          const DividerWidget(),
           SizedBox(
             width: double.infinity,
             child: HighlightView(
               code,
               language: language,
               theme: isDarkMode ? atomOneDarkTheme : githubTheme,
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 16,
+                bottom: 16,
+              ),
               textStyle: GoogleFonts.firaCode(
                 fontSize: 14,
               ),

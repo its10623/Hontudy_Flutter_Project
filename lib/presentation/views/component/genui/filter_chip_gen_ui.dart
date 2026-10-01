@@ -27,10 +27,10 @@ class _FilterChipGenUiState extends State<FilterChipGenUi> {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 350),
         child: Container(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: context.colors.surfaceContainerLowest,
-            borderRadius: BorderRadius.all(Radius.circular(16)),
+            borderRadius: const BorderRadius.all(Radius.circular(16)),
             border: Border.all(
               width: 1,
               color: context.colors.outline.withAlpha(50),
@@ -41,7 +41,9 @@ class _FilterChipGenUiState extends State<FilterChipGenUi> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(prompt),
-              const SizedBox(height: 8,),
+              const SizedBox(
+                height: 8,
+              ),
               Wrap(
                 spacing: 8,
                 runSpacing: 4,

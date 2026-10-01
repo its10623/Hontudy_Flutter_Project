@@ -52,7 +52,9 @@ class _DialogWidgetState extends State<DialogWidget> {
                   color: ButtonColor.surface,
                 ),
               ),
-              SizedBox(width: 8,)
+              const SizedBox(
+                width: 8,
+              ),
             ],
             Expanded(
               child: PrimaryButton(

@@ -33,7 +33,6 @@ class AppTheme {
       colors: _colors,
       useMaterial3: true,
       textTheme: _textTheme,
-
     );
     return base.copyWith(
       colorScheme: base.colorScheme.copyWith(
@@ -87,43 +86,43 @@ class AppTheme {
   static AuthButtonStyle googleAuthButtonStyle(bool isDarkMode) {
     if (!isDarkMode) {
       return _baseAuthButtonStyle.copyWith(
-          splashColor: Colors.black.withAlpha(15),
-          textStyle: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          )
+        splashColor: Colors.black.withAlpha(15),
+        textStyle: const TextStyle(
+          color: Colors.black87,
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
       );
     }
     return _baseAuthButtonStyle.copyWith(
-        splashColor: Colors.white.withAlpha(15),
-        buttonColor: Colors.black87,
-        textStyle: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-        )
+      splashColor: Colors.white.withAlpha(15),
+      buttonColor: Colors.black87,
+      textStyle: const TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.w600,
+        fontSize: 14,
+      ),
     );
   }
 
   static AuthButtonStyle appleAuthButtonStyle(bool isDarkMode) {
     if (!isDarkMode) {
       return _baseAuthButtonStyle.copyWith(
-          splashColor: Colors.white.withAlpha(15),
-          iconColor: Colors.white,
-          buttonColor: Colors.black87,
-          textStyle: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          )
+        splashColor: Colors.white.withAlpha(15),
+        iconColor: Colors.white,
+        buttonColor: Colors.black87,
+        textStyle: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
       );
     }
     return _baseAuthButtonStyle.copyWith(
       splashColor: Colors.black.withAlpha(15),
       iconColor: Colors.black87,
       buttonColor: Colors.white,
-      textStyle: TextStyle(
+      textStyle: const TextStyle(
         color: Colors.black87,
         fontWeight: FontWeight.w600,
         fontSize: 14,

@@ -105,7 +105,7 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
       bottomNavigationBar: ClipRRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
-          child: SafeArea(
+          child: const SafeArea(
             child: BottomNavBar(
               currentIndex: 1,
             ),
@@ -359,7 +359,7 @@ class _NoteQuizCardState extends State<_NoteQuizCard>
           overflow: TextOverflow.ellipsis,
         ),
         Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: context.colors.outlineVariant.withAlpha(100),
             borderRadius: BorderRadius.circular(16),
@@ -374,7 +374,7 @@ class _NoteQuizCardState extends State<_NoteQuizCard>
                   color: context.colors.outline,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 6,
               ),
               Text(
@@ -389,7 +389,9 @@ class _NoteQuizCardState extends State<_NoteQuizCard>
             ],
           ),
         ),
-        const SizedBox(height: 4,),
+        const SizedBox(
+          height: 4,
+        ),
         Row(
           children: [
             ChipWidget(
@@ -397,7 +399,7 @@ class _NoteQuizCardState extends State<_NoteQuizCard>
               backgroundColor: AppColors.wrongSurface,
               textColor: AppColors.wrong,
             ),
-            SizedBox(
+            const SizedBox(
               width: 6,
             ),
             ChipWidget(
@@ -420,8 +422,7 @@ class _NoteQuizCardState extends State<_NoteQuizCard>
               children: [
                 Checkbox(
                   value: widget.isChecked,
-                  onChanged: (value) =>
-                      widget.onCheckedChanged(value ?? false),
+                  onChanged: (value) => widget.onCheckedChanged(value ?? false),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -445,7 +446,7 @@ class _NoteQuizCardState extends State<_NoteQuizCard>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('해설', style: TextType.titleMedium),
+        const Text('해설', style: TextType.titleMedium),
         const SizedBox(height: 12),
         Text(
           // TODO: 실제 해설 데이터 연동 전까지는 내 답으로 대체 표시

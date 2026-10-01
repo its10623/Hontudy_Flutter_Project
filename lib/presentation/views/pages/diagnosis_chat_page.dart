@@ -13,7 +13,7 @@ class DiagnosisChatPage extends StatefulWidget {
 class DiagnosisChatPageState extends State<DiagnosisChatPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       appBar: ChatAppbar(
         pageInfo: 'AI진단',
         currentState: 'AI가 당신을 파악하고 있어요...',

@@ -34,10 +34,10 @@ class _SummaryConfirmState extends State<SummaryConfirm> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (prompt != null)...[
+          if (prompt != null) ...[
             Text(prompt),
-          ] else...[
-            ?null
+          ] else ...[
+            ?null,
           ],
           const SizedBox(
             height: 12,
@@ -51,7 +51,7 @@ class _SummaryConfirmState extends State<SummaryConfirm> {
                 BoxShadow(
                   color: context.colors.outlineVariant,
                   blurRadius: 2,
-                  offset: Offset(0, 1),
+                  offset: const Offset(0, 1),
                 ),
               ],
             ),
@@ -59,11 +59,11 @@ class _SummaryConfirmState extends State<SummaryConfirm> {
             child: Column(
               children: [
                 _SummaryRow(category: '배경', summaryResult: options[0]),
-                DividerWidget(),
+                const DividerWidget(),
                 _SummaryRow(category: '난이도', summaryResult: options[1]),
-                DividerWidget(),
+                const DividerWidget(),
                 _SummaryRow(category: '목적', summaryResult: options[2]),
-                DividerWidget(),
+                const DividerWidget(),
                 _SummaryRow(category: '약한 영역', summaryResult: options[3]),
               ],
             ),

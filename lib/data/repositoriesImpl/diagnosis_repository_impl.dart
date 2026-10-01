@@ -83,7 +83,9 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
   @override
   AsyncResult<List<DiagnosisProfile>> fetchDiagnosisProfileHistory() {
     return guardAsync(() async {
-      final dtos = await _firestore.fetchDiagnosisProfileHistory(_requiredUid());
+      final dtos = await _firestore.fetchDiagnosisProfileHistory(
+        _requiredUid(),
+      );
       final profile = dtos.map(DiagnosisProfileMapper.toDomain).toList();
       return profile;
     });
@@ -110,7 +112,7 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
       nextAction: json['next_action'] as String,
       questionText: json['question_text'] as String,
       diagnosisContent: switch (json['widget_type']) {
-        'free_text_input' => DiagnosisContent.freeTextInput(),
+        'free_text_input' => const DiagnosisContent.freeTextInput(),
         'choice_chips' => DiagnosisContent.choiceChips(
           options: List<String>.from(json['widget_content']['options'] as List),
         ),

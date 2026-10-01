@@ -20,7 +20,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colors.surface,
-      bottomNavigationBar: SafeArea(
+      bottomNavigationBar: const SafeArea(
         child: BottomNavBar(
           currentIndex: 2,
         ),
@@ -29,7 +29,7 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Column(
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -60,7 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           setState(() => _pushEnabled = value),
                     ),
                     const SizedBox(height: 16),
-                    Center(
+                    const Center(
                       child: Text(
                         '버전 1.0.0 (MVP)',
                         style: TextType.captionMedium,
@@ -99,7 +99,7 @@ class _AccountCard extends StatelessWidget {
           BoxShadow(
             color: context.colors.outlineVariant,
             blurRadius: 2,
-            offset: Offset(0, 1),
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -160,11 +160,10 @@ class _SectionLabel extends StatelessWidget {
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         text,
-        style: TextType.captionMedium
-          .copyWith(
-            fontWeight: FontWeight.w700,
-            color: context.colors.outline,
-          ),
+        style: TextType.captionMedium.copyWith(
+          fontWeight: FontWeight.w700,
+          color: context.colors.outline,
+        ),
       ),
     );
   }
@@ -184,15 +183,15 @@ class _DiagnosisCard extends StatelessWidget {
           BoxShadow(
             color: context.colors.outlineVariant,
             blurRadius: 2,
-            offset: Offset(0, 1),
+            offset: const Offset(0, 1),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: const [
+          const Row(
+            children: [
               Expanded(
                 child: _StatTile(label: '난이도', value: '2 / 5 · 입문+'),
               ),
@@ -207,10 +206,10 @@ class _DiagnosisCard extends StatelessWidget {
             spacing: 7,
             runSpacing: 7,
             children: [
-              ChipWidget(
+              const ChipWidget(
                 label: '네트워크',
               ),
-              ChipWidget(
+              const ChipWidget(
                 label: '운영체제',
               ),
               ChipWidget(
@@ -237,7 +236,7 @@ class _StatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(13),
+      padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(13),
@@ -293,7 +292,7 @@ class _RediagnoseRow extends StatelessWidget {
                         color: context.colors.onPrimary,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       '수준이 올라간 것 같으면 언제든',
                       style: TextType.captionSmall.copyWith(
@@ -335,7 +334,7 @@ class _SettingsCard extends StatelessWidget {
           BoxShadow(
             color: context.colors.outlineVariant,
             blurRadius: 2,
-            offset: Offset(0, 1),
+            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -346,9 +345,9 @@ class _SettingsCard extends StatelessWidget {
             label: '푸시 알림',
             trailing: _Toggle(value: pushEnabled, onChanged: onPushChanged),
           ),
-          DividerWidget(),
+          const DividerWidget(),
           const _SettingsRow(label: '로그아웃'),
-          DividerWidget(),
+          const DividerWidget(),
           const _SettingsRow(label: '회원 탈퇴', danger: true),
         ],
       ),
@@ -430,7 +429,7 @@ class _Toggle extends StatelessWidget {
               BoxShadow(
                 color: context.colors.outlineVariant,
                 blurRadius: 2,
-                offset: Offset(0, 1),
+                offset: const Offset(0, 1),
               ),
             ],
           ),

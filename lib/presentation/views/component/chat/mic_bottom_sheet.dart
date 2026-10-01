@@ -43,14 +43,14 @@ class MicBottomSheetState extends State<MicBottomSheet> {
   Widget build(BuildContext context) {
     return Container(
       height: _isListening ? 250 : 400,
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             if (_isListening) ...[
               SizedBox(height: 55, child: _WaveFormBars()),
-              Text('듣고 있어요...'),
+              const Text('듣고 있어요...'),
               MicButton(
                 onTap: () {
                   _stopListening();
@@ -95,17 +95,17 @@ class MicBottomSheetState extends State<MicBottomSheet> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 12,
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
                       color: context.colors.primaryContainer.withAlpha(20),
-                      borderRadius: BorderRadius.all(
+                      borderRadius: const BorderRadius.all(
                         Radius.elliptical(16, 16),
                       ),
                       border: BoxBorder.all(
@@ -123,16 +123,16 @@ class MicBottomSheetState extends State<MicBottomSheet> {
                             hintText: _text.isEmpty ? '변환된 텍스트가 없습니다.' : null,
                           ),
                         ),
-                        DividerWidget(),
+                        const DividerWidget(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.circle,
                               size: 8,
                               color: AppColors.textHighlightAmber,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 4,
                             ),
                             Text(
@@ -141,7 +141,7 @@ class MicBottomSheetState extends State<MicBottomSheet> {
                                 color: AppColors.textHighlightAmber,
                               ),
                             ),
-                            Spacer(),
+                            const Spacer(),
                             TextButton(
                               onPressed: () {},
                               child: Text(
@@ -156,7 +156,7 @@ class MicBottomSheetState extends State<MicBottomSheet> {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 12,
                   ),
                   Row(
@@ -170,7 +170,7 @@ class MicBottomSheetState extends State<MicBottomSheet> {
                           icon: Icons.mic_none_rounded,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 4,
                       ),
                       Expanded(
@@ -183,7 +183,7 @@ class MicBottomSheetState extends State<MicBottomSheet> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 12,
                   ),
                   Row(

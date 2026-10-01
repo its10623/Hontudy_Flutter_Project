@@ -18,14 +18,20 @@ class QuizChatPageState extends State<QuizChatPage> {
       appBar: ChatAppbar(
         pageInfo: '문제풀이 · 네트워크',
         currentState: '난이도 중',
-        onNote: _navigateWidget(Icons.menu_book_outlined, onTap: () {
-          /// TODO 노트 페이지 이동
-        }),
-        onProfile: _navigateWidget(Icons.person_outline_rounded, onTap: () {
-          /// TODO 프로필 스크린 이동
-        }),
+        onNote: _navigateWidget(
+          Icons.menu_book_outlined,
+          onTap: () {
+            /// TODO 노트 페이지 이동
+          },
+        ),
+        onProfile: _navigateWidget(
+          Icons.person_outline_rounded,
+          onTap: () {
+            /// TODO 프로필 스크린 이동
+          },
+        ),
       ),
-      body: ChatBody(
+      body: const ChatBody(
         metadata: '3일전에 풀었던 문제입니다',
         isMetadata: true,
       ),

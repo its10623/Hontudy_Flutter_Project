@@ -77,7 +77,7 @@ class QuizRepositoryImpl implements QuizRepository {
       'short_answer_input' ||
       'code_block' ||
       'image_diagram' ||
-      'math_formula' => QuizContent.shortAnswer(),
+      'math_formula' => const QuizContent.shortAnswer(),
       _ => throw Exception('알 수 없는 widget_type: $widgetType'),
     };
 

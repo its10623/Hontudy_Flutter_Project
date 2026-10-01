@@ -10,8 +10,8 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 12),
-      padding: EdgeInsets.all(4),
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(99),
@@ -26,9 +26,24 @@ class BottomNavBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _NavItem(icon: Icons.home_outlined, label: '홈', isSelected: currentIndex == 0, onTap: () {}),
-          _NavItem(icon: Icons.menu_book_outlined, label: '노트', isSelected: currentIndex == 1, onTap: () {}),
-          _NavItem(icon: Icons.person_outline_rounded, label: '프로필', isSelected: currentIndex == 2, onTap: () {})
+          _NavItem(
+            icon: Icons.home_outlined,
+            label: '홈',
+            isSelected: currentIndex == 0,
+            onTap: () {},
+          ),
+          _NavItem(
+            icon: Icons.menu_book_outlined,
+            label: '노트',
+            isSelected: currentIndex == 1,
+            onTap: () {},
+          ),
+          _NavItem(
+            icon: Icons.person_outline_rounded,
+            label: '프로필',
+            isSelected: currentIndex == 2,
+            onTap: () {},
+          ),
         ],
       ),
     );
@@ -87,12 +102,12 @@ class _NavItemState extends State<_NavItem> {
                 widget.label,
                 style: widget.isSelected
                     ? TextType.captionLarge.copyWith(
-                  color: context.colors.primary,
-                  fontWeight: FontWeight.w800,
-                )
+                        color: context.colors.primary,
+                        fontWeight: FontWeight.w800,
+                      )
                     : TextType.captionLarge.copyWith(
-                  color: context.colors.outline,
-                ),
+                        color: context.colors.outline,
+                      ),
               ),
             ],
           ),

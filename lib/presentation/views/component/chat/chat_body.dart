@@ -35,8 +35,8 @@ class _ChatBodyState extends State<ChatBody> {
   );
   final _scrollController = ScrollController();
   final _textController = TextEditingController();
-  final _currentUser = ChatUser(id: 'user', firstName: 'User');
-  final _aiUser = ChatUser(id: 'ai', firstName: '혼터디 AI');
+  static const _currentUser = ChatUser(id: 'user', firstName: 'User');
+  static const _aiUser = ChatUser(id: 'ai', firstName: '혼터디 AI');
   bool _isLoading = false;
   bool _isChecked = false;
 
@@ -87,17 +87,18 @@ class _ChatBodyState extends State<ChatBody> {
         scrollToBottomOptions: const ScrollToBottomOptions(bottomOffset: 10),
         loadingConfig: LoadingConfig(isLoading: _isLoading),
         inputOptions: _inputOptions(),
-        welcomeMessageConfig: WelcomeMessageConfig(
+        welcomeMessageConfig: const WelcomeMessageConfig(
           title: '혼터디에 오신 것을 환영 합니다\n어떤 공부를 하고 싶으신가요?',
           questionsSectionTitle: '카드를 선택해주세요',
         ),
-        exampleQuestions: [
+        exampleQuestions: const [
           ExampleQuestion(question: "언어 공부 하고 싶습니다"),
           ExampleQuestion(question: "CS 공부하고 싶습니다"),
         ],
         resultRenderers: {
           'choice_chips': (context, data) => FilterChipGenUi(data: data),
-          'single_choice_list': (context, data) => DiagnosisChoiceChip(data: data),
+          'single_choice_list': (context, data) =>
+              DiagnosisChoiceChip(data: data),
           'summary_confirm': (context, data) => SummaryConfirm(
             data: data,
             isChecked: _isChecked,
@@ -115,7 +116,9 @@ class _ChatBodyState extends State<ChatBody> {
           ),
           'code_block': (context, data) => CodeBlock(data: data),
           'answer_feedback': (context, data) => AnswerFeedback(
-            answerResult: data['answerResult'] == 'correct' ? AnswerResult.correct : AnswerResult.wrong,
+            answerResult: data['answerResult'] == 'correct'
+                ? AnswerResult.correct
+                : AnswerResult.wrong,
             wrongAnswerNote: data['wrongAnswer'].toString(),
             explanation: data['explanation'].toString(),
             keyPoint: data['keyPoint'],
@@ -123,16 +126,16 @@ class _ChatBodyState extends State<ChatBody> {
         },
         resultLoadingRenderers: {
           'genui_loading': (context, data) => Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: context.colors.surfaceContainerLowest,
-              borderRadius: BorderRadius.all(Radius.circular(16)),
+              borderRadius: const BorderRadius.all(Radius.circular(16)),
               border: Border.all(
                 width: 1,
                 color: context.colors.outline.withAlpha(50),
               ),
             ),
-            child: ShimmerWrapper(
+            child: const ShimmerWrapper(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -205,7 +208,7 @@ class _ChatBodyState extends State<ChatBody> {
   Future<void> _handleMicTap() async {
     await showModalBottomSheet(
       context: context,
-      builder: (_) => MicBottomSheet(),
+      builder: (_) => const MicBottomSheet(),
     );
   }
 
@@ -216,7 +219,7 @@ class _ChatBodyState extends State<ChatBody> {
     //_controller.addMessage(ChatMessage.loading(user: _aiUser, id: id))
 
     try {
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 1));
 
       _controller.addMessage(
         ChatMessage(
@@ -341,12 +344,12 @@ for (String subject in subjects) {
           if (widget.isMetadata) ...[
             if (!isCurrentUser) ...[
               Container(
-                margin: EdgeInsets.only(bottom: 4),
+                margin: const EdgeInsets.only(bottom: 4),
                 decoration: BoxDecoration(
                   color: AppColors.metadata,
                   borderRadius: BorderRadius.circular(99),
                 ),
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 4,
                 ),
@@ -354,11 +357,11 @@ for (String subject in subjects) {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.access_time_rounded,
                       size: 18,
                     ),
-                    SizedBox(width: 2),
+                    const SizedBox(width: 2),
                     Text(
                       widget.metadata!,
                       style: context.textStyles.labelSmall,
@@ -386,8 +389,8 @@ for (String subject in subjects) {
                         200,
                       ),
                       shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: const AssetImage(
+                      image: const DecorationImage(
+                        image: AssetImage(
                           'assets/icons/ai_icon.png',
                         ),
                       ),
@@ -446,7 +449,7 @@ for (String subject in subjects) {
           borderSide: BorderSide.none,
         ),
         suffixIcon: IconButton(
-          icon: Icon(Icons.mic_none),
+          icon: const Icon(Icons.mic_none),
           onPressed: _handleMicTap,
         ),
       ),
