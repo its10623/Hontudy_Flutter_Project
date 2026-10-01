@@ -153,43 +153,50 @@ final class DeleteAccountUseCaseProvider
 String _$deleteAccountUseCaseHash() =>
     r'54d620a72199e4d6a155d437015bc20310108671';
 
-@ProviderFor(signInUseCase)
-final signInUseCaseProvider = SignInUseCaseProvider._();
+@ProviderFor(determineNextRouteUseCase)
+final determineNextRouteUseCaseProvider = DetermineNextRouteUseCaseProvider._();
 
-final class SignInUseCaseProvider
-    extends $FunctionalProvider<SignInUseCase, SignInUseCase, SignInUseCase>
-    with $Provider<SignInUseCase> {
-  SignInUseCaseProvider._()
+final class DetermineNextRouteUseCaseProvider
+    extends
+        $FunctionalProvider<
+          DetermineNextRouteUseCase,
+          DetermineNextRouteUseCase,
+          DetermineNextRouteUseCase
+        >
+    with $Provider<DetermineNextRouteUseCase> {
+  DetermineNextRouteUseCaseProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'signInUseCaseProvider',
+        name: r'determineNextRouteUseCaseProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$signInUseCaseHash();
+  String debugGetCreateSourceHash() => _$determineNextRouteUseCaseHash();
 
   @$internal
   @override
-  $ProviderElement<SignInUseCase> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<DetermineNextRouteUseCase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
-  SignInUseCase create(Ref ref) {
-    return signInUseCase(ref);
+  DetermineNextRouteUseCase create(Ref ref) {
+    return determineNextRouteUseCase(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SignInUseCase value) {
+  Override overrideWithValue(DetermineNextRouteUseCase value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<SignInUseCase>(value),
+      providerOverride: $SyncValueProvider<DetermineNextRouteUseCase>(value),
     );
   }
 }
 
-String _$signInUseCaseHash() => r'd58e8797473f839b8f9a53642dc6628c6da636cc';
+String _$determineNextRouteUseCaseHash() =>
+    r'5f2caa8aef5133b101e124f3a39564d40242703c';

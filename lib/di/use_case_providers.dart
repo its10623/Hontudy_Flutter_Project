@@ -1,5 +1,5 @@
 import 'package:hontudy/domain/use_cases/delete_account_use_case.dart';
-import 'package:hontudy/domain/use_cases/sign_in_use_case.dart';
+import 'package:hontudy/domain/use_cases/determine_next_route_use_case.dart';
 import 'package:hontudy/domain/use_cases/submit_quiz_answer_use_case.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -35,8 +35,9 @@ DeleteAccountUseCase deleteAccountUseCase(Ref ref) {
 }
 
 @riverpod
-SignInUseCase signInUseCase(Ref ref) {
-  return SignInUseCase(
+DetermineNextRouteUseCase determineNextRouteUseCase(Ref ref) {
+  return DetermineNextRouteUseCase(
     userRepository: ref.watch(userRepositoryProvider),
+    diagnosisRepository: ref.watch(diagnosisRepositoryProvider),
   );
 }

@@ -1,6 +1,11 @@
+import 'package:google_sign_in/google_sign_in.dart'
+    show GoogleSignInException, GoogleSignInExceptionCode;
+import 'package:hontudy/domain/exceptions.dart';
 import 'package:hontudy/domain/repositories/user_repository.dart';
 import 'package:hontudy/domain/models/user.dart';
 import 'package:result_dart/result_dart.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart'
+    show AuthorizationErrorCode, SignInWithAppleAuthorizationException;
 
 import '../result_guard.dart';
 import '../services/remotes/auth_service.dart';
@@ -18,10 +23,26 @@ class UserRepositoryImpl implements UserRepository {
 
   String _requireUid() => _authService.currentUser!.uid;
 
+  Future<T> _throwIfCancelled<T>(Future<T> Function() authCall) async {
+    try {
+      return await authCall();
+    } on GoogleSignInException catch (e) {
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        throw SignInCancelledException();
+      }
+      rethrow;
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) {
+        throw SignInCancelledException();
+      }
+      rethrow;
+    }
+  }
+
   @override
   AsyncResult<AuthSignInResult> signInWithGoogle() {
     return guardAsync(() async {
-      final credential = await _authService.signInWithGoogle();
+      final credential = await _throwIfCancelled(_authService.signInWithGoogle);
       final isNewUser = credential.additionalUserInfo?.isNewUser ?? false;
       final user = UserMapper.toDomain(credential.user!);
       return (user: user, isNewUser: isNewUser);
@@ -31,7 +52,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   AsyncResult<AuthSignInResult> signInWithApple() {
     return guardAsync(() async {
-      final credential = await _authService.signInWithApple();
+      final credential = await _throwIfCancelled(_authService.signInWithApple);
       final isNewUser = credential.additionalUserInfo?.isNewUser ?? false;
       final user = UserMapper.toDomain(credential.user!);
       return (user: user, isNewUser: isNewUser);
@@ -56,11 +77,9 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  AsyncResult<User> fetchCurrentUser() {
-    return guardAsync(() async {
-      final firebaseUser = _authService.currentUser;
-      return UserMapper.toDomain(firebaseUser!);
-    });
+  User? get currentUser {
+    final firebaseUser = _authService.currentUser;
+    return firebaseUser == null ? null : UserMapper.toDomain(firebaseUser);
   }
 
   @override
@@ -82,7 +101,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   AsyncResult<void> reauthenticateWithGoogle() {
     return guardAsync(() async {
-      await _authService.reauthenticateWithGoogle();
+      await _throwIfCancelled(_authService.reauthenticateWithGoogle);
       return unit;
     });
   }
@@ -90,7 +109,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   AsyncResult<void> reauthenticateWithApple() {
     return guardAsync(() async {
-      await _authService.reauthenticateWithApple();
+      await _throwIfCancelled(_authService.reauthenticateWithApple);
       return unit;
     });
   }
@@ -105,6 +124,8 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   AsyncResult<bool> fetchTermsAgreement() {
-    return guardAsync(() => _firestoreService.fetchTermsAgreement(_requireUid()));
+    return guardAsync(
+      () => _firestoreService.fetchTermsAgreement(_requireUid()),
+    );
   }
 }
