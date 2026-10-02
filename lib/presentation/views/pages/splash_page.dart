@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hontudy/domain/exceptions.dart';
 import 'package:hontudy/domain/use_cases/determine_next_route_use_case.dart';
 import 'package:hontudy/presentation/viewmodels/splash_viewmodel.dart';
-import 'package:hontudy/presentation/views/component/dialog_widget.dart';
+import 'package:hontudy/presentation/views/component/error_dialog.dart';
 import 'package:hontudy/presentation/views/pages/diagnosis_chat_page.dart';
 import 'package:hontudy/presentation/views/pages/quiz_chat_page.dart';
 import 'package:hontudy/presentation/views/pages/sign_in_page.dart';
@@ -31,32 +30,12 @@ class SplashPage extends ConsumerWidget {
         );
       });
       if (next is AsyncError) {
-        final error = next.error;
-        String title = '오류';
-        String message = "알 수 없는 오류가 발생했습니다.";
-
-        if (error is NetworkException) {
-          title = '네트워크 오류';
-          message = "인터넷 연결을 확인하고 다시 시도해 주세요";
-        }
-
-        if (error is ServerException) {
-          title = '서버 오류';
-          message = '서버 점검 중이거나 일시적인 오류가 발생했습니다';
-        }
-
-        showDialog(
-          barrierDismissible: false,
+        ErrorDialog.show(
           context: context,
-          builder: (_) => DialogWidget(
-            title: title,
-            content: message,
-            primaryText: '다시 시도',
-            primaryOnPressed: () {
-              Navigator.of(context).pop();
-              ref.invalidate(splashViewModelProvider);
-            },
-          ),
+          error: next.error!,
+          buttonText: '다시 시도',
+          barrierDismissible: false,
+          onPressed: () => ref.invalidate(splashViewModelProvider),
         );
       }
     });
