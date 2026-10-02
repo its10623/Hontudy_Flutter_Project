@@ -18,7 +18,7 @@ final class SplashViewModelProvider
     : super(
         from: null,
         argument: null,
-        retry: null,
+        retry: _noRetry,
         name: r'splashViewModelProvider',
         isAutoDispose: true,
         dependencies: null,
@@ -33,7 +33,7 @@ final class SplashViewModelProvider
   SplashViewModel create() => SplashViewModel();
 }
 
-String _$splashViewModelHash() => r'd879909a30cf14e61c62e533e178ab6e7ca36a41';
+String _$splashViewModelHash() => r'8176aed1dca7749e7f803c0b961951af3b5a378f';
 
 abstract class _$SplashViewModel extends $AsyncNotifier<NextRoute> {
   FutureOr<NextRoute> build();

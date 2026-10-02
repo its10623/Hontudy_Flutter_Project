@@ -33,7 +33,7 @@ final class SignInViewModelProvider
   SignInViewModel create() => SignInViewModel();
 }
 
-String _$signInViewModelHash() => r'e5fbebde569ff0a5a9c4e89ba82684ac05acc385';
+String _$signInViewModelHash() => r'47ba7f574506e8fd1447c9e40aac79dd1fbb86c5';
 
 abstract class _$SignInViewModel extends $AsyncNotifier<NextRoute?> {
   FutureOr<NextRoute?> build();
