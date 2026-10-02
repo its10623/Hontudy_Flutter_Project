@@ -40,6 +40,7 @@ dependencies:
   cloud_firestore: ^6.10.0
   shared_preferences: ^2.5.5
   uuid: ^4.6.0
+  flutter_svg: ^2.0.0
 
 dependency_overrides:
   google_fonts: ^8.1.0
@@ -67,6 +68,7 @@ flutter:
   assets:
     - .env
     - assets/icons/
+    - assets/mascot/
     - assets/test.png
   fonts:
     - family: Pretendard
