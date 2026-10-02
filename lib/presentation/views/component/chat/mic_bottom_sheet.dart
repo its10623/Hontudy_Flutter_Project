@@ -300,5 +300,3 @@ class _WaveFormBarsState extends State<_WaveFormBars>
     );
   }
 }
-
-enum ButtonColor { primary, surface }

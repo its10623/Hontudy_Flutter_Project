@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:hontudy/presentation/core/theme/app_colors.dart';
-import 'package:hontudy/presentation/views/component/chat/mic_bottom_sheet.dart';
 import 'package:hontudy/presentation/views/component/choice_chip_widget.dart';
 import 'package:hontudy/presentation/views/component/primary_button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
