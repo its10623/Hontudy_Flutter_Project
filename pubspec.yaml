@@ -69,6 +69,7 @@ flutter:
     - .env
     - assets/icons/
     - assets/mascot/
+    - assets/topic/
     - assets/test.png
   fonts:
     - family: Pretendard
