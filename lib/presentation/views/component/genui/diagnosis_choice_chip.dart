@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
-import 'package:hontudy/presentation/core/theme/text_type.dart';
 import 'package:hontudy/presentation/views/component/choice_chip_item.dart';
 
 import 'gen_ui_box.dart';

@@ -57,7 +57,6 @@ class _NavItem extends StatefulWidget {
   final VoidCallback onTap;
 
   const _NavItem({
-    super.key,
     required this.icon,
     required this.label,
     required this.isSelected,

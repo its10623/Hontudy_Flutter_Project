@@ -147,7 +147,6 @@ class _SummaryRow extends StatelessWidget {
   final String summaryResult;
 
   const _SummaryRow({
-    super.key,
     required this.summaryResult,
     required this.category,
   });

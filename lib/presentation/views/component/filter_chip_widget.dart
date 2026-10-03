@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hontudy/presentation/core/theme/app_colors.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/core/theme/text_type.dart';
 
