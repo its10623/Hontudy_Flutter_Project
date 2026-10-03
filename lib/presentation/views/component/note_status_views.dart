@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:hontudy/presentation/views/component/dashed_rrect_painter.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hontudy/presentation/core/theme/app_colors.dart';
 
@@ -65,48 +66,36 @@ class _NoteStatusLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.center,
-          colors: [
-            context.colors.primary.withAlpha(25),
-            context.colors.surface,
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(28, 24, 28, 110),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            illustration,
+            const SizedBox(height: 22),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: context.textStyles.titleMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.3,
+                color: context.colors.onSurface,
+              ),
+            ),
+            const SizedBox(height: 9),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: context.textStyles.bodySmall?.copyWith(
+                fontWeight: FontWeight.w500,
+                height: 1.6,
+                color: context.colors.onSurfaceVariant.withAlpha(180),
+              ),
+            ),
+            const SizedBox(height: 22),
+            button,
           ],
-        ),
-      ),
-      child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(28, 24, 28, 110),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              illustration,
-              const SizedBox(height: 22),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: context.textStyles.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.3,
-                  color: context.colors.onSurface,
-                ),
-              ),
-              const SizedBox(height: 9),
-              Text(
-                message,
-                textAlign: TextAlign.center,
-                style: context.textStyles.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w500,
-                  height: 1.6,
-                  color: context.colors.onSurfaceVariant.withAlpha(180),
-                ),
-              ),
-              const SizedBox(height: 22),
-              button,
-            ],
-          ),
         ),
       ),
     );
@@ -218,7 +207,7 @@ class _GhostCard extends StatelessWidget {
       child: Transform.rotate(
         angle: angle * math.pi / 180,
         child: CustomPaint(
-          foregroundPainter: _DashedRRectPainter(
+          foregroundPainter: DashedRRectPainter(
             color: context.colors.outlineVariant,
             radius: 20,
             strokeWidth: 1.5,
@@ -282,49 +271,6 @@ class _GhostLine extends StatelessWidget {
       ),
     );
   }
-}
-
-class _DashedRRectPainter extends CustomPainter {
-  _DashedRRectPainter({
-    required this.color,
-    required this.radius,
-    required this.strokeWidth,
-  });
-
-  final Color color;
-  final double radius;
-  final double strokeWidth;
-  static const _dash = 5.0;
-  static const _gap = 4.0;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rrect = RRect.fromRectAndRadius(
-      (Offset.zero & size).deflate(strokeWidth / 2),
-      Radius.circular(radius),
-    );
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
-
-    for (final metric in (Path()..addRRect(rrect)).computeMetrics()) {
-      var distance = 0.0;
-      while (distance < metric.length) {
-        canvas.drawPath(
-          metric.extractPath(distance, distance + _dash),
-          paint,
-        );
-        distance += _dash + _gap;
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(_DashedRRectPainter old) =>
-      old.color != color ||
-      old.radius != radius ||
-      old.strokeWidth != strokeWidth;
 }
 
 class _StatusButton extends StatelessWidget {
