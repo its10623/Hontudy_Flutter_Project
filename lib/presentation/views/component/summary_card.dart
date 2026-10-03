@@ -1,31 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/core/theme/text_type.dart';
+import 'package:hontudy/presentation/state/note_summary_state.dart';
+import 'package:hontudy/presentation/views/component/main_icon_tile.dart';
 import 'package:hontudy/presentation/views/component/progress_bar_widget.dart';
 
-class TopicSummaryCard extends StatefulWidget {
-  final String topic;
-  final int savedQuiz;
-  final int wrongAnswer;
+class MainSummaryCard extends StatelessWidget {
   final VoidCallback onDetail;
+  final MainSummary summary;
 
-  const TopicSummaryCard({
+  const MainSummaryCard({
     super.key,
-    required this.topic,
-    required this.savedQuiz,
-    required this.wrongAnswer,
     required this.onDetail,
+    required this.summary,
   });
 
   @override
-  State<TopicSummaryCard> createState() => _TopicSummaryCardState();
-}
-
-class _TopicSummaryCardState extends State<TopicSummaryCard> {
-  @override
   Widget build(BuildContext context) {
-    final parseValue =
-        ((widget.savedQuiz - widget.wrongAnswer) / widget.savedQuiz);
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -45,36 +36,30 @@ class _TopicSummaryCardState extends State<TopicSummaryCard> {
           splashColor: context.colors.primary.withAlpha(30),
           highlightColor: context.colors.primary.withAlpha(50),
           borderRadius: BorderRadius.circular(16),
-          onTap: widget.onDetail,
+          onTap: onDetail,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: context.colors.surfaceContainerLowest,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Placeholder(),
-                ),
+                MainIconTile(main: summary.main, size: 40),
                 const Spacer(),
                 Text(
-                  widget.topic,
+                  summary.main,
                   style: TextType.bodyLarge.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const Spacer(),
                 Text(
-                  '${widget.savedQuiz} 문제 · 오답 ${widget.wrongAnswer}개',
+                  '${summary.solvedCount} 문제 · 오답 ${summary.wrongCount}개',
                   style: context.captionMedium,
                 ),
                 const Spacer(),
                 ProgressBarWidget(
-                  value: parseValue,
+                  value: summary.correctRate,
                 ),
               ],
             ),
@@ -85,21 +70,16 @@ class _TopicSummaryCardState extends State<TopicSummaryCard> {
   }
 }
 
-class TopicMoreCard extends StatefulWidget {
-  final int emptyTopic;
+class AllMainsCard extends StatelessWidget {
+  final int hiddenCount;
   final VoidCallback onTap;
 
-  const TopicMoreCard({
+  const AllMainsCard({
     super.key,
-    required this.emptyTopic,
+    required this.hiddenCount,
     required this.onTap,
   });
 
-  @override
-  State<TopicMoreCard> createState() => _TopicMoreCardState();
-}
-
-class _TopicMoreCardState extends State<TopicMoreCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -121,38 +101,73 @@ class _TopicMoreCardState extends State<TopicMoreCard> {
           splashColor: context.colors.primary.withAlpha(30),
           highlightColor: context.colors.primary.withAlpha(50),
           borderRadius: BorderRadius.circular(16),
-          onTap: widget.onTap,
+          onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Spacer(),
+                if (hiddenCount > 0)
+                  Text(
+                    '+$hiddenCount',
+                    style: TextType.displayLarge.copyWith(
+                      color: context.colors.primary,
+                    ),
+                  ),
                 Text(
-                  '아직 풀지않은',
-                  style: TextType.bodyLarge.copyWith(
-                    fontWeight: FontWeight.w600,
+                  '전체 주제 보기',
+                  style: TextType.headlineLarge.copyWith(
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
-                Text(
-                  '주제 ${widget.emptyTopic}개',
-                  style: TextType.bodyLarge.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '자세히 보기',
-                  style: TextType.captionLarge.copyWith(
-                    color: context.colors.primary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const Spacer(),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class UnsolvedMainCard extends StatelessWidget {
+  final String main;
+
+  const UnsolvedMainCard({super.key, required this.main});
+
+  @override
+  Widget build(BuildContext context) {
+    final mutedColor = context.colors.onSurfaceVariant;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: context.colors.surfaceContainerLowest.withAlpha(150),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: context.colors.outlineVariant),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            MainIconTile(main: main, muted: true, size: 40),
+            const Spacer(),
+            Text(
+              main,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextType.bodyLarge.copyWith(
+                fontWeight: FontWeight.w700,
+                color: mutedColor,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              '아직 풀지 않았어요',
+              style: context.captionMedium.copyWith(color: mutedColor),
+            ),
+            const Spacer(),
+            const ProgressBarWidget(value: 0),
+          ],
         ),
       ),
     );
