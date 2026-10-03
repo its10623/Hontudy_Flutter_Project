@@ -26,6 +26,9 @@ class ChatAppbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      scrolledUnderElevation: 0,
       title: Column(
         children: [
           Row(
@@ -113,7 +116,6 @@ class _AnimatedStepIndicator extends StatelessWidget {
   final int stepValue;
 
   const _AnimatedStepIndicator({
-    super.key,
     required this.stepValue,
   });
 

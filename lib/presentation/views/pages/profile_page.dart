@@ -4,6 +4,7 @@ import 'package:hontudy/presentation/core/theme/text_type.dart';
 import 'package:hontudy/presentation/views/component/chip_widget.dart';
 import 'package:hontudy/presentation/views/component/divider_widget.dart';
 
+import '../component/app_background.dart';
 import '../route/bottom_nav_bar.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -18,59 +19,61 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: context.colors.surface,
-      bottomNavigationBar: const SafeArea(
-        child: BottomNavBar(
-          currentIndex: 2,
+    return AppBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        bottomNavigationBar: const SafeArea(
+          child: BottomNavBar(
+            currentIndex: 2,
+          ),
         ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  '마이',
-                  style: TextType.titleLarge.copyWith(letterSpacing: -0.5),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '마이',
+                    style: TextType.titleLarge.copyWith(letterSpacing: -0.5),
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const _AccountCard(
-                      initial: '수',
-                      name: '수민님',
-                      meta: 'sumin@gmail.com · Google 로그인',
-                    ),
-                    const SizedBox(height: 16),
-                    const _SectionLabel('기억하고 있는 진단 프로필'),
-                    const SizedBox(height: 8),
-                    const _DiagnosisCard(),
-                    const SizedBox(height: 16),
-                    _SettingsCard(
-                      pushEnabled: _pushEnabled,
-                      onPushChanged: (value) =>
-                          setState(() => _pushEnabled = value),
-                    ),
-                    const SizedBox(height: 16),
-                    const Center(
-                      child: Text(
-                        '버전 1.0.0 (MVP)',
-                        style: TextType.captionMedium,
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const _AccountCard(
+                        initial: '수',
+                        name: '수민님',
+                        meta: 'sumin@gmail.com · Google 로그인',
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      const _SectionLabel('기억하고 있는 진단 프로필'),
+                      const SizedBox(height: 8),
+                      const _DiagnosisCard(),
+                      const SizedBox(height: 16),
+                      _SettingsCard(
+                        pushEnabled: _pushEnabled,
+                        onPushChanged: (value) =>
+                            setState(() => _pushEnabled = value),
+                      ),
+                      const SizedBox(height: 16),
+                      const Center(
+                        child: Text(
+                          '버전 1.0.0 (MVP)',
+                          style: TextType.captionMedium,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

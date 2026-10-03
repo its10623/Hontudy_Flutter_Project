@@ -9,6 +9,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../core/theme/context_theme_extension.dart';
 import '../../core/theme/text_type.dart';
+import '../component/app_background.dart';
 import '../component/chip_widget.dart';
 import '../route/bottom_nav_bar.dart';
 
@@ -25,8 +26,8 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
   );
   final savedQuiz = 14;
   final wrongAnswer = 9;
-  final mainTopic = '네트워크';
-  final secondaryTopic = '전송 계층';
+  final main = '네트워크';
+  final topic = '전송 계층';
   final List<List<dynamic>> wrongQuiz = [
     ['SO_REUSEADDR로 포트를 즉시 재사용하는 이유', 3],
     ['개방 주소법에서 클러스터링이 생기는 이유', 5],
@@ -99,67 +100,71 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: context.colors.surface,
-      bottomNavigationBar: ClipRRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
-          child: const SafeArea(
-            child: BottomNavBar(
-              currentIndex: 1,
+    return AppBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        bottomNavigationBar: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
+            child: const SafeArea(
+              child: BottomNavBar(
+                currentIndex: 1,
+              ),
             ),
           ),
         ),
-      ),
-      appBar: AppBar(
-        backgroundColor: context.colors.surface,
-        centerTitle: false,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              mainTopic,
-              style: TextType.titleLarge.copyWith(letterSpacing: -0.5),
-            ),
-            Text(
-              '$savedQuiz문제 · 오답 $wrongAnswer · $secondaryTopic',
-              style: context.captionMedium,
-            ),
-          ],
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ChoiceChipWidget(savedQuiz: savedQuiz, wrongAnswer: wrongAnswer),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 40,
-                ),
-                child: _NoteQuizCardCarousel(
-                  controller: _controller,
-                  quizzes: quizzes,
-                ),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          centerTitle: false,
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                main,
+                style: TextType.titleLarge.copyWith(letterSpacing: -0.5),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                child: SmoothPageIndicator(
-                  controller: _controller,
-                  count: quizzes.length,
-                  effect: ExpandingDotsEffect(
-                    dotHeight: 6,
-                    dotWidth: 6,
-                    activeDotColor: context.colors.primary,
+              Text(
+                '$savedQuiz문제 · 오답 $wrongAnswer · $topic',
+                style: context.captionMedium,
+              ),
+            ],
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ChoiceChipWidget(savedQuiz: savedQuiz, wrongAnswer: wrongAnswer),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 40,
+                  ),
+                  child: _NoteQuizCardCarousel(
+                    controller: _controller,
+                    quizzes: quizzes,
                   ),
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: SmoothPageIndicator(
+                    controller: _controller,
+                    count: quizzes.length,
+                    effect: ExpandingDotsEffect(
+                      dotHeight: 6,
+                      dotWidth: 6,
+                      activeDotColor: context.colors.primary,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -171,7 +176,6 @@ class _NoteQuizCardCarousel extends StatefulWidget {
   final PageController _controller;
 
   const _NoteQuizCardCarousel({
-    super.key,
     required this._controller,
     required this.quizzes,
   });
@@ -232,7 +236,6 @@ class _NoteQuizCard extends StatefulWidget {
   final ValueChanged<bool> onCheckedChanged;
 
   const _NoteQuizCard({
-    super.key,
     required this.quizzes,
     required this.isChecked,
     required this.onCheckedChanged,
