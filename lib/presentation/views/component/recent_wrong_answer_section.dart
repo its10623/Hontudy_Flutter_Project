@@ -6,7 +6,7 @@ import '../../core/theme/text_type.dart';
 
 class RecentWrongAnswerSection extends StatefulWidget {
   final String wrongQuiz;
-  final int timeAgo;
+  final String timeAgo;
   final VoidCallback onTap;
 
   const RecentWrongAnswerSection({
@@ -70,7 +70,7 @@ class _RecentWrongAnswerSectionState extends State<RecentWrongAnswerSection> {
                   width: 10,
                 ),
                 Text(
-                  '${widget.timeAgo}일 전',
+                  widget.timeAgo,
                   style: context.captionMedium,
                 ),
               ],
