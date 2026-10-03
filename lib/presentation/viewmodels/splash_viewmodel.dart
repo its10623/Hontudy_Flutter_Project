@@ -6,9 +6,7 @@ import '../../di/use_case_providers.dart';
 
 part 'splash_viewmodel.g.dart';
 
-Duration? _noRetry(int retryCount, Object error) => null;
-
-@Riverpod(retry: _noRetry)
+@riverpod
 class SplashViewModel extends _$SplashViewModel {
   @override
   FutureOr<NextRoute> build() async {
