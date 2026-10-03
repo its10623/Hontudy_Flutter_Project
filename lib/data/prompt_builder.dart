@@ -66,7 +66,6 @@ class PromptBuilder {
           .map(
             (c) => {
               'name': c.name,
-              'short_label': c.shortLabel,
               'topics': c.topics,
             },
           )
