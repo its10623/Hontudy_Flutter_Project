@@ -18,6 +18,43 @@ class MainSummary {
 
   double get correctRate =>
       solvedCount == 0 ? 0 : (solvedCount - wrongCount) / solvedCount;
+
+  factory MainSummary.fromRecords(String main, List<SolvedRecord> records) {
+    assert(records.isNotEmpty);
+    final wrongCountByTopic = <String, int>{};
+    for (final record in records) {
+      if (record.quizFeedback.isCorrect) continue;
+      wrongCountByTopic.update(
+        record.quiz.category.topic,
+        (count) => count + 1,
+        ifAbsent: () => 1,
+      );
+    }
+
+    var lastSolvedAt = records.first.timestamp;
+    for (final record in records) {
+      if (record.timestamp.isAfter(lastSolvedAt)) {
+        lastSolvedAt = record.timestamp;
+      }
+    }
+
+    String? weakestTopic;
+    var maxWrong = 0;
+    wrongCountByTopic.forEach((topic, count) {
+      if (count > maxWrong) {
+        maxWrong = count;
+        weakestTopic = topic;
+      }
+    });
+
+    return MainSummary(
+      main: main,
+      solvedCount: records.length,
+      wrongCount: wrongCountByTopic.values.fold(0, (sum, count) => sum + count),
+      weakestTopic: weakestTopic,
+      lastSolvedAt: lastSolvedAt,
+    );
+  }
 }
 
 enum MainSort { weakest, recent, name }
@@ -67,7 +104,7 @@ class NoteSummary {
 
     final mains =
         recordsByMain.entries
-            .map((entry) => _summarize(entry.key, entry.value))
+            .map((entry) => MainSummary.fromRecords(entry.key, entry.value))
             .toList()
           ..sort((a, b) {
             final byWrong = b.wrongCount.compareTo(a.wrongCount);
@@ -84,42 +121,6 @@ class NoteSummary {
       mains: mains,
       recentWrongRecords: recentWrong.take(_recentWrongLimit).toList(),
       unsolvedMains: unsolvedMains,
-    );
-  }
-
-  static MainSummary _summarize(String main, List<SolvedRecord> records) {
-    final wrongCountByTopic = <String, int>{};
-    for (final record in records) {
-      if (record.quizFeedback.isCorrect) continue;
-      wrongCountByTopic.update(
-        record.quiz.category.topic,
-        (count) => count + 1,
-        ifAbsent: () => 1,
-      );
-    }
-
-    var lastSolvedAt = records.first.timestamp;
-    for (final record in records) {
-      if (record.timestamp.isAfter(lastSolvedAt)) {
-        lastSolvedAt = record.timestamp;
-      }
-    }
-
-    String? weakestTopic;
-    var maxWrong = 0;
-    wrongCountByTopic.forEach((topic, count) {
-      if (count > maxWrong) {
-        maxWrong = count;
-        weakestTopic = topic;
-      }
-    });
-
-    return MainSummary(
-      main: main,
-      solvedCount: records.length,
-      wrongCount: wrongCountByTopic.values.fold(0, (sum, count) => sum + count),
-      weakestTopic: weakestTopic,
-      lastSolvedAt: lastSolvedAt,
     );
   }
 }
