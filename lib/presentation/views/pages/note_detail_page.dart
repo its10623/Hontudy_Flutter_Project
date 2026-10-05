@@ -2,8 +2,16 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hontudy/domain/models/quiz.dart';
+import 'package:hontudy/domain/models/solved_record.dart';
 import 'package:hontudy/presentation/core/theme/app_colors.dart';
+import 'package:hontudy/presentation/core/format/days_ago.dart';
+import 'package:hontudy/presentation/state/note_detail_state.dart';
+import 'package:hontudy/presentation/viewmodels/note_detail_viewmodel.dart';
 import 'package:hontudy/presentation/views/component/choice_chip_widget.dart';
+import 'package:hontudy/presentation/views/component/genui/code_block.dart';
+import 'package:hontudy/presentation/views/component/genui/image_widget.dart';
 import 'package:hontudy/presentation/views/component/primary_button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -11,86 +19,29 @@ import '../../core/theme/context_theme_extension.dart';
 import '../../core/theme/text_type.dart';
 import '../component/app_background.dart';
 import '../component/chip_widget.dart';
+import '../component/note_status_views.dart';
+import '../component/shimmer_wrapper.dart';
+import '../component/skeleton_box.dart';
 import '../route/bottom_nav_bar.dart';
 
-class NoteDetailPage extends StatefulWidget {
-  const NoteDetailPage({super.key});
+class NoteDetailPage extends ConsumerStatefulWidget {
+  final String main;
+  final String? initialQid;
+
+  const NoteDetailPage({
+    super.key,
+    required this.main,
+    this.initialQid,
+  });
 
   @override
-  State<NoteDetailPage> createState() => _NoteDetailPageState();
+  ConsumerState<NoteDetailPage> createState() => _NoteDetailPageState();
 }
 
-class _NoteDetailPageState extends State<NoteDetailPage> {
+class _NoteDetailPageState extends ConsumerState<NoteDetailPage> {
   final PageController _controller = PageController(
-    viewportFraction: 0.8, // 화면의 80% 크기로 페이지 설정
+    viewportFraction: 0.8,
   );
-  final savedQuiz = 14;
-  final wrongAnswer = 9;
-  final main = '네트워크';
-  final topic = '전송 계층';
-  final List<List<dynamic>> wrongQuiz = [
-    ['SO_REUSEADDR로 포트를 즉시 재사용하는 이유', 3],
-    ['개방 주소법에서 클러스터링이 생기는 이유', 5],
-    ['은행원 알고리즘의 안전 상태 판단 기준', 7],
-    ['은행원 알고리즘의 안전 상태 판단 기준', 7],
-    ['은행원 알고리즘의 안전 상태 판단 기준', 7],
-    ['은행원 알고리즘의 안전 상태 판단 기준', 7],
-    ['은행원 알고리즘의 안전 상태 판단 기준', 7],
-    ['은행원 알고리즘의 안전 상태 판단 기준', 7],
-  ];
-  final bool isChecked = false;
-  final List<List<dynamic>> quizzes = [
-    [
-      'TCP/UDP 특성',
-      2,
-      'TCP와 UDP의 핵심적인 차이점을 신뢰성과 데이터 전송 방식 관점에서 비교하고, 각각에 적합한 서비스 예시를 드시오.',
-      'TCP는 연결지향이라 신뢰성이 높고 패킷이 유실되면 다시 보내줍니다. HTTP 통신에 씁니다. UDP는 비연결형이라 속도가 빠른 대신 패킷이 유실될 수 있습니다. 영상 스트리밍에 씁니다.',
-      5,
-      1,
-      /*'TCP (Transmission Control Protocol): 연결 지향적 프로토콜로, 데이터의 순서와 수신 여부를 확인하여 신뢰성 있는 전송을 보장합니다. (예시: 웹 페이지 로딩(HTTP), 파일 전송(FTP), 이메일)\n\nUDP (User Datagram Protocol): 비연결형 프로토콜로, 수신 확인이나 순서 보장을 하지 않아 신뢰성은 낮지만 오버헤드가 적고 전송 속도가 빠릅니다. (예시: 실시간 화상 회의, 온라인 게임, DNS 질의)',
-      '정답'*/
-    ],
-    [
-      'TCP 연결 관리',
-      4,
-      'TCP 연결 종료 과정(4-Way Handshake)에서 TIME_WAIT 상태가 존재하는 두 가지 주요 이유는 무엇입니까?',
-      '클라이언트가 강제로 종료했을 때 서버가 바로 꺼지는 걸 막으려고 대기하는 상태입니다.',
-      3,
-      2,
-      /*'1. 지연된 패킷의 처리: 네트워크 상에서 길을 잃고 늦게 도착하는 잉여 패킷이 새로 맺어진 연결에 섞여 들어가 데이터 무결성을 해치는 것을 방지합니다.\n2. 안전한 연결 종료 보장: 서버가 클라이언트의 마지막 ACK를 받지 못해 FIN을 재전송할 경우를 대비하여, 클라이언트가 일정 시간 동안 소켓을 닫지 않고 대기하며 응답을 처리할 수 있게 합니다.',
-      '오답'*/
-    ],
-    [
-      '소켓 프로그래밍',
-      4,
-      '서버 소켓 프로그래밍 시 SO_REUSEADDR 옵션을 활성화하는 구체적인 목적은 무엇입니까?',
-      '서버 비정상 종료하고 다시 켤 때 TIME_WAIT 걸려있어서 bind 에러 나는거 무시하고 바로 포트 재사용하려고 켭니다.',
-      3,
-      1,
-      /*'서버 프로세스가 비정상 종료되거나 재시작될 때, 기존에 사용하던 포트가 커널에 의해 TIME_WAIT 상태로 묶여 있어 즉시 bind()를 할 수 없는 문제(주소 할당 에러)를 해결하기 위함입니다. 이 옵션을 켜면 TIME_WAIT 상태의 포트라도 즉시 재바인딩하여 서버를 대기 상태로 만들 수 있습니다.',
-      '정답'*/
-    ],
-    [
-      '다중화/역다중화',
-      6,
-      '전송 계층의 핵심 기능 중 하나인 다중화(Multiplexing)와 역다중화(Demultiplexing)가 무엇인지 포트(Port) 번호와 연관 지어 설명하시오.',
-      '다중화는 여러 데이터를 하나의 포트로 합쳐서 보내는 거고, 역다중화는 받은 데이터를 IP 주소를 보고 여러 개로 쪼개는 겁니다.',
-      4,
-      2,
-      /*'다중화: 송신 측 호스트에서 실행 중인 여러 프로세스(소켓)들이 만들어낸 데이터들을 모아, 전송 계층 헤더(출발지/목적지 포트 번호 등)를 붙여 하나의 캡슐로 만든 뒤 네트워크 계층으로 내려보내는 과정입니다.\n\n역다중화: 수신 측 호스트가 받은 패킷의 헤더를 분석하여, 목적지 포트 번호와 정확히 일치하는 실행 중인 프로세스(소켓)로 데이터를 분배해 주는 과정입니다.',
-      '오답'*/
-    ],
-    [
-      'TCP 제어 메커니즘',
-      8,
-      'TCP가 송신자의 데이터 전송 속도를 제어하는 기법 두 가지(흐름 제어, 혼잡 제어)의 대상을 비교하여 설명하시오.',
-      '흐름 제어는 받는 사람의 버퍼 상태에 맞춰서 보내는 양을 조절하는 거고, 혼잡 제어는 네트워크 라우터 자체가 붐빌 때 윈도우 사이즈를 줄여서 조절하는 겁니다.',
-      5,
-      1,
-      /*'흐름 제어 (Flow Control): 수신자가 데이터를 처리하는 속도를 초과하지 않도록 송신자의 전송 속도를 조절하는 기법입니다. 수신자가 자신의 가용 버퍼 크기를 송신자에게 알려주어 제어합니다.\n\n혼잡 제어 (Congestion Control): 네트워크 전체의 트래픽 혼잡도를 고려하여 송신자의 전송 속도를 제어하는 기법입니다. 네트워크가 붐빌 때 패킷 손실이 발생하는 것을 감지하고 전송량을 줄입니다.',
-      '정답'*/
-    ],
-  ];
 
   @override
   void dispose() {
@@ -100,6 +51,9 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final detailState = ref.watch(noteDetailViewModelProvider(widget.main));
+    final summary = detailState.value?.summary;
+
     return AppBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -122,88 +76,196 @@ class _NoteDetailPageState extends State<NoteDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                main,
+                widget.main,
                 style: TextType.titleLarge.copyWith(letterSpacing: -0.5),
               ),
-              Text(
-                '$savedQuiz문제 · 오답 $wrongAnswer · $topic',
-                style: context.captionMedium,
-              ),
+              if (summary case final s?)
+                Text(
+                  [
+                    '${s.solvedCount}문제',
+                    '오답 ${s.wrongCount}',
+                    ?s.weakestTopic,
+                  ].join(' · '),
+                  style: context.captionMedium,
+                ),
             ],
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ChoiceChipWidget(savedQuiz: savedQuiz, wrongAnswer: wrongAnswer),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 40,
-                  ),
-                  child: _NoteQuizCardCarousel(
-                    controller: _controller,
-                    quizzes: quizzes,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: SmoothPageIndicator(
-                    controller: _controller,
-                    count: quizzes.length,
-                    effect: ExpandingDotsEffect(
-                      dotHeight: 6,
-                      dotWidth: 6,
-                      activeDotColor: context.colors.primary,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+        body: switch (detailState) {
+          AsyncData(:final value) when value.isEmpty =>
+            const NoteDetailEmptyView(
+              reason: NoteDetailEmptyReason.noRecords,
+            ),
+          AsyncData(:final value) => _NoteDetailBody(
+            noteDetail: value,
+            controller: _controller,
+            initialQid: widget.initialQid,
           ),
-        ),
+          AsyncError() => NoteLoadErrorView(
+            onRetry: () =>
+                ref.invalidate(noteDetailViewModelProvider(widget.main)),
+          ),
+          _ => const _NoteDetailSkeleton(),
+        },
       ),
     );
   }
 }
 
-class _NoteQuizCardCarousel extends StatefulWidget {
-  final List<List<dynamic>> quizzes;
+enum _RecordFilter {
+  all,
+  wrong,
+  correct,
+}
+
+class _NoteDetailBody extends StatefulWidget {
+  final NoteDetail _noteDetail;
   final PageController _controller;
+  final String? _initialQid;
+
+  const _NoteDetailBody({
+    required this._noteDetail,
+    required this._controller,
+    this._initialQid,
+  });
+
+  @override
+  State<_NoteDetailBody> createState() => _NoteDetailBodyState();
+}
+
+class _NoteDetailBodyState extends State<_NoteDetailBody> {
+  _RecordFilter _filter = _RecordFilter.all;
+
+  @override
+  void initState() {
+    super.initState();
+    _showInitialRecord();
+  }
+
+  void _showInitialRecord() {
+    final qid = widget._initialQid;
+    if (qid == null) return;
+
+    final wrongIndex = widget._noteDetail.wrongRecords.indexWhere(
+      (record) => record.quiz.qid == qid,
+    );
+    final index = wrongIndex != -1
+        ? wrongIndex
+        : widget._noteDetail.records.indexWhere(
+            (record) => record.quiz.qid == qid,
+          );
+    if (index == -1) return;
+    if (wrongIndex != -1) _filter = _RecordFilter.wrong;
+
+    // PageView가 그려진 뒤에야 컨트롤러가 붙어서 첫 프레임 이후에 이동
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget._controller.hasClients) {
+        widget._controller.jumpToPage(index);
+      }
+    });
+  }
+
+  final Set<String> _checkedQids = {};
+
+  @override
+  Widget build(BuildContext context) {
+    final records = switch (_filter) {
+      _RecordFilter.all => widget._noteDetail.records,
+      _RecordFilter.wrong => widget._noteDetail.wrongRecords,
+      _RecordFilter.correct => widget._noteDetail.correctRecords,
+    };
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ChoiceChipWidget(
+            selectedIndex: _filter.index,
+            onSelected: (i) => setState(() {
+              _filter = _RecordFilter.values[i];
+              if (widget._controller.hasClients) {
+                widget._controller.jumpToPage(0);
+              }
+            }),
+            solvedCount: widget._noteDetail.summary?.solvedCount ?? 0,
+            wrongCount: widget._noteDetail.summary?.wrongCount ?? 0,
+          ),
+          if (records.isNotEmpty) ...[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 40,
+                ),
+                child: _NoteQuizCardCarousel(
+                  controller: widget._controller,
+                  quizzes: records,
+                  checkedQids: _checkedQids,
+                  onCheckedChanged: (qid, checked) => setState(() {
+                    checked ? _checkedQids.add(qid) : _checkedQids.remove(qid);
+                  }),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: SmoothPageIndicator(
+                  controller: widget._controller,
+                  count: records.length,
+                  effect: ExpandingDotsEffect(
+                    dotHeight: 6,
+                    dotWidth: 6,
+                    activeDotColor: context.colors.primary,
+                  ),
+                ),
+              ),
+            ),
+          ] else ...[
+            Expanded(
+              child: NoteDetailEmptyView(
+                reason: switch (_filter) {
+                  _RecordFilter.wrong => NoteDetailEmptyReason.noWrong,
+                  _RecordFilter.correct => NoteDetailEmptyReason.noCorrect,
+                  _RecordFilter.all => NoteDetailEmptyReason.noRecords,
+                },
+                onShowAll: () => setState(() => _filter = _RecordFilter.all),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _NoteQuizCardCarousel extends StatelessWidget {
+  final List<SolvedRecord> quizzes;
+  final PageController _controller;
+  final Set<String> checkedQids;
+  final void Function(String qid, bool checked) onCheckedChanged;
 
   const _NoteQuizCardCarousel({
     required this._controller,
     required this.quizzes,
+    required this.checkedQids,
+    required this.onCheckedChanged,
   });
-
-  @override
-  State<_NoteQuizCardCarousel> createState() => _NoteQuizCardCarouselState();
-}
-
-class _NoteQuizCardCarouselState extends State<_NoteQuizCardCarousel> {
-  final Set<int> _checkedIndices = {};
 
   @override
   Widget build(BuildContext context) {
     return PageView.builder(
-      controller: widget._controller,
+      controller: _controller,
       clipBehavior: Clip.none,
-      itemCount: widget.quizzes.length,
+      itemCount: quizzes.length,
       itemBuilder: (context, index) {
+        final record = quizzes[index];
+        final qid = record.quiz.qid;
         return AnimatedBuilder(
-          animation: widget._controller,
+          animation: _controller,
           builder: (context, child) {
             double distance = 0;
-            if (widget._controller.hasClients &&
-                widget._controller.position.haveDimensions) {
-              distance = (widget._controller.page! - index).abs().clamp(
-                0.0,
-                1.0,
-              );
+            if (_controller.hasClients && _controller.position.haveDimensions) {
+              distance = (_controller.page! - index).abs().clamp(0.0, 1.0);
             }
             final scale = 1 - (distance * 0.15);
             return Transform.scale(
@@ -212,17 +274,10 @@ class _NoteQuizCardCarouselState extends State<_NoteQuizCardCarousel> {
             );
           },
           child: _NoteQuizCard(
-            quizzes: widget.quizzes[index],
-            isChecked: _checkedIndices.contains(index),
-            onCheckedChanged: (checked) {
-              setState(() {
-                if (checked) {
-                  _checkedIndices.add(index);
-                } else {
-                  _checkedIndices.remove(index);
-                }
-              });
-            },
+            key: ValueKey(qid),
+            record: record,
+            isChecked: checkedQids.contains(qid),
+            onCheckedChanged: (checked) => onCheckedChanged(qid, checked),
           ),
         );
       },
@@ -231,14 +286,15 @@ class _NoteQuizCardCarouselState extends State<_NoteQuizCardCarousel> {
 }
 
 class _NoteQuizCard extends StatefulWidget {
-  final List<dynamic> quizzes;
+  final SolvedRecord record;
   final bool isChecked;
   final ValueChanged<bool> onCheckedChanged;
 
   const _NoteQuizCard({
-    required this.quizzes,
     required this.isChecked,
     required this.onCheckedChanged,
+    required this.record,
+    super.key,
   });
 
   @override
@@ -274,142 +330,106 @@ class _NoteQuizCardState extends State<_NoteQuizCard>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onVerticalDragUpdate: (details) {
-        setState(() {
-          _dragOffset += details.primaryDelta ?? 0;
-        });
-      },
-      onVerticalDragEnd: (details) {
-        final velocity = details.primaryVelocity ?? 0;
-        final pastHalfway = _dragOffset.abs() > _flipDistance / 2;
-        final shouldFlip = velocity.abs() > 300 || pastHalfway;
-        if (shouldFlip) {
-          final sign = _dragOffset == 0
-              ? (velocity < 0 ? -1 : 1)
-              : (_dragOffset < 0 ? -1 : 1);
-          _snapTo(_flipDistance * sign);
-        } else {
-          _snapTo(0);
-        }
-      },
-      child: AnimatedBuilder(
-        animation: _snapController,
-        builder: (context, child) {
-          final offset = _snapController.isAnimating
-              ? lerpDouble(_snapStart, _snapTarget, _snapController.value)!
-              : _dragOffset;
-          final angle = (offset / _flipDistance).clamp(-1.0, 1.0) * pi;
-          final showingBack = angle.abs() > pi / 2;
+    return AnimatedBuilder(
+      animation: _snapController,
+      builder: (context, child) {
+        final offset = _snapController.isAnimating
+            ? lerpDouble(_snapStart, _snapTarget, _snapController.value)!
+            : _dragOffset;
+        final angle = (offset / _flipDistance).clamp(-1.0, 1.0) * pi;
+        final showingBack = angle.abs() > pi / 2;
 
-          return Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.001)
-              ..rotateX(angle),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4.0),
-              decoration: BoxDecoration(
-                color: context.colors.surfaceContainerLowest,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: context.colors.outline.withAlpha(150),
-                    blurRadius: 30,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(16),
-              child: showingBack
-                  ? Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.identity()..rotateX(pi),
-                      child: _buildBackContent(context),
-                    )
-                  : _buildFrontContent(context),
+        return Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.001)
+            ..rotateX(angle),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+            decoration: BoxDecoration(
+              color: context.colors.surfaceContainerLowest,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: context.colors.outline.withAlpha(150),
+                  blurRadius: 30,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+            padding: const EdgeInsets.all(16),
+            child: showingBack
+                ? Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.identity()..rotateX(pi),
+                    child: _buildBackContent(context),
+                  )
+                : _buildFrontContent(context),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildFrontContent(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ChipWidget(label: widget.quizzes[0]),
-              Text(
-                '${widget.quizzes[1]}일 전',
-                style: context.captionMedium.copyWith(
-                  fontWeight: FontWeight.w600,
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ChipWidget(label: widget.record.quiz.category.topic),
+                      Text(
+                        formatDaysAgo(widget.record.timestamp),
+                        style: context.captionMedium.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                Text(
+                  'Q. ${widget.record.quiz.questionText}',
+                  style: TextType.titleMedium,
+                ),
+                if (widget.record.quiz.codeSnippet case final code?)
+                  CodeBlock(
+                    language: code.language,
+                    code: code.code,
+                  ),
+                if (widget.record.quiz.imageUrl case final image?)
+                  ImageWidget(
+                    url: image,
+                  ),
+                _MyAnswerSection(record: widget.record),
+                /*const SizedBox(
+                  height: 4,
+                ),
+                Row(
+                  children: [
+                    ChipWidget(
+                      label: '오답 ${widget.record.quiz.}회',
+                      backgroundColor: AppColors.wrongSurface,
+                      textColor: AppColors.wrong,
+                    ),
+                    const SizedBox(
+                      width: 6,
+                    ),
+                    ChipWidget(
+                      label: '정답 ${widget.quizzes[5]}회',
+                    ),
+                  ],
+                ),*/
+              ],
+            ),
           ),
         ),
-        Text(
-          'Q. ${widget.quizzes[2]}',
-          style: TextType.titleMedium,
-          maxLines: 4,
-          overflow: TextOverflow.ellipsis,
-        ),
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: context.colors.outlineVariant.withAlpha(100),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '내 답',
-                style: TextType.captionSmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: context.colors.outline,
-                ),
-              ),
-              const SizedBox(
-                height: 6,
-              ),
-              Text(
-                '${widget.quizzes[3]}',
-                style: TextType.captionMedium.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: context.colors.outline,
-                ),
-                maxLines: 5,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(
-          height: 4,
-        ),
-        Row(
-          children: [
-            ChipWidget(
-              label: '오답 ${widget.quizzes[4]}회',
-              backgroundColor: AppColors.wrongSurface,
-              textColor: AppColors.wrong,
-            ),
-            const SizedBox(
-              width: 6,
-            ),
-            ChipWidget(
-              label: '정답 ${widget.quizzes[5]}회',
-            ),
-          ],
-        ),
-        const Spacer(),
+        const SizedBox(height: 8),
         PrimaryButton(
           onPressed: () => _snapTo(_flipDistance),
           text: '해설 다시 보기',
@@ -448,20 +468,325 @@ class _NoteQuizCardState extends State<_NoteQuizCard>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('해설', style: TextType.titleMedium),
-        const SizedBox(height: 12),
-        Text(
-          // TODO: 실제 해설 데이터 연동 전까지는 내 답으로 대체 표시
-          '${widget.quizzes[3]}',
-          style: context.captionMedium,
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('해설', style: TextType.titleMedium),
+                const SizedBox(height: 12),
+                Text(
+                  _referenceAnswerText(widget.record.quiz),
+                  style: context.captionMedium,
+                ),
+                Text(
+                  widget.record.quizFeedback.feedbackText,
+                  style: context.captionMedium,
+                ),
+                if (widget.record.quizFeedback.codeSnippet case final code?)
+                  CodeBlock(
+                    language: code.language,
+                    code: code.code,
+                  ),
+                if (widget.record.quizFeedback.imageUrl case final image?)
+                  ImageWidget(
+                    url: image,
+                  ),
+                if (widget.record.quizFeedback.keyPoint case final point?)
+                  Text(
+                    point,
+                    style: context.captionMedium,
+                  ),
+              ],
+            ),
+          ),
         ),
-        const Spacer(),
+        const SizedBox(height: 8),
         PrimaryButton(
           onPressed: () => _snapTo(0),
           text: '문제로 돌아가기',
           color: ButtonColor.surface,
         ),
       ],
+    );
+  }
+}
+
+/// 객관식은 프롬프트 규칙상 reference_answer가 비어 있어서 정답 보기를 대신 보여줌
+String _referenceAnswerText(Quiz quiz) => switch (quiz.quizContent) {
+  SingleChoiceContent(:final options, :final correctIndex)
+      when correctIndex >= 0 && correctIndex < options.length =>
+    '${correctIndex + 1}. ${options[correctIndex]}',
+  _ => quiz.referenceAnswer,
+};
+
+int? _selectedOptionIndex(List<String> options, String userAnswer) {
+  final answer = userAnswer.trim();
+  final byText = options.indexWhere((option) => option.trim() == answer);
+  if (byText != -1) return byText;
+  final byNumber = int.tryParse(answer);
+  if (byNumber == null) return null;
+  if (byNumber >= 0 && byNumber < options.length) return byNumber;
+  return null;
+}
+
+class _MyAnswerSection extends StatelessWidget {
+  final SolvedRecord record;
+
+  const _MyAnswerSection({required this.record});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: context.colors.outlineVariant.withAlpha(100),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '내 답',
+            style: TextType.captionSmall.copyWith(
+              fontWeight: FontWeight.w600,
+              color: context.colors.outline,
+            ),
+          ),
+          const SizedBox(height: 6),
+          switch (record.quiz.quizContent) {
+            ShortAnswerContent() => Text(
+              record.userAnswer,
+              style: TextType.captionMedium.copyWith(
+                fontWeight: FontWeight.w700,
+                color: context.colors.outline,
+              ),
+            ),
+            SingleChoiceContent(:final options) => _ChoiceOptions(
+              options: options,
+              selectedIndex: _selectedOptionIndex(options, record.userAnswer),
+              isCorrect: record.quizFeedback.isCorrect,
+            ),
+          },
+        ],
+      ),
+    );
+  }
+}
+
+class _ChoiceOptions extends StatelessWidget {
+  final List<String> options;
+  final int? selectedIndex;
+  final bool isCorrect;
+
+  const _ChoiceOptions({
+    required this.options,
+    required this.selectedIndex,
+    required this.isCorrect,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (var i = 0; i < options.length; i++) ...[
+          _ChoiceOptionRow(
+            number: i + 1,
+            text: options[i],
+            selected: i == selectedIndex,
+            isCorrect: isCorrect,
+          ),
+          if (i != options.length - 1) const SizedBox(height: 6),
+        ],
+      ],
+    );
+  }
+}
+
+class _ChoiceOptionRow extends StatelessWidget {
+  final int number;
+  final String text;
+  final bool selected;
+  final bool isCorrect;
+
+  const _ChoiceOptionRow({
+    required this.number,
+    required this.text,
+    required this.selected,
+    required this.isCorrect,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final (background, foreground) = !selected
+        ? (context.colors.surfaceContainerLowest, context.colors.outline)
+        : isCorrect
+        ? (AppColors.correctSurface, AppColors.correct)
+        : (AppColors.wrongSurface, AppColors.wrong);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(12),
+        border: selected ? Border.all(color: foreground) : null,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '$number',
+            style: TextType.captionMedium.copyWith(
+              fontWeight: FontWeight.w800,
+              color: foreground,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: TextType.captionMedium.copyWith(
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: foreground,
+              ),
+            ),
+          ),
+          if (selected) ...[
+            const SizedBox(width: 6),
+            Icon(
+              isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded,
+              size: 16,
+              color: foreground,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _NoteDetailSkeleton extends StatelessWidget {
+  const _NoteDetailSkeleton();
+
+  static const _chipWidths = [72.0, 72.0, 64.0];
+  static const _viewportFraction = 0.8;
+  static const _sideScale = 0.85;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ShimmerWrapper(
+            child: Row(
+              children: [
+                for (final width in _chipWidths) ...[
+                  SkeletonBox(
+                    width: width,
+                    height: 34,
+                    borderRadius: BorderRadius.circular(99),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+              ],
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final cardWidth = constraints.maxWidth * _viewportFraction;
+                  return SizedBox.expand(
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.center,
+                      children: [
+                        for (final side in [-1.0, 1.0])
+                          Transform.translate(
+                            offset: Offset(side * cardWidth, 0),
+                            child: Transform.scale(
+                              scale: _sideScale,
+                              child: _SkeletonQuizCard(width: cardWidth),
+                            ),
+                          ),
+                        _SkeletonQuizCard(width: cardWidth),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Center(
+              child: ShimmerWrapper(
+                child: SkeletonBox(
+                  width: 44,
+                  height: 6,
+                  borderRadius: BorderRadius.circular(99),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SkeletonQuizCard extends StatelessWidget {
+  final double width;
+
+  const _SkeletonQuizCard({required this.width});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: context.colors.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: ShimmerWrapper(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SkeletonBox(
+                  width: 80,
+                  height: 22,
+                  borderRadius: BorderRadius.circular(99),
+                ),
+                const SkeletonBox(width: 40, height: 12),
+              ],
+            ),
+            const SizedBox(height: 20),
+            const SkeletonBox(width: double.infinity, height: 16),
+            const SizedBox(height: 8),
+            const FractionallySizedBox(
+              widthFactor: 0.7,
+              child: SkeletonBox(width: double.infinity, height: 16),
+            ),
+            const SizedBox(height: 24),
+            Expanded(
+              child: SkeletonBox(
+                width: double.infinity,
+                height: double.infinity,
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
