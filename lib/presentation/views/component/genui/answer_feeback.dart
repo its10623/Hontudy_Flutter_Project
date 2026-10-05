@@ -33,8 +33,10 @@ class AnswerFeedback extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 11,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: _isCorrect
                       ? AppColors.correctSurface

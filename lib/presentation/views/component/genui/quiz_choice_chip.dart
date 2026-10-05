@@ -88,8 +88,7 @@ class _QuizOptionRow extends StatelessWidget {
                 child: Text(
                   '${index + 1}',
                   style: TextType.captionLarge.copyWith(
-                    color: isSelected
-                        ? context.colors.onPrimary : null,
+                    color: isSelected ? context.colors.onPrimary : null,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -98,7 +97,9 @@ class _QuizOptionRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: TextType.captionLarge.copyWith(fontWeight: FontWeight.w700),
+                  style: TextType.captionLarge.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],
