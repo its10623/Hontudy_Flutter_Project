@@ -6,6 +6,7 @@ import 'package:hontudy/presentation/views/component/chat/mic_bottom_sheet.dart'
 import 'package:hontudy/presentation/views/component/genui/answer_feeback.dart';
 import 'package:hontudy/presentation/views/component/genui/code_block.dart';
 import 'package:hontudy/presentation/views/component/genui/diagnosis_choice_chip.dart';
+import 'package:hontudy/presentation/views/component/genui/gen_ui_box.dart';
 import 'package:hontudy/presentation/views/component/genui/image_widget.dart';
 import 'package:hontudy/presentation/views/component/genui/quiz_choice_chip.dart';
 import 'package:hontudy/presentation/views/component/genui/summary_confirm.dart';
@@ -111,10 +112,15 @@ class _ChatBodyState extends State<ChatBody> {
           'single_choice_question': (context, data) => QuizChoiceChip(
             data: data,
           ),
-          'image_diagram': (context, data) => ImageWidget(
-            data: data,
+          'image_diagram': (context, data) => GenUiBox(
+            child: ImageWidget(
+              url: data['url'],
+            ),
           ),
-          'code_block': (context, data) => CodeBlock(data: data),
+          'code_block': (context, data) => CodeBlock(
+            language: data['language'],
+            code: data['code'],
+          ),
           'answer_feedback': (context, data) => AnswerFeedback(
             answerResult: data['answerResult'] == 'correct'
                 ? AnswerResult.correct

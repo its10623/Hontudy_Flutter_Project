@@ -9,18 +9,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hontudy/presentation/views/component/divider_widget.dart';
 
 class CodeBlock extends StatelessWidget {
-  final dynamic data;
+  final String language;
+  final String code;
 
   const CodeBlock({
     super.key,
-    required this.data,
+    required this.language,
+    required this.code,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final language = data['language'].toString();
-    final code = data['code'].toString();
 
     return Container(
       width: double.infinity,

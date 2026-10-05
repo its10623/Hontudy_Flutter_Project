@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 
 class FullScreenImagePage extends StatelessWidget {
-  final String assetImage;
+  final ImageProvider image;
 
   const FullScreenImagePage({
     super.key,
-    required this.assetImage,
+    required this.image,
   });
 
   @override
@@ -24,7 +24,7 @@ class FullScreenImagePage extends StatelessWidget {
           boundaryMargin: const EdgeInsets.all(20),
           minScale: 0.5,
           maxScale: 4.0,
-          child: Image.asset(assetImage),
+          child: Image(image: image),
         ),
       ),
     );
