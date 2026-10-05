@@ -9,6 +9,8 @@ import '../../core/theme/context_theme_extension.dart';
 
 const _mascotDefaultAsset = 'assets/mascot/mascot_default.svg';
 const _mascotOopsAsset = 'assets/mascot/mascot_oops.svg';
+const _mascotHappyAsset = 'assets/mascot/mascot_happy.svg';
+const _mascotThinkAsset = 'assets/mascot/mascot_think.svg';
 
 class NoteEmptyView extends StatelessWidget {
   const NoteEmptyView({super.key, required this.onStartQuiz});
@@ -26,6 +28,51 @@ class NoteEmptyView extends StatelessWidget {
   }
 }
 
+enum NoteDetailEmptyReason {
+  noRecords,
+  noWrong,
+  noCorrect,
+}
+
+class NoteDetailEmptyView extends StatelessWidget {
+  final NoteDetailEmptyReason reason;
+
+  /// [NoteDetailEmptyReason.noWrong]일 때 "전체 보기" 버튼 동작. null이면 버튼 숨김
+  final VoidCallback? onShowAll;
+  final VoidCallback? onShowCorrect;
+
+  const NoteDetailEmptyView({
+    super.key,
+    required this.reason,
+    this.onShowAll,
+    this.onShowCorrect,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return switch (reason) {
+      NoteDetailEmptyReason.noRecords => const _NoteStatusLayout(
+        illustration: _MascotIllustration(asset: _mascotDefaultAsset),
+        title: '이 주제에 저장된 문제가 없어요',
+        message: '이 주제의 문제를 풀면\n내 답과 해설이 여기에 쌓여요',
+      ),
+      NoteDetailEmptyReason.noWrong => _NoteStatusLayout(
+        illustration: const _MascotIllustration(asset: _mascotHappyAsset),
+        title: '틀린 문제가 없어요',
+        message: '이 주제는 지금까지 모두 맞혔어요\n전체 기록에서 다시 볼 수 있어요',
+        button: onShowAll == null
+            ? null
+            : _StatusButton(label: '전체 보기', onPressed: onShowAll),
+      ),
+      NoteDetailEmptyReason.noCorrect => const _NoteStatusLayout(
+        illustration: _MascotIllustration(asset: _mascotThinkAsset),
+        title: '아직 맞힌 문제가 없어요',
+        message: '틀린 문제를 다시 보면서\n개념을 정리해 보세요',
+      ),
+    };
+  }
+}
+
 class NoteLoadErrorView extends StatelessWidget {
   const NoteLoadErrorView({
     super.key,
@@ -39,7 +86,7 @@ class NoteLoadErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _NoteStatusLayout(
-      illustration: const _ErrorIllustration(),
+      illustration: const _MascotIllustration(asset: _mascotOopsAsset),
       title: '노트를 불러오지 못했어요',
       message: '저장된 노트는 그대로 있어요.\n잠시 후 다시 시도해주세요.',
       button: _StatusButton(
@@ -56,13 +103,13 @@ class _NoteStatusLayout extends StatelessWidget {
     required this.illustration,
     required this.title,
     required this.message,
-    required this.button,
+    this.button,
   });
 
   final Widget illustration;
   final String title;
   final String message;
-  final Widget button;
+  final Widget? button;
 
   @override
   Widget build(BuildContext context) {
@@ -93,8 +140,10 @@ class _NoteStatusLayout extends StatelessWidget {
                 color: context.colors.onSurfaceVariant.withAlpha(180),
               ),
             ),
-            const SizedBox(height: 22),
-            button,
+            if (button case final button?) ...[
+              const SizedBox(height: 22),
+              button,
+            ],
           ],
         ),
       ),
@@ -140,17 +189,19 @@ class _EmptyIllustration extends StatelessWidget {
   }
 }
 
-class _ErrorIllustration extends StatelessWidget {
-  const _ErrorIllustration();
+class _MascotIllustration extends StatelessWidget {
+  const _MascotIllustration({required this.asset});
+
+  final String asset;
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return SizedBox(
       width: 200,
       height: 170,
       child: Stack(
         clipBehavior: Clip.none,
-        children: [_MascotOnShadow(asset: _mascotOopsAsset)],
+        children: [_MascotOnShadow(asset: asset)],
       ),
     );
   }
