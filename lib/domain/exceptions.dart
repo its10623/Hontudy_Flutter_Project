@@ -15,6 +15,12 @@ class SignInCancelledException implements DomainException {
   String toString() => 'SignInCancelledException: 사용자가 소셜 로그인을 취소함';
 }
 
+class AiUsageLimitExceededException implements DomainException {
+  @override
+  String toString() =>
+      'AiUsageLimitExceededException: 오늘 사용할 수 있는 AI 요청을 모두 사용함';
+}
+
 class NetworkException implements Exception {
   final Object cause;
 
