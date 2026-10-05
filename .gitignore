@@ -65,3 +65,11 @@ AGENTS.md
 .hotswan/
 .claude/commands/answer.md
 .claude/commands/commit.md
+
+# Cloud Functions
+functions/node_modules/
+functions/lib/
+functions/.secret.local
+functions/.env.local
+firebase-debug.log
+firebase-debug.*.log
