@@ -40,6 +40,11 @@ const maxCompletionTokens = defineInt("MAX_COMPLETION_TOKENS", {
 });
 // 에뮬레이터·초기 테스트에서만 false로 내린다. 배포 기본값은 true.
 const enforceAppCheck = defineBoolean("ENFORCE_APP_CHECK", {default: true});
+// 추론형 모델(GPT-5 계열 등)은 temperature를 기본값(1) 외에는 거절한다(400 unsupported_value).
+// 지원하는 모델로 바꾸면 true로 바꿔 앱이 보낸 temperature를 그대로 전달한다.
+const openaiSupportsTemperature = defineBoolean("OPENAI_SUPPORTS_TEMPERATURE", {
+  default: false,
+});
 
 const REGION = "us-central1";
 const OPENAI_BASE_URL = "https://api.openai.com/v1";
@@ -114,6 +119,31 @@ function invalidArgument(message: string): HttpsError {
   return new HttpsError("invalid-argument", message);
 }
 
+/**
+ * OpenAI/Gemini 에러 응답에서 원인 분류용 필드만 꺼낸다.
+ * OpenAI: {error: {code, type, param}}, Gemini: {error: {status, code}}
+ */
+async function upstreamErrorInfo(
+  response: Response,
+): Promise<Record<string, unknown>> {
+  try {
+    const body = (await response.json()) as {error?: Record<string, unknown>};
+    const error = body.error ?? {};
+    const pick = (key: string) =>
+      typeof error[key] === "string" || typeof error[key] === "number" ?
+        error[key] :
+        undefined;
+    return {
+      errorCode: pick("code"),
+      errorType: pick("type"),
+      errorParam: pick("param"),
+      errorStatus: pick("status"),
+    };
+  } catch {
+    return {};
+  }
+}
+
 /** 외부 API 호출. 500/503은 서버에서 재시도하고, 실패는 HttpsError로 바꾼다. */
 async function fetchUpstream(
   name: string,
@@ -138,8 +168,12 @@ async function fetchUpstream(
       continue;
     }
 
-    // 응답 본문에는 사용자 입력이 섞일 수 있어 상태 코드만 남긴다.
-    logger.error(`${name} 실패`, {status: response.status});
+    // 응답 본문(message)에는 사용자 입력이 섞일 수 있어, 원인 분류용
+    // 필드(code/type/param)만 남긴다.
+    logger.error(`${name} 실패`, {
+      status: response.status,
+      ...(await upstreamErrorInfo(response)),
+    });
     if (response.status >= 500) {
       throw new HttpsError("unavailable", `${name} 서버 오류`);
     }
@@ -208,7 +242,7 @@ export const chatCompletion = onCall(
           // 모델은 클라이언트가 아니라 서버 파라미터로만 정한다.
           model: openaiModel.value(),
           messages,
-          temperature,
+          ...(openaiSupportsTemperature.value() ? {temperature} : {}),
           max_completion_tokens: maxCompletionTokens.value(),
         }),
       },
