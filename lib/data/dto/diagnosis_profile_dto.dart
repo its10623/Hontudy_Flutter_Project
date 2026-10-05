@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hontudy/data/dto/timestamp_converter.dart';
 import 'package:hontudy/domain/models/diagnosis_profile.dart';
 
 part 'diagnosis_profile_dto.g.dart';
@@ -9,6 +10,7 @@ class DiagnosisProfileDto {
   final int difficultyScore;
   final List<String> purposeTags;
   final List<String> weakAreas;
+  @TimestampConverter()
   final DateTime timestamp;
 
   const DiagnosisProfileDto({

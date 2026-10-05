@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hontudy/data/dto/timestamp_converter.dart';
 import 'package:hontudy/data/dto/quiz_dto.dart';
 import 'package:hontudy/data/dto/quiz_feedback_dto.dart';
 import 'package:hontudy/domain/models/solved_record.dart';
@@ -10,6 +11,7 @@ class SolvedRecordDto {
   final QuizDto quiz;
   final String userAnswer;
   final QuizFeedbackDto quizFeedback;
+  @TimestampConverter()
   final DateTime timestamp;
 
   const SolvedRecordDto({

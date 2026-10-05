@@ -16,7 +16,9 @@ DiagnosisProfileDto _$DiagnosisProfileDtoFromJson(Map<String, dynamic> json) =>
       weakAreas: (json['weakAreas'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
-      timestamp: DateTime.parse(json['timestamp'] as String),
+      timestamp: const TimestampConverter().fromJson(
+        json['timestamp'] as Object,
+      ),
     );
 
 Map<String, dynamic> _$DiagnosisProfileDtoToJson(
@@ -26,5 +28,5 @@ Map<String, dynamic> _$DiagnosisProfileDtoToJson(
   'difficultyScore': instance.difficultyScore,
   'purposeTags': instance.purposeTags,
   'weakAreas': instance.weakAreas,
-  'timestamp': instance.timestamp.toIso8601String(),
+  'timestamp': const TimestampConverter().toJson(instance.timestamp),
 };
