@@ -9,6 +9,7 @@ import 'package:hontudy/presentation/viewmodels/note_summary_viewmodel.dart';
 import 'package:hontudy/presentation/views/component/app_background.dart';
 import 'package:hontudy/presentation/views/component/note_status_views.dart';
 import 'package:hontudy/presentation/views/pages/all_mains_page.dart';
+import 'package:hontudy/presentation/views/pages/note_detail_page.dart';
 import 'package:hontudy/presentation/views/pages/quiz_chat_page.dart';
 import 'package:hontudy/presentation/views/component/recent_wrong_answer_section.dart';
 import 'package:hontudy/presentation/views/component/shimmer_wrapper.dart';
@@ -179,66 +180,70 @@ class _NoteSummaryBody extends StatelessWidget {
       padding: const EdgeInsets.all(12.0),
       child: ListView(
         children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: context.colors.primary,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '가장 약한 주제',
-                        style: context.captionMedium.copyWith(
-                          color: context.colors.onPrimary.withAlpha(200),
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Text(
-                        weakestTitle,
-                        style: TextType.titleSmall.copyWith(
-                          color: context.colors.onPrimary,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      Text(
-                        '${weakest.solvedCount} 문제 중 ${weakest.wrongCount}개 오답',
-                        style: context.captionMedium.copyWith(
-                          color: context.colors.onPrimary.withAlpha(200),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Stack(
-                  alignment: AlignmentGeometry.center,
+          Material(
+            color: context.colors.primary,
+            borderRadius: BorderRadius.circular(16),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => _openDetail(context, weakest.main),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: CircularProgressIndicator(
-                        value: weakest.correctRate,
-                        backgroundColor: context.colors.onPrimary.withAlpha(
-                          50,
-                        ),
-                        color: context.colors.onPrimary,
-                        strokeWidth: 6,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '가장 약한 주제',
+                            style: context.captionMedium.copyWith(
+                              color: context.colors.onPrimary.withAlpha(200),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            weakestTitle,
+                            style: TextType.titleSmall.copyWith(
+                              color: context.colors.onPrimary,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          Text(
+                            '${weakest.solvedCount} 문제 중 ${weakest.wrongCount}개 오답',
+                            style: context.captionMedium.copyWith(
+                              color: context.colors.onPrimary.withAlpha(200),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Text(
-                      '${(weakest.correctRate * 100).round()}%',
-                      style: TextType.headlineSmall.copyWith(
-                        color: context.colors.onPrimary,
-                      ),
+                    Stack(
+                      alignment: AlignmentGeometry.center,
+                      children: [
+                        SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: CircularProgressIndicator(
+                            value: weakest.correctRate,
+                            backgroundColor: context.colors.onPrimary.withAlpha(
+                              50,
+                            ),
+                            color: context.colors.onPrimary,
+                            strokeWidth: 6,
+                          ),
+                        ),
+                        Text(
+                          '${(weakest.correctRate * 100).round()}%',
+                          style: TextType.headlineSmall.copyWith(
+                            color: context.colors.onPrimary,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
           const SizedBox(
@@ -249,7 +254,7 @@ class _NoteSummaryBody extends StatelessWidget {
             onMore: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const AllMainsPage()),
             ),
-            onDetail: (String s) {},
+            onDetail: (main) => _openDetail(context, main),
             unsolvedMains: summary.unsolvedMains,
           ),
           Row(
@@ -260,7 +265,7 @@ class _NoteSummaryBody extends StatelessWidget {
                 style: TextType.captionMedium,
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {}, // TODO 오답만 보아보는 필터 필요
                 child: Text(
                   '전체 보기',
                   style: TextType.captionMedium.copyWith(
@@ -278,7 +283,11 @@ class _NoteSummaryBody extends StatelessWidget {
           ) ...[
             RecentWrongAnswerSection(
               wrongQuiz: summary.recentWrongRecords[index].quiz.questionText,
-              onTap: () {},
+              onTap: () => _openDetail(
+                context,
+                summary.recentWrongRecords[index].quiz.category.main,
+                initialQid: summary.recentWrongRecords[index].quiz.qid,
+              ),
               timeAgo: formatDaysAgo(
                 summary.recentWrongRecords[index].timestamp,
               ),
@@ -341,4 +350,13 @@ class _NoteSummarySkeleton extends StatelessWidget {
       ),
     );
   }
+}
+
+/// go_router 도입 전까지 쓰는 임시 이동
+void _openDetail(BuildContext context, String main, {String? initialQid}) {
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (_) => NoteDetailPage(main: main, initialQid: initialQid),
+    ),
+  );
 }
