@@ -2,8 +2,10 @@ import 'package:hontudy/data/dto/diagnosis_profile_dto.dart';
 import 'package:hontudy/data/prompt_builder.dart';
 import 'package:hontudy/data/result_guard.dart';
 import 'package:hontudy/data/services/remotes/auth_service.dart';
-import 'package:hontudy/data/services/remotes/llm_service.dart';
+import 'package:hontudy/data/services/remotes/ai_functions_service.dart';
+import 'package:hontudy/domain/models/category_scheme.dart';
 import 'package:hontudy/domain/models/diagnosis_profile.dart';
+import 'package:hontudy/domain/models/diagnosis_scheme.dart';
 import 'package:hontudy/domain/models/diagnosis_turn.dart';
 import 'package:hontudy/domain/repositories/diagnosis_repository.dart';
 import 'package:result_dart/result_dart.dart';
@@ -13,12 +15,12 @@ import '../services/remotes/firestore_service.dart';
 class DiagnosisRepositoryImpl implements DiagnosisRepository {
   final FirestoreService _firestore;
   final AuthService _auth;
-  final LlmService _llm;
+  final AiFunctionsService _ai;
 
   DiagnosisRepositoryImpl({
     required this._firestore,
     required this._auth,
-    required this._llm,
+    required this._ai,
   });
 
   String _requiredUid() => _auth.currentUser!.uid;
@@ -37,8 +39,7 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
   ) {
     return guardAsync(() async {
       final prompt = PromptBuilder.buildDiagnosisClassificationPrompt(history);
-      final json = await _llm.sendPrompt(
-        model: defaultLlmModel,
+      final json = await _ai.sendPrompt(
         messages: [
           {'role': 'user', 'content': prompt},
         ],
@@ -60,8 +61,7 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
         history: pastHistory,
         userInput: recentAnswer,
       );
-      final json = await _llm.sendPrompt(
-        model: defaultLlmModel,
+      final json = await _ai.sendPrompt(
         messages: [
           {'role': 'user', 'content': prompt},
         ],
@@ -91,13 +91,35 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
     });
   }
 
+  List<String> _whitelistedStrings(
+    Object? raw, {
+    required Iterable<String> allowed,
+    int? limit,
+  }) {
+    if (raw is! List) return const [];
+    final allowedSet = allowed.toSet();
+    final values = raw
+        .map((value) => value.toString())
+        .where(allowedSet.contains)
+        .toSet()
+        .toList();
+    return limit == null ? values : values.take(limit).toList();
+  }
+
   DiagnosisResult _diagnosisResultFromJson(Map<String, dynamic> json) {
     return DiagnosisResult(
       profile: DiagnosisProfile(
         background: json['background'] as String,
         difficultyScore: json['difficulty_score'] as int,
-        purposeTags: List<String>.from(json['purpose_tags'] as List),
-        weakAreas: List<String>.from(json['weak_areas'] as List),
+        purposeTags: _whitelistedStrings(
+          json['purpose_tags'],
+          allowed: DiagnosisScheme.purposeTags.map((purpose) => purpose.tag),
+        ),
+        weakAreas: _whitelistedStrings(
+          json['weak_areas'],
+          allowed: CategoryScheme.mainCategories.map((main) => main.name),
+          limit: 3,
+        ),
         timestamp: DateTime.now(),
       ),
       backgroundDetail: json['background_detail'] as String?,

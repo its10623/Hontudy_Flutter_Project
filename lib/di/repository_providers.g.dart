@@ -96,7 +96,7 @@ final class DiagnosisRepositoryProvider
 }
 
 String _$diagnosisRepositoryHash() =>
-    r'2bcd5b7c622e5a8d3e5a982e613bf0feb9a5c46a';
+    r'390f3b46eea51ec376f3555b3ddfe73d23f2aa7c';
 
 @ProviderFor(quizRepository)
 final quizRepositoryProvider = QuizRepositoryProvider._();
@@ -137,7 +137,7 @@ final class QuizRepositoryProvider
   }
 }
 
-String _$quizRepositoryHash() => r'9699bc516ec4417de349d9822d1a8bdbf3e48de7';
+String _$quizRepositoryHash() => r'1505d6589a3554b226931cc2cc0998991154abc4';
 
 @ProviderFor(noteRepository)
 final noteRepositoryProvider = NoteRepositoryProvider._();

@@ -96,91 +96,50 @@ final class FirestoreServiceProvider
 
 String _$firestoreServiceHash() => r'60ff847ea870b353b433504c7f164ea13f87009a';
 
-@ProviderFor(llmService)
-final llmServiceProvider = LlmServiceProvider._();
+@ProviderFor(aiFunctionsService)
+final aiFunctionsServiceProvider = AiFunctionsServiceProvider._();
 
-final class LlmServiceProvider
-    extends $FunctionalProvider<LlmService, LlmService, LlmService>
-    with $Provider<LlmService> {
-  LlmServiceProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'llmServiceProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$llmServiceHash();
-
-  @$internal
-  @override
-  $ProviderElement<LlmService> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  LlmService create(Ref ref) {
-    return llmService(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(LlmService value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<LlmService>(value),
-    );
-  }
-}
-
-String _$llmServiceHash() => r'901a98eecedc42950f956d25ca43f9c523a0a0af';
-
-@ProviderFor(geminiImageService)
-final geminiImageServiceProvider = GeminiImageServiceProvider._();
-
-final class GeminiImageServiceProvider
+final class AiFunctionsServiceProvider
     extends
         $FunctionalProvider<
-          GeminiImageService,
-          GeminiImageService,
-          GeminiImageService
+          AiFunctionsService,
+          AiFunctionsService,
+          AiFunctionsService
         >
-    with $Provider<GeminiImageService> {
-  GeminiImageServiceProvider._()
+    with $Provider<AiFunctionsService> {
+  AiFunctionsServiceProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'geminiImageServiceProvider',
+        name: r'aiFunctionsServiceProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$geminiImageServiceHash();
+  String debugGetCreateSourceHash() => _$aiFunctionsServiceHash();
 
   @$internal
   @override
-  $ProviderElement<GeminiImageService> $createElement(
+  $ProviderElement<AiFunctionsService> $createElement(
     $ProviderPointer pointer,
   ) => $ProviderElement(pointer);
 
   @override
-  GeminiImageService create(Ref ref) {
-    return geminiImageService(ref);
+  AiFunctionsService create(Ref ref) {
+    return aiFunctionsService(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(GeminiImageService value) {
+  Override overrideWithValue(AiFunctionsService value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<GeminiImageService>(value),
+      providerOverride: $SyncValueProvider<AiFunctionsService>(value),
     );
   }
 }
 
-String _$geminiImageServiceHash() =>
-    r'f5d72b7a85422fa4579605fc244e4528999e24e4';
+String _$aiFunctionsServiceHash() =>
+    r'6a6ce4b032ac9ccf77cb74618865946797572a16';

@@ -25,15 +25,14 @@ DiagnosisRepository diagnosisRepository(Ref ref) {
   return DiagnosisRepositoryImpl(
     firestore: ref.watch(firestoreServiceProvider),
     auth: ref.watch(authServiceProvider),
-    llm: ref.watch(llmServiceProvider),
+    ai: ref.watch(aiFunctionsServiceProvider),
   );
 }
 
 @riverpod
 QuizRepository quizRepository(Ref ref) {
   return QuizRepositoryImpl(
-    llm: ref.watch(llmServiceProvider),
-    geminiImageService: ref.watch(geminiImageServiceProvider),
+    ai: ref.watch(aiFunctionsServiceProvider),
   );
 }
 

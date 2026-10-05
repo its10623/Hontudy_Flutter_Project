@@ -8,14 +8,12 @@ import 'package:result_dart/result_dart.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../domain/exceptions.dart';
-import '../services/remotes/gemini_image_service.dart';
-import '../services/remotes/llm_service.dart';
+import '../services/remotes/ai_functions_service.dart';
 
 class QuizRepositoryImpl implements QuizRepository {
-  final LlmService _llm;
-  final GeminiImageService _geminiImageService;
+  final AiFunctionsService _ai;
 
-  QuizRepositoryImpl({required this._llm, required this._geminiImageService});
+  QuizRepositoryImpl({required this._ai});
 
   @override
   AsyncResult<Quiz> requestQuiz({
@@ -27,8 +25,7 @@ class QuizRepositoryImpl implements QuizRepository {
         profile: profile,
         excludeKeywords: excludeKeywords,
       );
-      final json = await _llm.sendPrompt(
-        model: defaultLlmModel,
+      final json = await _ai.sendPrompt(
         messages: [
           {'role': 'user', 'content': prompt},
         ],
@@ -53,8 +50,7 @@ class QuizRepositoryImpl implements QuizRepository {
         quiz: quiz,
         userAnswer: userAnswer,
       );
-      final json = await _llm.sendPrompt(
-        model: defaultLlmModel,
+      final json = await _ai.sendPrompt(
         messages: [
           {'role': 'user', 'content': prompt},
         ],
@@ -64,16 +60,40 @@ class QuizRepositoryImpl implements QuizRepository {
     });
   }
 
+
+  /// 보기 수나 정답 번호가 맞지 않으면 화면에 그리지 않도록 거부.
+  QuizContent _singleChoiceFromJson(
+    Map<String, dynamic> json,
+    Map<String, dynamic>? widgetContent,
+  ) {
+    final rawOptions =
+        (json['choices'] ?? widgetContent?['options']) as List<dynamic>?;
+    final rawIndex =
+        (json['correct_index'] ?? widgetContent?['correctIndex']) as num?;
+
+    if (rawOptions == null || rawOptions.length < 2 || rawOptions.length > 5) {
+      throw FormatException('객관식 보기 수가 올바르지 않음: $rawOptions');
+    }
+    final options = rawOptions.map((option) => option.toString()).toList();
+    final correctIndex = rawIndex?.toInt();
+    if (correctIndex == null ||
+        correctIndex < 0 ||
+        correctIndex >= options.length) {
+      throw FormatException('객관식 정답 번호가 올바르지 않음: $rawIndex');
+    }
+    return QuizContent.singleChoice(
+      options: options,
+      correctIndex: correctIndex,
+    );
+  }
+
   Future<Quiz> _quizFromJson(Map<String, dynamic> json) async {
     final category = json['category'] as Map<String, dynamic>;
     final widgetType = json['widget_type'] as String;
     final widgetContent = json['widget_content'] as Map<String, dynamic>?;
 
     final quizContent = switch (widgetType) {
-      'single_choice_question' => QuizContent.singleChoice(
-        options: List<String>.from(widgetContent!['options'] as List),
-        correctIndex: widgetContent['correctIndex'] as int,
-      ),
+      'single_choice_question' => _singleChoiceFromJson(json, widgetContent),
       'short_answer_input' ||
       'code_block' ||
       'image_diagram' ||
@@ -83,14 +103,13 @@ class QuizRepositoryImpl implements QuizRepository {
 
     final referenceAnswer = quizContent is SingleChoiceContent
         ? quizContent.options[quizContent.correctIndex]
-        : json['reference_answer'] as String;
+        : json['reference_answer'] as String? ?? '';
 
     String? imageUrl;
     if (widgetType == 'image_diagram' && widgetContent != null) {
       final imagePrompt = widgetContent['image_prompt'] as String?;
       if (imagePrompt != null) {
-        imageUrl = await _geminiImageService.generateImage(
-          model: defaultGeminiImageModel,
+        imageUrl = await _ai.generateImage(
           prompt: imagePrompt,
         );
       }
@@ -122,8 +141,7 @@ class QuizRepositoryImpl implements QuizRepository {
     final imagePrompt = json['image_prompt'] as String?;
     final imageUrl = imagePrompt == null
         ? null
-        : await _geminiImageService.generateImage(
-            model: defaultGeminiImageModel,
+        : await _ai.generateImage(
             prompt: imagePrompt,
           );
 
