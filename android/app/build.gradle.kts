@@ -29,10 +29,6 @@ android {
     }
 
     buildTypes {
-        debug {
-            // 디버그/릴리즈를 폰에 동시에 설치해서 비교 테스트할 수 있도록 별도 앱으로 분리
-            applicationIdSuffix = ".debug"
-        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
