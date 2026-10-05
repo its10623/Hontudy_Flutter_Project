@@ -31,7 +31,9 @@ class FirestoreService {
   }
 
   Future<void> saveTermsAgreement(String uid) {
-    return _userRef.doc(uid).set({'hasAgreedToTerms': true}, SetOptions(merge: true));
+    return _userRef.doc(uid).set({
+      'hasAgreedToTerms': true,
+    }, SetOptions(merge: true));
   }
 
   Future<DiagnosisProfileDto?> fetchDiagnosisProfile(String uid) async {
@@ -99,21 +101,24 @@ class FirestoreService {
     return doc.data()?['hasAgreedToTerms'] as bool? ?? false;
   }
 
-  Future<void> deleteDiagnosisProfileHistory(String uid) async {
-    final snapshot = await _diagnosisProfileRef(uid).get();
-    final batch = _firestore.batch();
-    for (var doc in snapshot.docs) {
-      batch.delete(doc.reference);
-    }
-    return batch.commit();
-  }
+  Future<void> deleteDiagnosisProfileHistory(String uid) =>
+      _deleteAll(_diagnosisProfileRef(uid));
 
-  Future<void> deleteSolvedRecordHistory(String uid) async {
-    final snapshot = await _solvedRecordRef(uid).get();
-    final batch = _firestore.batch();
-    for (var doc in snapshot.docs) {
-      batch.delete(doc.reference);
+  Future<void> deleteSolvedRecordHistory(String uid) =>
+      _deleteAll(_solvedRecordRef(uid));
+
+  Future<void> deleteUserDocument(String uid) => _userRef.doc(uid).delete();
+
+  Future<void> _deleteAll(CollectionReference<Map<String, dynamic>> ref) async {
+    const batchLimit = 500;
+    final snapshot = await ref.get();
+    final docs = snapshot.docs;
+    for (var start = 0; start < docs.length; start += batchLimit) {
+      final batch = _firestore.batch();
+      for (final doc in docs.skip(start).take(batchLimit)) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
     }
-    return batch.commit();
   }
 }

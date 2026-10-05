@@ -10,6 +10,7 @@ abstract class UserRepository {
   User? get currentUser;
   Stream<User?> authStateChanges();
   AsyncResult<void> deleteAccount();
+  AsyncResult<void> deleteUserData();
   AsyncResult<void> reauthenticateWithGoogle();
   AsyncResult<void> reauthenticateWithApple();
   AsyncResult<void> saveTermsAgreement();

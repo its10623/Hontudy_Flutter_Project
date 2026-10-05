@@ -99,6 +99,14 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  AsyncResult<void> deleteUserData() {
+    return guardAsync(() async {
+      await _firestoreService.deleteUserDocument(_requireUid());
+      return unit;
+    });
+  }
+
+  @override
   AsyncResult<void> reauthenticateWithGoogle() {
     return guardAsync(() async {
       await _throwIfCancelled(_authService.reauthenticateWithGoogle);
