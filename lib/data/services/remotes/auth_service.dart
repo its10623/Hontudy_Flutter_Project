@@ -22,7 +22,13 @@ class AuthService {
 
   Future<UserCredential> signInWithApple() async {
     if (Platform.isAndroid) {
-      return _firebaseAuth.signInWithProvider(_appleProvider());
+      final userCredential = await _firebaseAuth.signInWithProvider(
+        _appleProvider(),
+      );
+      if (userCredential.additionalUserInfo?.isNewUser ?? false) {
+        await _reorderKoreanAppleName();
+      }
+      return userCredential;
     }
     final apple = await _appleCredential();
     final userCredential = await _firebaseAuth.signInWithCredential(
@@ -54,17 +60,33 @@ class AuthService {
     await _firebaseAuth.currentUser?.reauthenticateWithCredential(credential);
   }
 
-  Future<void> reauthenticateWithApple() async {
+  /// 재인증하고, 탈퇴 시 Apple 연결을 끊는 데 쓸 토큰을 돌려줌
+  Future<String> reauthenticateWithApple() async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null) throw StateError('로그인된 사용자가 없어 재인증할 수 없음');
+
     if (Platform.isAndroid) {
-      await _firebaseAuth.currentUser?.reauthenticateWithProvider(
+      final userCredential = await user.reauthenticateWithProvider(
         _appleProvider(),
       );
-      return;
+      final accessToken = userCredential.credential?.accessToken;
+      if (accessToken == null) {
+        throw StateError('Apple 재인증 결과에 access token이 없음');
+      }
+      return accessToken;
     }
     final apple = await _appleCredential();
-    await _firebaseAuth.currentUser?.reauthenticateWithCredential(
-      apple.credential,
-    );
+    await user.reauthenticateWithCredential(apple.credential);
+    return apple.authorizationCode;
+  }
+
+  /// Apple ID 설정의 "Apple로 로그인" 연결을 끊기
+  Future<void> revokeAppleToken(String token) async {
+    if (Platform.isAndroid) {
+      await _firebaseAuth.revokeAccessToken(token);
+      return;
+    }
+    await _firebaseAuth.revokeTokenWithAuthorizationCode(token);
   }
 
   Future<OAuthCredential> _googleCredential() async {
@@ -83,7 +105,9 @@ class AuthService {
       ..addScope('name');
   }
 
-  Future<({OAuthCredential credential, String? fullName})>
+  Future<
+    ({OAuthCredential credential, String? fullName, String authorizationCode})
+  >
   _appleCredential() async {
     final rawNonce = _generateNonce();
     final hashedNonce = _sha256ofString(rawNonce);
@@ -104,7 +128,11 @@ class AuthService {
       givenName: appleCredential.givenName,
       familyName: appleCredential.familyName,
     );
-    return (credential: credential, fullName: fullName);
+    return (
+      credential: credential,
+      fullName: fullName,
+      authorizationCode: appleCredential.authorizationCode,
+    );
   }
 
   Future<void> _saveAppleNameIfMissing(String? fullName) async {
@@ -112,6 +140,16 @@ class AuthService {
     if (user == null || fullName == null) return;
     if (user.displayName?.isNotEmpty ?? false) return;
     await user.updateDisplayName(fullName);
+  }
+
+  Future<void> _reorderKoreanAppleName() async {
+    final user = _firebaseAuth.currentUser;
+    final displayName = user?.displayName?.trim();
+    if (user == null || displayName == null) return;
+
+    final match = RegExp(r'^([가-힣]+) ([가-힣]+)$').firstMatch(displayName);
+    if (match == null) return;
+    await user.updateDisplayName('${match[2]}${match[1]}');
   }
 
   String? _joinAppleName({String? givenName, String? familyName}) {

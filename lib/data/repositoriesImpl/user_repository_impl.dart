@@ -121,9 +121,16 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  AsyncResult<void> reauthenticateWithApple() {
+  AsyncResult<String> reauthenticateWithApple() {
+    return guardAsync(
+      () => _throwIfCancelled(_authService.reauthenticateWithApple),
+    );
+  }
+
+  @override
+  AsyncResult<void> revokeAppleToken(String token) {
     return guardAsync(() async {
-      await _throwIfCancelled(_authService.reauthenticateWithApple);
+      await _authService.revokeAppleToken(token);
       return unit;
     });
   }
