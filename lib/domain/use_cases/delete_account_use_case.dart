@@ -1,7 +1,6 @@
 import 'package:hontudy/domain/models/user.dart';
 import 'package:hontudy/domain/repositories/diagnosis_repository.dart';
 import 'package:hontudy/domain/repositories/user_repository.dart';
-import 'package:result_dart/result_dart.dart';
 
 import '../repositories/note_repository.dart';
 
@@ -26,33 +25,18 @@ class DeleteAccountUseCase {
     String? appleRevokeToken;
     switch (user.authProvider) {
       case AuthProvider.google:
-        await _getOrThrow(_userRepository.reauthenticateWithGoogle());
+        (await _userRepository.reauthenticateWithGoogle()).getOrThrow();
       case AuthProvider.apple:
-        appleRevokeToken = await _valueOrThrow(
-          _userRepository.reauthenticateWithApple(),
-        );
+        appleRevokeToken = (await _userRepository.reauthenticateWithApple())
+            .getOrThrow();
     }
 
-    await _getOrThrow(_diagnosisRepository.deleteDiagnosisProfile());
-    await _getOrThrow(_noteRepository.deleteSolvedRecordHistory());
-    await _getOrThrow(_userRepository.deleteUserData());
+    (await _diagnosisRepository.deleteDiagnosisProfile()).getOrThrow();
+    (await _noteRepository.deleteSolvedRecordHistory()).getOrThrow();
+    (await _userRepository.deleteUserData()).getOrThrow();
     if (appleRevokeToken != null) {
-      await _getOrThrow(_userRepository.revokeAppleToken(appleRevokeToken));
+      (await _userRepository.revokeAppleToken(appleRevokeToken)).getOrThrow();
     }
-    await _getOrThrow(_userRepository.deleteAccount());
-  }
-
-  Future<T> _valueOrThrow<T extends Object>(AsyncResult<T> result) async {
-    return (await result).fold(
-      (success) => success,
-      (failure) => throw failure,
-    );
-  }
-
-  Future<void> _getOrThrow(AsyncResult<void> result) async {
-    (await result).fold(
-      (success) => success,
-      (failure) => throw failure,
-    );
+    (await _userRepository.deleteAccount()).getOrThrow();
   }
 }
