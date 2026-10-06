@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
@@ -20,8 +21,15 @@ class AuthService {
   }
 
   Future<UserCredential> signInWithApple() async {
-    final credential = await _appleCredential();
-    return _firebaseAuth.signInWithCredential(credential);
+    if (Platform.isAndroid) {
+      return _firebaseAuth.signInWithProvider(_appleProvider());
+    }
+    final apple = await _appleCredential();
+    final userCredential = await _firebaseAuth.signInWithCredential(
+      apple.credential,
+    );
+    await _saveAppleNameIfMissing(apple.fullName);
+    return userCredential;
   }
 
   Future<void> updateDisplayName(String displayName) async {
@@ -35,8 +43,7 @@ class AuthService {
 
   User? get currentUser => _firebaseAuth.currentUser;
 
-  Stream<User?> authStateChanges() =>
-      _firebaseAuth.authStateChanges();
+  Stream<User?> authStateChanges() => _firebaseAuth.authStateChanges();
 
   Future<void> deleteAccount() async {
     await _firebaseAuth.currentUser?.delete();
@@ -48,8 +55,16 @@ class AuthService {
   }
 
   Future<void> reauthenticateWithApple() async {
-    final credential = await _appleCredential();
-    await _firebaseAuth.currentUser?.reauthenticateWithCredential(credential);
+    if (Platform.isAndroid) {
+      await _firebaseAuth.currentUser?.reauthenticateWithProvider(
+        _appleProvider(),
+      );
+      return;
+    }
+    final apple = await _appleCredential();
+    await _firebaseAuth.currentUser?.reauthenticateWithCredential(
+      apple.credential,
+    );
   }
 
   Future<OAuthCredential> _googleCredential() async {
@@ -62,7 +77,14 @@ class AuthService {
     return GoogleAuthProvider.credential(idToken: idToken);
   }
 
-  Future<OAuthCredential> _appleCredential() async {
+  AppleAuthProvider _appleProvider() {
+    return AppleAuthProvider()
+      ..addScope('email')
+      ..addScope('name');
+  }
+
+  Future<({OAuthCredential credential, String? fullName})>
+  _appleCredential() async {
     final rawNonce = _generateNonce();
     final hashedNonce = _sha256ofString(rawNonce);
 
@@ -74,10 +96,32 @@ class AuthService {
       nonce: hashedNonce,
     );
 
-    return OAuthProvider('apple.com').credential(
+    final credential = OAuthProvider('apple.com').credential(
       idToken: appleCredential.identityToken,
       rawNonce: rawNonce,
     );
+    final fullName = _joinAppleName(
+      givenName: appleCredential.givenName,
+      familyName: appleCredential.familyName,
+    );
+    return (credential: credential, fullName: fullName);
+  }
+
+  Future<void> _saveAppleNameIfMissing(String? fullName) async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null || fullName == null) return;
+    if (user.displayName?.isNotEmpty ?? false) return;
+    await user.updateDisplayName(fullName);
+  }
+
+  String? _joinAppleName({String? givenName, String? familyName}) {
+    final given = givenName?.trim() ?? '';
+    final family = familyName?.trim() ?? '';
+    if (given.isEmpty && family.isEmpty) return null;
+
+    final isKorean = RegExp(r'[가-힣]').hasMatch('$family$given');
+    if (isKorean) return '$family$given';
+    return [given, family].where((part) => part.isNotEmpty).join(' ');
   }
 
   String _generateNonce([int length = 32]) {

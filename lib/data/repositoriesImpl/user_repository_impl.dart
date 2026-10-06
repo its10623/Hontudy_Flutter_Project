@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuthException;
 import 'package:google_sign_in/google_sign_in.dart'
     show GoogleSignInException, GoogleSignInExceptionCode;
 import 'package:hontudy/domain/exceptions.dart';
@@ -36,6 +37,11 @@ class UserRepositoryImpl implements UserRepository {
         throw SignInCancelledException();
       }
       rethrow;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'web-context-canceled') {
+        throw SignInCancelledException();
+      }
+      rethrow;
     }
   }
 
@@ -54,7 +60,7 @@ class UserRepositoryImpl implements UserRepository {
     return guardAsync(() async {
       final credential = await _throwIfCancelled(_authService.signInWithApple);
       final isNewUser = credential.additionalUserInfo?.isNewUser ?? false;
-      final user = UserMapper.toDomain(credential.user!);
+      final user = UserMapper.toDomain(_authService.currentUser!);
       return (user: user, isNewUser: isNewUser);
     });
   }
