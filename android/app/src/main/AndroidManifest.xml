@@ -42,5 +42,11 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- Firebase Auth(Android Apple 로그인)가 Custom Tab 지원 브라우저를 조회할 수 있게 함.
+             없으면 Android 11+ 패키지 가시성 규칙 때문에 조회 결과가 비어
+             일반 브라우저 창으로 열리고, 로그인 후에도 자동으로 닫히지 않는다. -->
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService"/>
+        </intent>
     </queries>
 </manifest>
