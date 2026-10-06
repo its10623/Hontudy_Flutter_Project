@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/views/component/filter_chip_widget.dart';
+import 'package:hontudy/presentation/views/component/primary_button.dart';
 
 class FilterChipGenUi extends StatefulWidget {
-  final dynamic data;
+  final List<String> options;
+  final bool enabled;
+  final ValueChanged<List<String>> onSubmit;
 
   const FilterChipGenUi({
     super.key,
-    this.data,
+    required this.options,
+    required this.enabled,
+    required this.onSubmit,
   });
 
   @override
@@ -15,60 +19,51 @@ class FilterChipGenUi extends StatefulWidget {
 }
 
 class _FilterChipGenUiState extends State<FilterChipGenUi> {
-  Set<String> selectedOptions = {};
+  final Set<String> _selected = {};
+
+  void _toggle(String option, bool selected) {
+    setState(() {
+      if (selected) {
+        _selected.add(option);
+      } else {
+        _selected.remove(option);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final prompt = widget.data['prompt'].toString();
-    final options = widget.data['options'] as List<String>;
-
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 350),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: context.colors.surfaceContainerLowest,
-            borderRadius: const BorderRadius.all(Radius.circular(16)),
-            border: Border.all(
-              width: 1,
-              color: context.colors.outline.withAlpha(50),
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(prompt),
-              const SizedBox(
-                height: 8,
+    final canSubmit = widget.enabled && _selected.isNotEmpty;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final option in widget.options)
+              FilterChipWidget(
+                label: Text(option),
+                isSelected: _selected.contains(option),
+                onSelected: widget.enabled
+                    ? (value) => _toggle(option, value)
+                    : (_) {},
               ),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  for (var i = 0; i < options.length; i++) ...[
-                    FilterChipWidget(
-                      label: Text(options[i]),
-                      onSelected: (value) {
-                        setState(() {
-                          if (value) {
-                            selectedOptions.add(options[i]);
-                          } else {
-                            selectedOptions.remove(options[i]);
-                          }
-                        });
-                      },
-                      isSelected: selectedOptions.contains(options[i]),
-                    ),
-                  ],
-                ],
-              ),
-            ],
-          ),
+          ],
         ),
-      ),
+        if (widget.enabled) ...[
+          const SizedBox(height: 12),
+          PrimaryButton(
+            onPressed: canSubmit
+                ? () => widget.onSubmit(
+                    widget.options.where(_selected.contains).toList(),
+                  )
+                : null,
+            text: '선택 완료',
+            color: ButtonColor.primary,
+          ),
+        ],
+      ],
     );
   }
 }

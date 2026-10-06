@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:hontudy/presentation/views/component/divider_widget.dart';
 
 import '../../../core/theme/context_theme_extension.dart';
+import '../../../core/theme/shape.dart';
 import '../progress_bar_widget.dart';
+import 'mascot_avatar.dart';
 
 class ChatAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String pageInfo;
   final String currentState;
-  final int? stepValue;
+  final double? progress;
   final Widget? onNote;
   final Widget? onProfile;
 
@@ -15,13 +17,18 @@ class ChatAppbar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.pageInfo,
     required this.currentState,
-    this.stepValue,
+    this.progress,
     this.onNote,
     this.onProfile,
   });
 
+  static const _progressToolbarHeight = 78.0;
+
+  double get _toolbarHeight =>
+      progress != null ? _progressToolbarHeight : kToolbarHeight;
+
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight + 1.0);
+  Size get preferredSize => Size.fromHeight(_toolbarHeight + 1.0);
 
   @override
   Widget build(BuildContext context) {
@@ -29,105 +36,72 @@ class ChatAppbar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       scrolledUnderElevation: 0,
+      toolbarHeight: _toolbarHeight,
+      titleSpacing: 16,
       title: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/icons/ai_icon.png'),
-                    fit: BoxFit.cover,
-                  ),
+              const MascotAvatar(),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      pageInfo,
+                      style: context.textStyles.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(currentState, style: context.captionMedium),
+                  ],
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    pageInfo,
-                    style: context.textStyles.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        if (stepValue != null)
-                          TextSpan(
-                            text: '진단률 $stepValue% · ',
-                            style: context.captionSmall.copyWith(
-                              color: context.captionSmall.color?.withValues(
-                                alpha: 0.6,
-                              ),
-                            ),
-                          ),
-                        TextSpan(
-                          text: currentState,
-                          style: context.captionSmall.copyWith(
-                            color: context.captionSmall.color?.withValues(
-                              alpha: 0.6,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              if (onNote != null && onProfile != null) ...[
-                const Spacer(),
-                onNote!,
-                const SizedBox(
-                  width: 10,
-                ),
-                onProfile!,
-              ],
-              const Spacer(),
+              ?onNote,
+              if (onNote != null && onProfile != null)
+                const SizedBox(width: 10),
+              ?onProfile,
             ],
           ),
-          const SizedBox(
-            height: 4,
-          ),
-          Padding(
-            padding: const EdgeInsetsGeometry.symmetric(horizontal: 10),
-            child: stepValue != null
-                ? _AnimatedStepIndicator(stepValue: stepValue!)
-                : null,
-          ),
-          const SizedBox(
-            height: 4,
-          ),
+          if (progress case final progress?) ...[
+            const SizedBox(height: 14),
+            _ChatProgressBar(value: progress),
+          ],
         ],
       ),
       bottom: const PreferredSize(
-        preferredSize: .fromHeight(1.0),
+        preferredSize: Size.fromHeight(1.0),
         child: DividerWidget(),
       ),
     );
   }
 }
 
-class _AnimatedStepIndicator extends StatelessWidget {
-  final int stepValue;
+class _ChatProgressBar extends StatelessWidget {
+  final double value;
 
-  const _AnimatedStepIndicator({
-    required this.stepValue,
-  });
+  const _ChatProgressBar({required this.value});
 
   @override
   Widget build(BuildContext context) {
-    final double parseValue = stepValue / 100.0;
-    return TweenAnimationBuilder(
-      tween: Tween<double>(begin: 0, end: stepValue / 100.0),
-      duration: const Duration(milliseconds: 800),
-      builder: (context, value, child) {
-        return ProgressBarWidget(value: parseValue);
-      },
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: AppShape.pill,
+        border: Border.all(color: context.colors.primary.withAlpha(35)),
+      ),
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(end: value.clamp(0.0, 1.0)),
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeOut,
+        builder: (context, animated, _) => ProgressBarWidget(
+          value: animated,
+          height: 8,
+          backgroundColor: context.colors.surfaceContainerLowest,
+        ),
+      ),
     );
   }
 }

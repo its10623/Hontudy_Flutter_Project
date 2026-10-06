@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/core/theme/text_type.dart';
-
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class PrimaryButton extends StatefulWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final IconData? icon;
   final String text;
   final ButtonColor color;
@@ -29,8 +29,8 @@ class _PrimaryButtonState extends State<PrimaryButton> {
       style: FilledButton.styleFrom(
         backgroundColor: _backgroundColor(context),
         foregroundColor: _foregroundColor(context),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+        shape: const RoundedRectangleBorder(
+          borderRadius: AppShape.widgetCard,
         ),
         minimumSize: const Size(double.infinity, 50),
         side: widget.color != ButtonColor.primary
