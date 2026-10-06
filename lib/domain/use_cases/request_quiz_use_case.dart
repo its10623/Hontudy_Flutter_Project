@@ -1,4 +1,5 @@
 import 'package:hontudy/domain/exceptions.dart';
+import 'package:hontudy/domain/models/diagnosis_profile.dart';
 import 'package:hontudy/domain/repositories/diagnosis_repository.dart';
 import 'package:hontudy/domain/repositories/note_repository.dart';
 import 'package:hontudy/domain/repositories/quiz_repository.dart';
@@ -29,7 +30,7 @@ class RequestQuizUseCase {
     required this._diagnosisRepository,
   });
 
-  Future<RequestQuizResult> call() async {
+  Future<RequestQuizResult> call({DiagnosisProfile? diagnosisProfile}) async {
     final excludeKeywords = await _noteRepository
         .fetchRecentSolvedRecords(7)
         .fold(
@@ -40,10 +41,12 @@ class RequestQuizUseCase {
               .toList(),
           (failure) => throw failure,
         );
-    final profile = await _diagnosisRepository.fetchDiagnosisProfile().fold(
-      (record) => record.$1,
-      (failure) => throw failure,
-    );
+    final profile =
+        diagnosisProfile ??
+        await _diagnosisRepository.fetchDiagnosisProfile().fold(
+          (record) => record.$1,
+          (failure) => throw failure,
+        );
     if (profile == null) throw DiagnosisProfileEmptyException();
 
     final keywords = List<String>.from(excludeKeywords);
