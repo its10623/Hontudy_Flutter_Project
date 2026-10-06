@@ -47,7 +47,9 @@ class _DialogWidgetState extends State<DialogWidget> {
             if (widget.secondaryText != null) ...[
               Expanded(
                 child: PrimaryButton(
-                  onPressed: () {},
+                  onPressed:
+                      widget.secondaryOnPressed ??
+                      () => Navigator.of(context).pop(),
                   text: widget.secondaryText!,
                   color: ButtonColor.surface,
                 ),
@@ -58,7 +60,7 @@ class _DialogWidgetState extends State<DialogWidget> {
             ],
             Expanded(
               child: PrimaryButton(
-                onPressed: () {},
+                onPressed: widget.primaryOnPressed,
                 text: widget.primaryText,
                 color: ButtonColor.primary,
               ),
