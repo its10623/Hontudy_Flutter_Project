@@ -22,13 +22,14 @@ class DiagnosisState with _$DiagnosisState {
       switch (message) {
         case AiQuestion(:final questionText):
           pendingQuestion = questionText;
-        case UserAnswer(:final text):
-          if (pendingQuestion == null) continue;
+        case UserAnswer(:final text, :final offTopic):
+          if (offTopic || pendingQuestion == null) continue;
           answers.add(
             DiagnosisAnswer(questionText: pendingQuestion, answerText: text),
           );
           pendingQuestion = null;
         case AiSummary():
+        case AiNotice():
           break;
       }
     }
@@ -37,10 +38,36 @@ class DiagnosisState with _$DiagnosisState {
 
   int get turnCount => history.length;
 
-  AiQuestion? get activeQuestion => switch ((phase, messages.lastOrNull)) {
-    (WaitingAnswer(), final AiQuestion question) => question,
-    _ => null,
-  };
+  AiQuestion? get activeQuestion {
+    if (phase is! WaitingAnswer) return null;
+    for (final message in messages.reversed) {
+      switch (message) {
+        case AiNotice():
+        case UserAnswer(offTopic: true):
+          continue;
+        case final AiQuestion question:
+          return question;
+        default:
+          return null;
+      }
+    }
+    return null;
+  }
+
+  int get offTopicStreak {
+    var count = 0;
+    for (final message in messages.reversed) {
+      switch (message) {
+        case AiNotice():
+          continue;
+        case UserAnswer(offTopic: true):
+          count++;
+        default:
+          return count;
+      }
+    }
+    return count;
+  }
 
   DiagnosisResult? get summaryResult =>
       messages.whereType<AiSummary>().lastOrNull?.result;
@@ -61,7 +88,14 @@ sealed class DiagnosisMessage with _$DiagnosisMessage {
     required String id,
     required DateTime createdAt,
     required String text,
+    @Default(false) bool offTopic,
   }) = UserAnswer;
+
+  const factory DiagnosisMessage.aiNotice({
+    required String id,
+    required DateTime createdAt,
+    required String text,
+  }) = AiNotice;
 
   const factory DiagnosisMessage.aiSummary({
     required String id,

@@ -12,7 +12,8 @@ class DiagnosisTurn with _$DiagnosisTurn {
   const DiagnosisTurn({
     required this.confidence,
     required this.nextAction,
-    required this.questionText, required this.diagnosisContent,
+    required this.questionText,
+    required this.diagnosisContent,
   });
 }
 
@@ -46,7 +47,8 @@ sealed class DiagnosisContent with _$DiagnosisContent {
 enum DiagnosisNextAction {
   continueDiagnosis('continue_diagnosis'),
   readyToClassify('ready_to_classify'),
-  userRequestedProblem('user_requested_problem');
+  userRequestedProblem('user_requested_problem'),
+  offTopic('off_topic');
 
   const DiagnosisNextAction(this.jsonValue);
   final String jsonValue;

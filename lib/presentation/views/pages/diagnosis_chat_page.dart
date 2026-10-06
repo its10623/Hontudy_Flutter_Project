@@ -17,7 +17,7 @@ import '../component/app_background.dart';
 import '../component/chat/chat_appbar.dart';
 import '../component/chat/chat_body.dart';
 import '../component/error_dialog.dart';
-import '../component/genui/diagnosis_choice_chip.dart';
+import '../component/genui/diagnosis_choice_list.dart';
 import '../component/genui/filter_chip_gen_ui.dart';
 import '../component/genui/summary_confirm.dart';
 import '../component/primary_button.dart';
@@ -56,8 +56,10 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
   Widget build(BuildContext context) {
     ref.listen(diagnosisViewModelProvider, (previous, next) {
       _controller.setMessages(_toChatMessages(next));
-      if (next.phase case Failed(:final error)) {
-        debugPrint('[Diagnosis] 요청 실패: $error');
+      if (kDebugMode) {
+        if (next.phase case Failed(:final error)) {
+          debugPrint('[Diagnosis] 요청 실패: $error');
+        }
       }
       if (next.phase case Completed(
         :final profile,
@@ -79,9 +81,7 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
         backgroundColor: Colors.transparent,
         appBar: ChatAppbar(
           pageInfo: '혼터디 AI · 맞춤 문제 진단',
-          currentState: isSummary
-              ? '진단 결과 확인'
-              : '$questionNumber번째 질문',
+          currentState: isSummary ? '진단 결과 확인' : '$questionNumber번째 질문',
           progress: isSummary ? 1 : questionNumber / maxTurns,
         ),
         body: ChatBody(
@@ -106,6 +106,7 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
             AiQuestion(:final questionText) => questionText,
             UserAnswer(:final text) => text,
             AiSummary() => '진단 결과를 정리했어요. 맞는지 확인해 주세요.',
+            AiNotice(:final text) => text,
           },
           user: message is UserAnswer ? chatCurrentUser : chatAiUser,
           createdAt: message.createdAt,
@@ -155,7 +156,7 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
   }) {
     final notifier = ref.read(diagnosisViewModelProvider.notifier);
     return switch (content) {
-      SingleChoiceListContent(:final options) => DiagnosisChoiceChip(
+      SingleChoiceListContent(:final options) => DiagnosisChoiceList(
         options: options,
         enabled: enabled,
         onSelected: notifier.submitAnswer,

@@ -10,18 +10,36 @@ part 'diagnosis_viewmodel.g.dart';
 class DiagnosisViewModel extends _$DiagnosisViewModel {
   static const maxTurns = 8;
 
+  static const _maxOffTopic = 3;
+  static const _offTopicNotice =
+      '혼터디는 IT·CS 학습을 돕는 서비스예요. 위 질문에 답해 주시면 맞춤 진단을 이어갈게요.';
+  static const _restartNotice = '진단과 관련 없는 답변이 이어져서 처음 질문부터 다시 시작할게요.';
+
   @override
-  DiagnosisState build() {
-    final message = DiagnosisMessage.aiQuestion(
-      id: _newId(),
-      createdAt: _now(),
-      questionText: '혼터디에 오신 것을 환영합니다\n어떤 공부를 하고 싶으신가요?',
-      content: const DiagnosisContent.singleChoiceList(
-        options: ['언어 공부 하고 싶습니다', 'CS 공부하고 싶습니다'],
-      ),
-    );
+  DiagnosisState build() => _initialState();
+
+  DiagnosisState _initialState({String? notice}) {
     return DiagnosisState(
-      messages: [message],
+      messages: [
+        if (notice != null)
+          DiagnosisMessage.aiNotice(
+            id: _newId(),
+            createdAt: _now(),
+            text: notice,
+          ),
+        DiagnosisMessage.aiQuestion(
+          id: _newId(),
+          createdAt: _now(),
+          questionText: '혼터디에 오신 것을 환영합니다\n어떤 공부를 하고 싶으신가요?',
+          content: const DiagnosisContent.singleChoiceList(
+            options: [
+              'CS 핵심 전반적인 기본기 다지고 싶어요',
+              '취업·이직을 준비하고 있어요',
+              '기술 면접 단골 질문 위주로 준비하고 싶어요',
+            ],
+          ),
+        ),
+      ],
       phase: const DiagnosisPhase.waitingAnswer(),
     );
   }
@@ -109,7 +127,34 @@ class DiagnosisViewModel extends _$DiagnosisViewModel {
       case DiagnosisNextAction.readyToClassify:
       case DiagnosisNextAction.userRequestedProblem:
         await _classify();
+      case DiagnosisNextAction.offTopic:
+        _handleOffTopic();
     }
+  }
+
+  void _handleOffTopic() {
+    final last = state.messages.last;
+    final marked = [
+      ...state.messages.take(state.messages.length - 1),
+      if (last is UserAnswer) last.copyWith(offTopic: true) else last,
+    ];
+    final withMarked = state.copyWith(messages: marked);
+
+    if (withMarked.offTopicStreak >= _maxOffTopic) {
+      state = _initialState(notice: _restartNotice);
+      return;
+    }
+    state = withMarked.copyWith(
+      messages: [
+        ...marked,
+        DiagnosisMessage.aiNotice(
+          id: _newId(),
+          createdAt: _now(),
+          text: _offTopicNotice,
+        ),
+      ],
+      phase: const DiagnosisPhase.waitingAnswer(),
+    );
   }
 
   Future<void> _classify() async {

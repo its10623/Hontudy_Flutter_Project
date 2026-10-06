@@ -284,12 +284,13 @@ extension DiagnosisMessagePatterns on DiagnosisMessage {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( AiQuestion value)?  aiQuestion,TResult Function( UserAnswer value)?  userAnswer,TResult Function( AiSummary value)?  aiSummary,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( AiQuestion value)?  aiQuestion,TResult Function( UserAnswer value)?  userAnswer,TResult Function( AiNotice value)?  aiNotice,TResult Function( AiSummary value)?  aiSummary,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case AiQuestion() when aiQuestion != null:
 return aiQuestion(_that);case UserAnswer() when userAnswer != null:
-return userAnswer(_that);case AiSummary() when aiSummary != null:
+return userAnswer(_that);case AiNotice() when aiNotice != null:
+return aiNotice(_that);case AiSummary() when aiSummary != null:
 return aiSummary(_that);case _:
   return orElse();
 
@@ -308,12 +309,13 @@ return aiSummary(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( AiQuestion value)  aiQuestion,required TResult Function( UserAnswer value)  userAnswer,required TResult Function( AiSummary value)  aiSummary,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( AiQuestion value)  aiQuestion,required TResult Function( UserAnswer value)  userAnswer,required TResult Function( AiNotice value)  aiNotice,required TResult Function( AiSummary value)  aiSummary,}){
 final _that = this;
 switch (_that) {
 case AiQuestion():
 return aiQuestion(_that);case UserAnswer():
-return userAnswer(_that);case AiSummary():
+return userAnswer(_that);case AiNotice():
+return aiNotice(_that);case AiSummary():
 return aiSummary(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
@@ -328,12 +330,13 @@ return aiSummary(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( AiQuestion value)?  aiQuestion,TResult? Function( UserAnswer value)?  userAnswer,TResult? Function( AiSummary value)?  aiSummary,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( AiQuestion value)?  aiQuestion,TResult? Function( UserAnswer value)?  userAnswer,TResult? Function( AiNotice value)?  aiNotice,TResult? Function( AiSummary value)?  aiSummary,}){
 final _that = this;
 switch (_that) {
 case AiQuestion() when aiQuestion != null:
 return aiQuestion(_that);case UserAnswer() when userAnswer != null:
-return userAnswer(_that);case AiSummary() when aiSummary != null:
+return userAnswer(_that);case AiNotice() when aiNotice != null:
+return aiNotice(_that);case AiSummary() when aiSummary != null:
 return aiSummary(_that);case _:
   return null;
 
@@ -351,11 +354,12 @@ return aiSummary(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String id,  DateTime createdAt,  String questionText,  DiagnosisContent content)?  aiQuestion,TResult Function( String id,  DateTime createdAt,  String text)?  userAnswer,TResult Function( String id,  DateTime createdAt,  DiagnosisResult result)?  aiSummary,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String id,  DateTime createdAt,  String questionText,  DiagnosisContent content)?  aiQuestion,TResult Function( String id,  DateTime createdAt,  String text,  bool offTopic)?  userAnswer,TResult Function( String id,  DateTime createdAt,  String text)?  aiNotice,TResult Function( String id,  DateTime createdAt,  DiagnosisResult result)?  aiSummary,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case AiQuestion() when aiQuestion != null:
 return aiQuestion(_that.id,_that.createdAt,_that.questionText,_that.content);case UserAnswer() when userAnswer != null:
-return userAnswer(_that.id,_that.createdAt,_that.text);case AiSummary() when aiSummary != null:
+return userAnswer(_that.id,_that.createdAt,_that.text,_that.offTopic);case AiNotice() when aiNotice != null:
+return aiNotice(_that.id,_that.createdAt,_that.text);case AiSummary() when aiSummary != null:
 return aiSummary(_that.id,_that.createdAt,_that.result);case _:
   return orElse();
 
@@ -374,11 +378,12 @@ return aiSummary(_that.id,_that.createdAt,_that.result);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String id,  DateTime createdAt,  String questionText,  DiagnosisContent content)  aiQuestion,required TResult Function( String id,  DateTime createdAt,  String text)  userAnswer,required TResult Function( String id,  DateTime createdAt,  DiagnosisResult result)  aiSummary,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String id,  DateTime createdAt,  String questionText,  DiagnosisContent content)  aiQuestion,required TResult Function( String id,  DateTime createdAt,  String text,  bool offTopic)  userAnswer,required TResult Function( String id,  DateTime createdAt,  String text)  aiNotice,required TResult Function( String id,  DateTime createdAt,  DiagnosisResult result)  aiSummary,}) {final _that = this;
 switch (_that) {
 case AiQuestion():
 return aiQuestion(_that.id,_that.createdAt,_that.questionText,_that.content);case UserAnswer():
-return userAnswer(_that.id,_that.createdAt,_that.text);case AiSummary():
+return userAnswer(_that.id,_that.createdAt,_that.text,_that.offTopic);case AiNotice():
+return aiNotice(_that.id,_that.createdAt,_that.text);case AiSummary():
 return aiSummary(_that.id,_that.createdAt,_that.result);}
 }
 /// A variant of `when` that fallback to returning `null`
@@ -393,11 +398,12 @@ return aiSummary(_that.id,_that.createdAt,_that.result);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String id,  DateTime createdAt,  String questionText,  DiagnosisContent content)?  aiQuestion,TResult? Function( String id,  DateTime createdAt,  String text)?  userAnswer,TResult? Function( String id,  DateTime createdAt,  DiagnosisResult result)?  aiSummary,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String id,  DateTime createdAt,  String questionText,  DiagnosisContent content)?  aiQuestion,TResult? Function( String id,  DateTime createdAt,  String text,  bool offTopic)?  userAnswer,TResult? Function( String id,  DateTime createdAt,  String text)?  aiNotice,TResult? Function( String id,  DateTime createdAt,  DiagnosisResult result)?  aiSummary,}) {final _that = this;
 switch (_that) {
 case AiQuestion() when aiQuestion != null:
 return aiQuestion(_that.id,_that.createdAt,_that.questionText,_that.content);case UserAnswer() when userAnswer != null:
-return userAnswer(_that.id,_that.createdAt,_that.text);case AiSummary() when aiSummary != null:
+return userAnswer(_that.id,_that.createdAt,_that.text,_that.offTopic);case AiNotice() when aiNotice != null:
+return aiNotice(_that.id,_that.createdAt,_that.text);case AiSummary() when aiSummary != null:
 return aiSummary(_that.id,_that.createdAt,_that.result);case _:
   return null;
 
@@ -493,12 +499,13 @@ $DiagnosisContentCopyWith<$Res> get content {
 
 
 class UserAnswer extends DiagnosisMessage {
-  const UserAnswer({required this.id, required this.createdAt, required this.text}): super._();
+  const UserAnswer({required this.id, required this.createdAt, required this.text, this.offTopic = false}): super._();
   
 
 @override final  String id;
 @override final  DateTime createdAt;
  final  String text;
+@JsonKey() final  bool offTopic;
 
 /// Create a copy of DiagnosisMessage
 /// with the given fields replaced by the non-null parameter values.
@@ -510,18 +517,18 @@ $UserAnswerCopyWith<UserAnswer> get copyWith => _$UserAnswerCopyWithImpl<UserAns
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserAnswer&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.text, text) || other.text == text));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is UserAnswer&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.text, text) || other.text == text)&&(identical(other.offTopic, offTopic) || other.offTopic == offTopic));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,createdAt,text);
+    return Object.hash(runtimeType,id,createdAt,text,offTopic);
 }
 
 @override
 String toString() {
-    return 'DiagnosisMessage.userAnswer(id: $id, createdAt: $createdAt, text: $text)';
+    return 'DiagnosisMessage.userAnswer(id: $id, createdAt: $createdAt, text: $text, offTopic: $offTopic)';
 }
 
 
@@ -532,7 +539,7 @@ abstract mixin class $UserAnswerCopyWith<$Res> implements $DiagnosisMessageCopyW
   factory $UserAnswerCopyWith(UserAnswer value, $Res Function(UserAnswer) _then) = _$UserAnswerCopyWithImpl;
 @override @useResult
 $Res call({
- String id, DateTime createdAt, String text
+ String id, DateTime createdAt, String text, bool offTopic
 });
 
 
@@ -549,8 +556,81 @@ class _$UserAnswerCopyWithImpl<$Res>
 
 /// Create a copy of DiagnosisMessage
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? createdAt = null,Object? text = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? createdAt = null,Object? text = null,Object? offTopic = null,}) {
   return _then(UserAnswer(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
+as String,offTopic: null == offTopic ? _self.offTopic : offTopic // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class AiNotice extends DiagnosisMessage {
+  const AiNotice({required this.id, required this.createdAt, required this.text}): super._();
+  
+
+@override final  String id;
+@override final  DateTime createdAt;
+ final  String text;
+
+/// Create a copy of DiagnosisMessage
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AiNoticeCopyWith<AiNotice> get copyWith => _$AiNoticeCopyWithImpl<AiNotice>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AiNotice&&(identical(other.id, id) || other.id == id)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.text, text) || other.text == text));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,id,createdAt,text);
+}
+
+@override
+String toString() {
+    return 'DiagnosisMessage.aiNotice(id: $id, createdAt: $createdAt, text: $text)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $AiNoticeCopyWith<$Res> implements $DiagnosisMessageCopyWith<$Res> {
+  factory $AiNoticeCopyWith(AiNotice value, $Res Function(AiNotice) _then) = _$AiNoticeCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, DateTime createdAt, String text
+});
+
+
+
+
+}
+/// @nodoc
+class _$AiNoticeCopyWithImpl<$Res>
+    implements $AiNoticeCopyWith<$Res> {
+  _$AiNoticeCopyWithImpl(this._self, this._then);
+
+  final AiNotice _self;
+  final $Res Function(AiNotice) _then;
+
+/// Create a copy of DiagnosisMessage
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? createdAt = null,Object? text = null,}) {
+  return _then(AiNotice(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable

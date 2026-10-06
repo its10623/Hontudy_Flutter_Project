@@ -104,6 +104,7 @@ ${_taskDescription('''사용자의 IT 학습 배경과 수준을 파악하기 �
 현재 $turnCount번째 턴입니다 (최소 2, 최대 8).''')}
 ${_constraints([
       '한 번에 하나의 질문만 하세요',
+      '혼터디는 IT·CS 학습 앱입니다. 사용자 답변이 IT·CS 학습이나 진단 질문과 무관하면(잡담, 음식 추천, 외국어 공부 등) next_action을 off_topic으로 하고, widget_type은 free_text_input, question_text는 빈 문자열로 두세요',
       '사용자가 아직 답하지 않은 정보만 물으세요',
       '배경/난이도/목적 태그를 섣불리 단정짓지 말고, 확신도가 낮으면 계속 질문하세요',
       '대화 이력({conversation_history})을 참고해 이미 물은 질문은 반복하지 마세요',
@@ -120,7 +121,7 @@ ${_orderDeduction('''다음 순서로 답하세요:
 ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
       'reasoning': 'string (근거 1~2줄)',
       'confidence': 'number (0~100)',
-      'next_action': 'continue_diagnosis | ready_to_classify | user_requested_problem',
+      'next_action': 'continue_diagnosis | ready_to_classify | user_requested_problem | off_topic',
       'widget_type': 'free_text_input | choice_chips | single_choice_list | summary_confirm',
       'question_text': 'string',
       'widget_content': 'object | null (위젯 타입에 맞는 콘텐츠)',
