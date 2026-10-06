@@ -82,7 +82,18 @@ class AiChatBubble extends StatelessWidget {
                       ),
                     if (footer case final footer?) ...[
                       const SizedBox(height: 10),
-                      footer,
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: context.colors.surfaceContainerLowest,
+                          borderRadius: AppShape.widgetCard,
+                          border: Border.all(
+                            color: context.colors.primary.withAlpha(30),
+                          ),
+                        ),
+                        child: footer,
+                      ),
                     ],
                     const SizedBox(height: 6),
                     _ChatTime(createdAt: createdAt),

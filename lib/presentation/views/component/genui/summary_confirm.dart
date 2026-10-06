@@ -47,9 +47,8 @@ class _SummaryConfirmState extends State<SummaryConfirm> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: context.colors.surfaceContainerLowest,
-            borderRadius: AppShape.widgetCard,
-            border: Border.all(color: context.colors.primary.withAlpha(30)),
+            color: context.colors.surfaceContainerLow,
+            borderRadius: AppShape.option,
           ),
           child: Column(
             children: [
