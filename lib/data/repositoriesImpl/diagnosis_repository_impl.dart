@@ -129,9 +129,14 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
   }
 
   DiagnosisTurn _diagnosisTurnFromJson(Map<String, dynamic> json) {
+    final raw = json['next_action'] as String;
+    final nextAction = DiagnosisNextAction.values.firstWhere(
+      (next) => next.jsonValue == raw,
+      orElse: () => throw FormatException('모르는 NextAction 값: $raw'),
+    );
     return DiagnosisTurn(
       confidence: json['confidence'] as int,
-      nextAction: json['next_action'] as String,
+      nextAction: nextAction,
       questionText: json['question_text'] as String,
       diagnosisContent: switch (json['widget_type']) {
         'free_text_input' => const DiagnosisContent.freeTextInput(),

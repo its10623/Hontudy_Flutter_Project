@@ -51,7 +51,7 @@ abstract mixin class $DiagnosisTurnCopyWith<$Res>  {
   factory $DiagnosisTurnCopyWith(DiagnosisTurn value, $Res Function(DiagnosisTurn) _then) = _$DiagnosisTurnCopyWithImpl;
 @useResult
 $Res call({
- int confidence, String nextAction, String questionText, DiagnosisContent diagnosisContent
+ int confidence, DiagnosisNextAction nextAction, String questionText, DiagnosisContent diagnosisContent
 });
 
 
@@ -72,7 +72,7 @@ class _$DiagnosisTurnCopyWithImpl<$Res>
   return _then(DiagnosisTurn(
 confidence: null == confidence ? _self.confidence : confidence // ignore: cast_nullable_to_non_nullable
 as int,nextAction: null == nextAction ? _self.nextAction : nextAction // ignore: cast_nullable_to_non_nullable
-as String,questionText: null == questionText ? _self.questionText : questionText // ignore: cast_nullable_to_non_nullable
+as DiagnosisNextAction,questionText: null == questionText ? _self.questionText : questionText // ignore: cast_nullable_to_non_nullable
 as String,diagnosisContent: null == diagnosisContent ? _self.diagnosisContent : diagnosisContent // ignore: cast_nullable_to_non_nullable
 as DiagnosisContent,
   ));

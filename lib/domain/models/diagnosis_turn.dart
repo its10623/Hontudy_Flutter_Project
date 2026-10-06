@@ -5,7 +5,7 @@ part 'diagnosis_turn.freezed.dart';
 @freezed
 class DiagnosisTurn with _$DiagnosisTurn {
   final int confidence;
-  final String nextAction;
+  final DiagnosisNextAction nextAction;
   final String questionText;
   final DiagnosisContent diagnosisContent;
 
@@ -41,6 +41,15 @@ sealed class DiagnosisContent with _$DiagnosisContent {
     SingleChoiceListContent() => 'single_choice_list',
     SummaryConfirmContent() => 'summary_confirm',
   };
+}
+
+enum DiagnosisNextAction {
+  continueDiagnosis('continue_diagnosis'),
+  readyToClassify('ready_to_classify'),
+  userRequestedProblem('user_requested_problem');
+
+  const DiagnosisNextAction(this.jsonValue);
+  final String jsonValue;
 }
 
 @freezed
