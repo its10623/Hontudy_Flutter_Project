@@ -7,6 +7,7 @@ import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hontudy/presentation/views/component/divider_widget.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class CodeBlock extends StatelessWidget {
   final String language;
@@ -27,7 +28,7 @@ class CodeBlock extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
         color: context.colors.surfaceContainer,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppShape.button,
         border: Border.all(
           color: context.colors.outlineVariant,
         ),

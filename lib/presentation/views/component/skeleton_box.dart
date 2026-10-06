@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/context_theme_extension.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class SkeletonBox extends StatelessWidget {
   final double width, height;
@@ -20,7 +21,7 @@ class SkeletonBox extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerHighest,
-        borderRadius: borderRadius ?? BorderRadius.circular(8),
+        borderRadius: borderRadius ?? AppShape.badge,
       ),
     );
   }

@@ -18,6 +18,7 @@ import 'package:hontudy/presentation/views/component/summary_card.dart';
 import 'package:hontudy/presentation/views/route/bottom_nav_bar.dart';
 
 import '../../core/format/days_ago.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class NoteSummaryPage extends ConsumerWidget {
   const NoteSummaryPage({super.key});
@@ -182,7 +183,7 @@ class _NoteSummaryBody extends StatelessWidget {
         children: [
           Material(
             color: context.colors.primary,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: AppShape.widgetCard,
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: () => _openDetail(context, weakest.main),
@@ -313,10 +314,10 @@ class _NoteSummarySkeleton extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         padding: const EdgeInsets.all(12),
         children: [
-          SkeletonBox(
+          const SkeletonBox(
             width: double.infinity,
             height: 96,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: AppShape.widgetCard,
           ),
           const SizedBox(height: 10),
           GridView.count(
@@ -328,10 +329,10 @@ class _NoteSummarySkeleton extends StatelessWidget {
             mainAxisExtent: 140,
             children: [
               for (var i = 0; i < 4; i++)
-                SkeletonBox(
+                const SkeletonBox(
                   width: double.infinity,
                   height: double.infinity,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: AppShape.widgetCard,
                 ),
             ],
           ),
@@ -339,10 +340,10 @@ class _NoteSummarySkeleton extends StatelessWidget {
           const SkeletonBox(width: 80, height: 14),
           const SizedBox(height: 16),
           for (var i = 0; i < _recentRowCount; i++) ...[
-            SkeletonBox(
+            const SkeletonBox(
               width: double.infinity,
               height: 56,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: AppShape.button,
             ),
             if (i != _recentRowCount - 1) const SizedBox(height: 12),
           ],

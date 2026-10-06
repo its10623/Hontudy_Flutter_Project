@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/context_theme_extension.dart';
 import '../../core/theme/text_type.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -14,7 +15,7 @@ class BottomNavBar extends StatelessWidget {
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(99),
+        borderRadius: AppShape.pill,
         boxShadow: [
           BoxShadow(
             color: context.colors.outline.withAlpha(50),
@@ -72,12 +73,12 @@ class _NavItemState extends State<_NavItem> {
   Widget build(BuildContext context) {
     return Material(
       color: context.colors.surfaceContainerLowest,
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: AppShape.floating,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => widget.onTap,
         splashColor: context.colors.primaryContainer.withAlpha(100),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: AppShape.floating,
         child: Container(
           width: 100,
           height: 60,
@@ -85,7 +86,7 @@ class _NavItemState extends State<_NavItem> {
             color: widget.isSelected
                 ? context.colors.primaryContainer.withAlpha(150)
                 : Colors.transparent,
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: AppShape.floating,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

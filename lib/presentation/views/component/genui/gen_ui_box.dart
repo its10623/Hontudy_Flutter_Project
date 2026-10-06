@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/context_theme_extension.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class GenUiBox extends StatelessWidget {
   final Widget child;
@@ -21,7 +22,7 @@ class GenUiBox extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: context.colors.surfaceContainerLowest,
-            borderRadius: const BorderRadius.all(Radius.circular(16)),
+            borderRadius: AppShape.widgetCard,
             border: Border.all(
               width: 1,
               color: context.colors.outline.withAlpha(50),

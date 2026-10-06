@@ -4,6 +4,7 @@ import 'package:hontudy/presentation/core/theme/text_type.dart';
 import 'package:hontudy/presentation/state/note_summary_state.dart';
 import 'package:hontudy/presentation/views/component/main_icon_tile.dart';
 import 'package:hontudy/presentation/views/component/progress_bar_widget.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class MainSummaryCard extends StatelessWidget {
   final VoidCallback onDetail;
@@ -19,7 +20,7 @@ class MainSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppShape.widgetCard,
         boxShadow: [
           BoxShadow(
             color: context.colors.outline.withAlpha(50),
@@ -30,12 +31,12 @@ class MainSummaryCard extends StatelessWidget {
       ),
       child: Material(
         color: context.colors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppShape.widgetCard,
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           splashColor: context.colors.primary.withAlpha(30),
           highlightColor: context.colors.primary.withAlpha(50),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppShape.widgetCard,
           onTap: onDetail,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -84,7 +85,7 @@ class AllMainsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppShape.widgetCard,
         boxShadow: [
           BoxShadow(
             color: context.colors.outline.withAlpha(50),
@@ -95,12 +96,12 @@ class AllMainsCard extends StatelessWidget {
       ),
       child: Material(
         color: context.colors.outlineVariant,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppShape.widgetCard,
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           splashColor: context.colors.primary.withAlpha(30),
           highlightColor: context.colors.primary.withAlpha(50),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppShape.widgetCard,
           onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -141,7 +142,7 @@ class UnsolvedMainCard extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerLowest.withAlpha(150),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppShape.widgetCard,
         border: Border.all(color: context.colors.outlineVariant),
       ),
       child: Padding(

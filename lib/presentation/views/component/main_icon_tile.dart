@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/core/theme/main_category_style.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 /// 1단계 주제 아이콘 타일. muted면 아직 안 푼 주제처럼 회색
 class MainIconTile extends StatelessWidget {
@@ -32,7 +33,7 @@ class MainIconTile extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppShape.button,
       ),
       child: SvgPicture.asset(
         style.iconAsset,

@@ -23,6 +23,7 @@ import '../component/note_status_views.dart';
 import '../component/shimmer_wrapper.dart';
 import '../component/skeleton_box.dart';
 import '../route/bottom_nav_bar.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class NoteDetailPage extends ConsumerStatefulWidget {
   final String main;
@@ -348,7 +349,7 @@ class _NoteQuizCardState extends State<_NoteQuizCard>
             margin: const EdgeInsets.symmetric(horizontal: 4.0),
             decoration: BoxDecoration(
               color: context.colors.surfaceContainerLowest,
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: AppShape.card,
               boxShadow: [
                 BoxShadow(
                   color: context.colors.outline.withAlpha(150),
@@ -542,7 +543,7 @@ class _MyAnswerSection extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: context.colors.outlineVariant.withAlpha(100),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppShape.widgetCard,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -630,7 +631,7 @@ class _ChoiceOptionRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: background,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppShape.button,
         border: selected ? Border.all(color: foreground) : null,
       ),
       child: Row(
@@ -688,7 +689,7 @@ class _NoteDetailSkeleton extends StatelessWidget {
                   SkeletonBox(
                     width: width,
                     height: 34,
-                    borderRadius: BorderRadius.circular(99),
+                    borderRadius: AppShape.pill,
                   ),
                   const SizedBox(width: 8),
                 ],
@@ -722,14 +723,14 @@ class _NoteDetailSkeleton extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8),
+          const Padding(
+            padding: EdgeInsets.all(8),
             child: Center(
               child: ShimmerWrapper(
                 child: SkeletonBox(
                   width: 44,
                   height: 6,
-                  borderRadius: BorderRadius.circular(99),
+                  borderRadius: AppShape.pill,
                 ),
               ),
             ),
@@ -752,9 +753,9 @@ class _SkeletonQuizCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: AppShape.card,
       ),
-      child: ShimmerWrapper(
+      child: const ShimmerWrapper(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -764,24 +765,24 @@ class _SkeletonQuizCard extends StatelessWidget {
                 SkeletonBox(
                   width: 80,
                   height: 22,
-                  borderRadius: BorderRadius.circular(99),
+                  borderRadius: AppShape.pill,
                 ),
-                const SkeletonBox(width: 40, height: 12),
+                SkeletonBox(width: 40, height: 12),
               ],
             ),
-            const SizedBox(height: 20),
-            const SkeletonBox(width: double.infinity, height: 16),
-            const SizedBox(height: 8),
-            const FractionallySizedBox(
+            SizedBox(height: 20),
+            SkeletonBox(width: double.infinity, height: 16),
+            SizedBox(height: 8),
+            FractionallySizedBox(
               widthFactor: 0.7,
               child: SkeletonBox(width: double.infinity, height: 16),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             Expanded(
               child: SkeletonBox(
                 width: double.infinity,
                 height: double.infinity,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: AppShape.widgetCard,
               ),
             ),
           ],

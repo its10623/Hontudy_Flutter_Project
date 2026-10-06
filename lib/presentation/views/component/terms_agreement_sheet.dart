@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/context_theme_extension.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 Future<bool> showTermsAgreementSheet(
   BuildContext context, {
@@ -54,7 +55,7 @@ class _TermsAgreementSheetState extends State<TermsAgreementSheet> {
     return Container(
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerLowest,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: AppShape.sheetTop,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(15),
@@ -74,7 +75,7 @@ class _TermsAgreementSheetState extends State<TermsAgreementSheet> {
               height: 4,
               decoration: BoxDecoration(
                 color: context.colors.outlineVariant,
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: AppShape.pill,
               ),
             ),
           ),
@@ -90,9 +91,9 @@ class _TermsAgreementSheetState extends State<TermsAgreementSheet> {
           const SizedBox(height: 20),
           Material(
             color: context.colors.surface,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: AppShape.option,
             child: InkWell(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: AppShape.option,
               onTap: _toggleAll,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
@@ -144,8 +145,8 @@ class _TermsAgreementSheetState extends State<TermsAgreementSheet> {
                 disabledBackgroundColor: context.colors.primaryContainer,
                 foregroundColor: context.colors.onPrimary,
                 disabledForegroundColor: context.colors.onPrimary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: AppShape.option,
                 ),
                 textStyle: context.textStyles.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w700,
@@ -180,7 +181,7 @@ class _TermRow extends StatelessWidget {
         Expanded(
           child: InkWell(
             onTap: onToggle,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: AppShape.segment,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 2),
               child: Row(

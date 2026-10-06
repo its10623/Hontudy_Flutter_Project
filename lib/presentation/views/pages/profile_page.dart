@@ -6,6 +6,7 @@ import 'package:hontudy/presentation/views/component/divider_widget.dart';
 
 import '../component/app_background.dart';
 import '../route/bottom_nav_bar.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -97,7 +98,7 @@ class _AccountCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: AppShape.widgetCard,
         boxShadow: [
           BoxShadow(
             color: context.colors.outlineVariant,
@@ -181,7 +182,7 @@ class _DiagnosisCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: AppShape.widgetCard,
         boxShadow: [
           BoxShadow(
             color: context.colors.outlineVariant,
@@ -242,7 +243,7 @@ class _StatTile extends StatelessWidget {
       padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(13),
+        borderRadius: AppShape.option,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,9 +275,9 @@ class _RediagnoseRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: context.colors.primary,
-      borderRadius: BorderRadius.circular(13),
+      borderRadius: AppShape.option,
       child: InkWell(
-        borderRadius: BorderRadius.circular(13),
+        borderRadius: AppShape.option,
         onTap: () {
           //TODO 재진단 채팅 이동
         },
@@ -332,7 +333,7 @@ class _SettingsCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.colors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: AppShape.widgetCard,
         boxShadow: [
           BoxShadow(
             color: context.colors.outlineVariant,
@@ -420,7 +421,7 @@ class _Toggle extends StatelessWidget {
           color: value
               ? context.colors.primary
               : context.colors.outline.withAlpha(100),
-          borderRadius: BorderRadius.circular(99),
+          borderRadius: AppShape.pill,
         ),
         child: Container(
           width: 22,

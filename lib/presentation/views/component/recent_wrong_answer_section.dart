@@ -3,6 +3,7 @@ import 'package:hontudy/presentation/core/theme/app_colors.dart';
 
 import '../../core/theme/context_theme_extension.dart';
 import '../../core/theme/text_type.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class RecentWrongAnswerSection extends StatefulWidget {
   final String wrongQuiz;
@@ -26,7 +27,7 @@ class _RecentWrongAnswerSectionState extends State<RecentWrongAnswerSection> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppShape.widgetCard,
         boxShadow: [
           BoxShadow(
             color: context.colors.outline.withAlpha(50),
@@ -37,12 +38,12 @@ class _RecentWrongAnswerSectionState extends State<RecentWrongAnswerSection> {
       ),
       child: Material(
         color: context.colors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppShape.segment,
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           splashColor: context.colors.primary.withAlpha(30),
           highlightColor: context.colors.primary.withAlpha(50),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: AppShape.segment,
           onTap: widget.onTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

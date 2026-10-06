@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/core/theme/text_type.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class ChipWidget extends StatefulWidget {
   final String label;
@@ -24,8 +25,10 @@ class _ChipWidgetState extends State<ChipWidget> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
       decoration: BoxDecoration(
-        color: widget.backgroundColor ?? context.colors.primaryContainer.withAlpha(150),
-        borderRadius: BorderRadius.circular(99),
+        color:
+            widget.backgroundColor ??
+            context.colors.primaryContainer.withAlpha(150),
+        borderRadius: AppShape.pill,
       ),
       child: Text(
         widget.label,

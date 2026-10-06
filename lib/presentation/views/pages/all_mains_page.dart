@@ -12,6 +12,7 @@ import 'package:hontudy/presentation/views/component/main_icon_tile.dart';
 import 'package:hontudy/presentation/views/component/note_status_views.dart';
 import 'package:hontudy/presentation/views/component/progress_bar_widget.dart';
 import 'package:hontudy/presentation/views/pages/note_detail_page.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class AllMainsPage extends ConsumerStatefulWidget {
   const AllMainsPage({super.key});
@@ -141,7 +142,7 @@ class _SolvedMainRow extends StatelessWidget {
     final isLow = summary.correctRate < _lowRate;
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppShape.card,
         boxShadow: [
           BoxShadow(
             color: context.colors.primary.withAlpha(18),
@@ -152,7 +153,7 @@ class _SolvedMainRow extends StatelessWidget {
       ),
       child: Material(
         color: context.colors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppShape.card,
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           splashColor: context.colors.primary.withAlpha(30),
@@ -230,9 +231,9 @@ class _WeakBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.metadataSurface,
-        borderRadius: BorderRadius.circular(99),
+        borderRadius: AppShape.pill,
       ),
       child: Text(
         '약점',

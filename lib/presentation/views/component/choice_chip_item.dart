@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hontudy/presentation/core/theme/text_type.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class ChoiceChipItem extends StatelessWidget {
   final Widget label;
@@ -21,7 +22,7 @@ class ChoiceChipItem extends StatelessWidget {
       avatar: avatar,
       label: label,
       showCheckmark: false,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(99)),
+      shape: const RoundedRectangleBorder(borderRadius: AppShape.pill),
       labelStyle: TextType.captionLarge.copyWith(fontWeight: FontWeight.w800),
       selected: isSelected,
       onSelected: onSelected,

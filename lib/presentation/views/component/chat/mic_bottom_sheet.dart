@@ -3,6 +3,7 @@ import 'package:hontudy/presentation/core/theme/app_colors.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/views/component/divider_widget.dart';
 import 'package:hontudy/presentation/views/component/primary_button.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class MicBottomSheet extends StatefulWidget {
   const MicBottomSheet({super.key});
@@ -87,7 +88,7 @@ class MicBottomSheetState extends State<MicBottomSheet> {
                         decoration: BoxDecoration(
                           color: context.colors.surfaceContainerHighest
                               .withAlpha(50),
-                          borderRadius: BorderRadius.circular(99),
+                          borderRadius: AppShape.pill,
                         ),
                         child: Text(
                           recordTime,
@@ -295,7 +296,7 @@ class _WaveFormBarsState extends State<_WaveFormBars>
       height: height,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: AppShape.segment,
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/views/component/primary_button.dart';
 
 import 'full_screen_image.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class ImageWidget extends StatefulWidget {
   final String url;
@@ -45,7 +46,7 @@ class _ImageWidgetState extends State<ImageWidget> {
           AspectRatio(
             aspectRatio: 16 / 9,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: AppShape.widgetCard,
               child: image == null
                   ? const _ImageFallback()
                   : Image(
@@ -76,7 +77,6 @@ class _ImageWidgetState extends State<ImageWidget> {
     );
   }
 }
-
 
 ImageProvider? imageProviderFrom(String source) {
   if (!source.startsWith('data:')) return NetworkImage(source);

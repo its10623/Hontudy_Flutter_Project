@@ -4,6 +4,7 @@ import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/core/theme/text_type.dart';
 
 import 'gen_ui_box.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 enum AnswerResult { correct, wrong }
 
@@ -41,7 +42,7 @@ class AnswerFeedback extends StatelessWidget {
                   color: _isCorrect
                       ? AppColors.correctSurface
                       : AppColors.wrongSurface,
-                  borderRadius: BorderRadius.circular(99),
+                  borderRadius: AppShape.pill,
                 ),
                 child: Text(
                   _isCorrect ? '정답' : '오답',
@@ -77,7 +78,7 @@ class AnswerFeedback extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: context.colors.primaryContainer.withAlpha(60),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppShape.button,
                 border: Border.all(color: context.colors.primaryContainer),
               ),
               child: Column(

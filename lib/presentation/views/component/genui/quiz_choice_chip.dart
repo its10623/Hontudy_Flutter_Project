@@ -3,6 +3,7 @@ import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/core/theme/text_type.dart';
 
 import 'gen_ui_box.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class QuizChoiceChip extends StatefulWidget {
   final dynamic data;
@@ -60,9 +61,9 @@ class _QuizOptionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: context.colors.surface,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: AppShape.button,
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppShape.button,
         onTap: onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -70,7 +71,7 @@ class _QuizOptionRow extends StatelessWidget {
             color: isSelected
                 ? context.colors.primaryContainer.withAlpha(150)
                 : null,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppShape.button,
             border: Border.all(
               color: isSelected
                   ? context.colors.primary

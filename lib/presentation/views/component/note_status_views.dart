@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hontudy/presentation/core/theme/app_colors.dart';
 
 import '../../core/theme/context_theme_extension.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 const _mascotDefaultAsset = 'assets/mascot/mascot_default.svg';
 const _mascotOopsAsset = 'assets/mascot/mascot_oops.svg';
@@ -268,7 +269,7 @@ class _GhostCard extends StatelessWidget {
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: context.colors.surfaceContainerLowest,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: AppShape.card,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,7 +281,7 @@ class _GhostCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: chipBg,
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: AppShape.pill,
                   ),
                   child: Text(
                     label,
@@ -317,7 +318,7 @@ class _GhostLine extends StatelessWidget {
         height: 9,
         decoration: BoxDecoration(
           color: context.colors.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: AppShape.skeletonBar,
         ),
       ),
     );
@@ -339,7 +340,7 @@ class _StatusButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: AppShape.option,
         boxShadow: [
           BoxShadow(
             color: context.colors.primary.withAlpha(71),
@@ -358,8 +359,8 @@ class _StatusButton extends StatelessWidget {
             foregroundColor: context.colors.onPrimary,
             disabledForegroundColor: context.colors.onPrimary,
             padding: const EdgeInsets.symmetric(horizontal: 28),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+            shape: const RoundedRectangleBorder(
+              borderRadius: AppShape.option,
             ),
             textStyle: context.textStyles.headlineSmall?.copyWith(
               fontWeight: FontWeight.w700,

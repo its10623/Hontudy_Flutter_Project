@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/core/theme/text_type.dart';
 import 'package:hontudy/presentation/views/component/primary_button.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class DialogWidget extends StatefulWidget {
   final String title;
@@ -65,7 +66,7 @@ class _DialogWidgetState extends State<DialogWidget> {
           ],
         ),
       ],
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: const RoundedRectangleBorder(borderRadius: AppShape.widgetCard),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/core/theme/text_type.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class FilterChipWidget extends StatefulWidget {
   final Function(bool) onSelected;
@@ -31,7 +32,7 @@ class _FilterChipWidgetState extends State<FilterChipWidget> {
           return null;
         }
       }),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(99)),
+      shape: const RoundedRectangleBorder(borderRadius: AppShape.pill),
       label: widget.label,
       onSelected: widget.onSelected,
       showCheckmark: false,
