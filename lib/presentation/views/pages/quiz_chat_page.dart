@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hontudy/di/repository_providers.dart';
 import 'package:hontudy/domain/models/diagnosis_profile.dart';
 import 'package:hontudy/presentation/core/theme/shape.dart';
 
 import '../../core/theme/context_theme_extension.dart';
+import 'diagnosis_chat_page.dart';
 import '../component/app_background.dart';
 import '../component/chat/chat_appbar.dart';
 import '../component/chat/chat_body.dart';
-import '../component/genui/answer_feeback.dart';
+import '../component/dialog_widget.dart';
+import '../component/error_dialog.dart';
+import '../component/genui/answer_feedback.dart';
 import '../component/genui/code_block.dart';
 import '../component/genui/gen_ui_box.dart';
 import '../component/genui/image_widget.dart';
@@ -15,16 +20,16 @@ import '../component/genui/quiz_choice_chip.dart';
 import '../component/shimmer_wrapper.dart';
 import '../component/skeleton_box.dart';
 
-class QuizChatPage extends StatefulWidget {
+class QuizChatPage extends ConsumerStatefulWidget {
   final DiagnosisProfile? profile;
 
   const QuizChatPage({super.key, this.profile});
 
   @override
-  QuizChatPageState createState() => QuizChatPageState();
+  ConsumerState<QuizChatPage> createState() => QuizChatPageState();
 }
 
-class QuizChatPageState extends State<QuizChatPage> {
+class QuizChatPageState extends ConsumerState<QuizChatPage> {
   final _controller = ChatMessagesController(
     paginationConfig: const PaginationConfig(reverseOrder: false),
   );
@@ -123,11 +128,10 @@ for (String subject in subjects) {
               /// TODO 노트 페이지 이동
             },
           ),
+          // TODO(임시): 프로필 화면이 연결되면 프로필의 진단 기록 관리로 이동
           onProfile: _navigateWidget(
             Icons.person_outline_rounded,
-            onTap: () {
-              /// TODO 프로필 스크린 이동
-            },
+            onTap: _confirmForgetDiagnosis,
           ),
         ),
         // TODO(임시): QuizViewModel 연결 전까지 mock 응답
@@ -226,6 +230,33 @@ for (String subject in subjects) {
           },
         ),
       ),
+    );
+  }
+
+  Future<void> _confirmForgetDiagnosis() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => DialogWidget(
+        title: '진단 결과 기억 해제',
+        content: '저장된 진단 결과를 지우고 다시 진단해요. 지금까지의 진단 기록도 함께 삭제돼요.',
+        secondaryText: '취소',
+        secondaryOnPressed: () => Navigator.of(dialogContext).pop(false),
+        primaryText: '다시 진단하기',
+        primaryOnPressed: () => Navigator.of(dialogContext).pop(true),
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    final result = await ref
+        .read(diagnosisRepositoryProvider)
+        .deleteDiagnosisProfile();
+    if (!mounted) return;
+    if (result.exceptionOrNull() case final error?) {
+      await ErrorDialog.show(context: context, error: error);
+      return;
+    }
+    await Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const DiagnosisChatPage()),
     );
   }
 
