@@ -25,16 +25,17 @@ class AuthService {
       final userCredential = await _firebaseAuth.signInWithProvider(
         _appleProvider(),
       );
-      if (userCredential.additionalUserInfo?.isNewUser ?? false) {
-        await _reorderKoreanAppleName();
+      // Firebase가 "이름 성"으로 저장한 신규 가입자 이름을 한국식으로 맞춤
+      final parts = userCredential.user?.displayName?.split(' ');
+      if ((userCredential.additionalUserInfo?.isNewUser ?? false) &&
+          parts?.length == 2) {
+        await _saveName(given: parts![0], family: parts[1]);
       }
       return userCredential;
     }
-    final apple = await _appleCredential();
-    final userCredential = await _firebaseAuth.signInWithCredential(
-      apple.credential,
-    );
-    await _saveAppleNameIfMissing(apple.fullName);
+    final (apple, credential) = await _appleCredential();
+    final userCredential = await _firebaseAuth.signInWithCredential(credential);
+    await _saveName(given: apple.givenName, family: apple.familyName);
     return userCredential;
   }
 
@@ -75,8 +76,8 @@ class AuthService {
       }
       return accessToken;
     }
-    final apple = await _appleCredential();
-    await user.reauthenticateWithCredential(apple.credential);
+    final (apple, credential) = await _appleCredential();
+    await user.reauthenticateWithCredential(credential);
     return apple.authorizationCode;
   }
 
@@ -105,61 +106,32 @@ class AuthService {
       ..addScope('name');
   }
 
-  Future<
-    ({OAuthCredential credential, String? fullName, String authorizationCode})
-  >
+  Future<(AuthorizationCredentialAppleID, OAuthCredential)>
   _appleCredential() async {
     final rawNonce = _generateNonce();
-    final hashedNonce = _sha256ofString(rawNonce);
-
-    final appleCredential = await SignInWithApple.getAppleIDCredential(
+    final apple = await SignInWithApple.getAppleIDCredential(
       scopes: [
         AppleIDAuthorizationScopes.email,
         AppleIDAuthorizationScopes.fullName,
       ],
-      nonce: hashedNonce,
+      nonce: _sha256ofString(rawNonce),
     );
-
     final credential = OAuthProvider('apple.com').credential(
-      idToken: appleCredential.identityToken,
+      idToken: apple.identityToken,
       rawNonce: rawNonce,
     );
-    final fullName = _joinAppleName(
-      givenName: appleCredential.givenName,
-      familyName: appleCredential.familyName,
-    );
-    return (
-      credential: credential,
-      fullName: fullName,
-      authorizationCode: appleCredential.authorizationCode,
-    );
+    return (apple, credential);
   }
 
-  Future<void> _saveAppleNameIfMissing(String? fullName) async {
+  // Apple은 이름을 최초 로그인 때만 준다 한글 이름은 성+이름으로 붙여 저장
+  Future<void> _saveName({String? given, String? family}) async {
     final user = _firebaseAuth.currentUser;
-    if (user == null || fullName == null) return;
-    if (user.displayName?.isNotEmpty ?? false) return;
-    await user.updateDisplayName(fullName);
-  }
+    final g = given?.trim() ?? '';
+    final f = family?.trim() ?? '';
+    if (user == null || (g.isEmpty && f.isEmpty)) return;
 
-  Future<void> _reorderKoreanAppleName() async {
-    final user = _firebaseAuth.currentUser;
-    final displayName = user?.displayName?.trim();
-    if (user == null || displayName == null) return;
-
-    final match = RegExp(r'^([가-힣]+) ([가-힣]+)$').firstMatch(displayName);
-    if (match == null) return;
-    await user.updateDisplayName('${match[2]}${match[1]}');
-  }
-
-  String? _joinAppleName({String? givenName, String? familyName}) {
-    final given = givenName?.trim() ?? '';
-    final family = familyName?.trim() ?? '';
-    if (given.isEmpty && family.isEmpty) return null;
-
-    final isKorean = RegExp(r'[가-힣]').hasMatch('$family$given');
-    if (isKorean) return '$family$given';
-    return [given, family].where((part) => part.isNotEmpty).join(' ');
+    final isKorean = RegExp(r'[가-힣]').hasMatch('$f$g');
+    await user.updateDisplayName(isKorean ? '$f$g' : '$g $f'.trim());
   }
 
   String _generateNonce([int length = 32]) {
