@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
 import 'package:hontudy/presentation/core/theme/shape.dart';
 
-class DiagnosisChoiceChip extends StatefulWidget {
+class DiagnosisChoiceList extends StatefulWidget {
   final List<String> options;
   final bool enabled;
   final ValueChanged<String> onSelected;
 
-  const DiagnosisChoiceChip({
+  const DiagnosisChoiceList({
     super.key,
     required this.options,
     required this.enabled,
@@ -15,10 +15,10 @@ class DiagnosisChoiceChip extends StatefulWidget {
   });
 
   @override
-  State<DiagnosisChoiceChip> createState() => _DiagnosisChoiceChipState();
+  State<DiagnosisChoiceList> createState() => _DiagnosisChoiceListState();
 }
 
-class _DiagnosisChoiceChipState extends State<DiagnosisChoiceChip> {
+class _DiagnosisChoiceListState extends State<DiagnosisChoiceList> {
   String? _selected;
 
   void _select(String option) {
@@ -30,15 +30,13 @@ class _DiagnosisChoiceChipState extends State<DiagnosisChoiceChip> {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 8,
       children: [
         for (final option in widget.options)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: _OptionRow(
-              label: option,
-              selected: _selected == option,
-              onTap: widget.enabled ? () => _select(option) : null,
-            ),
+          _OptionRow(
+            label: option,
+            selected: _selected == option,
+            onTap: widget.enabled ? () => _select(option) : null,
           ),
       ],
     );
@@ -65,12 +63,10 @@ class _OptionRow extends StatelessWidget {
       child: Material(
         color: selected
             ? primary.withAlpha(20)
-            : context.colors.surfaceContainerLowest,
+            : context.colors.surfaceContainerLow,
         shape: RoundedRectangleBorder(
           borderRadius: AppShape.option,
-          side: BorderSide(
-            color: selected ? primary : primary.withAlpha(30),
-          ),
+          side: BorderSide(color: selected ? primary : Colors.transparent),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
