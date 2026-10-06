@@ -106,11 +106,40 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
     return limit == null ? values : values.take(limit).toList();
   }
 
+  int _parseInt(Object? raw, {required String field}) {
+    final value = switch (raw) {
+      int() => raw,
+      num() => raw.round(),
+      String() => num.tryParse(raw.trim())?.round(),
+      _ => null,
+    };
+    if (value == null) throw FormatException('$field 값이 숫자가 아님: $raw');
+    return value;
+  }
+
+  int _intInRange(
+    Object? raw, {
+    required String field,
+    required int min,
+    required int max,
+  }) {
+    final value = _parseInt(raw, field: field);
+    if (value < min || value > max) {
+      throw FormatException('$field 값이 $min~$max 범위를 벗어남: $value');
+    }
+    return value;
+  }
+
   DiagnosisResult _diagnosisResultFromJson(Map<String, dynamic> json) {
     return DiagnosisResult(
       profile: DiagnosisProfile(
         background: json['background'] as String,
-        difficultyScore: json['difficulty_score'] as int,
+        difficultyScore: _intInRange(
+          json['difficulty_score'],
+          field: 'difficulty_score',
+          min: 1,
+          max: 5,
+        ),
         purposeTags: _whitelistedStrings(
           json['purpose_tags'],
           allowed: DiagnosisScheme.purposeTags.map((purpose) => purpose.tag),
@@ -124,7 +153,10 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
       ),
       backgroundDetail: json['background_detail'] as String?,
       reasoning: json['reasoning'] as String,
-      confidence: json['confidence'] as int,
+      confidence: _parseInt(
+        json['confidence'],
+        field: 'confidence',
+      ).clamp(0, 100),
     );
   }
 
@@ -135,7 +167,10 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
       orElse: () => throw FormatException('모르는 NextAction 값: $raw'),
     );
     return DiagnosisTurn(
-      confidence: json['confidence'] as int,
+      confidence: _parseInt(
+        json['confidence'],
+        field: 'confidence',
+      ).clamp(0, 100),
       nextAction: nextAction,
       questionText: json['question_text'] as String,
       diagnosisContent: switch (json['widget_type']) {
