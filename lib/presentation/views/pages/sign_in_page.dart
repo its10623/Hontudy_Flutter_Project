@@ -1,6 +1,7 @@
 import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hontudy/presentation/core/terms_link.dart';
 import 'package:hontudy/presentation/viewmodels/sign_in_viewmodel.dart';
 import 'package:hontudy/presentation/views/component/terms_agreement_sheet.dart';
 import 'package:hontudy/presentation/views/pages/quiz_chat_page.dart';
@@ -36,7 +37,10 @@ class _SignInPageState extends ConsumerState<SignInPage> {
             case NextRoute.needsSignIn || null:
               return;
             case NextRoute.needsTermsAgreement:
-              final agreed = await showTermsAgreementSheet(context);
+              final agreed = await showTermsAgreementSheet(
+                context,
+                onOpenTerm: (_) => openTermsPage(),
+              );
               if (!context.mounted) return;
               if (agreed) {
                 await ref.read(signInViewModelProvider.notifier).agreeToTerms();

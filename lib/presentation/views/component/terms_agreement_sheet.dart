@@ -20,13 +20,19 @@ Future<bool> showTermsAgreementSheet(
 }
 
 class _Term {
-  const _Term(this.label);
+  const _Term(this.label, {this.description});
   final String label;
+  final String? description;
 }
 
 const _terms = [
   _Term('서비스 이용약관'),
   _Term('개인정보 수집 및 이용'),
+  _Term(
+    'AI 서비스 이용을 위한 대화 내용 국외 전송',
+    description:
+        '진단·문제풀이 중 입력한 내용이 AI 응답 생성을 위해 OpenAI·Google(미국)로 전송돼요. 대화 원문은 서버에 저장하지 않아요.',
+  ),
 ];
 
 class TermsAgreementSheet extends StatefulWidget {
@@ -189,23 +195,37 @@ class _TermRow extends StatelessWidget {
                   _CheckCircle(checked: checked),
                   const SizedBox(width: 11),
                   Expanded(
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text.rich(
                           TextSpan(
-                            text: '[필수] ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              color: context.colors.primary,
+                            children: [
+                              TextSpan(
+                                text: '[필수] ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  color: context.colors.primary,
+                                ),
+                              ),
+                              TextSpan(text: term.label),
+                            ],
+                          ),
+                          style: context.textStyles.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: context.colors.onSurface,
+                          ),
+                        ),
+                        if (term.description case final description?) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            description,
+                            style: context.captionSmall.copyWith(
+                              color: context.colors.outline,
                             ),
                           ),
-                          TextSpan(text: term.label),
                         ],
-                      ),
-                      style: context.textStyles.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: context.colors.onSurface,
-                      ),
+                      ],
                     ),
                   ),
                 ],
