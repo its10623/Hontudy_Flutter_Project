@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hontudy/di/repository_providers.dart';
 import 'package:hontudy/domain/models/diagnosis_profile.dart';
 import 'package:hontudy/presentation/core/theme/shape.dart';
 
 import '../../core/theme/context_theme_extension.dart';
-import 'diagnosis_chat_page.dart';
 import '../component/app_background.dart';
 import '../component/chat/chat_appbar.dart';
 import '../component/chat/chat_body.dart';
-import '../component/dialog_widget.dart';
-import '../component/error_dialog.dart';
 import '../component/genui/answer_feedback.dart';
 import '../component/genui/code_block.dart';
 import '../component/genui/gen_ui_box.dart';
@@ -19,20 +14,37 @@ import '../component/genui/image_widget.dart';
 import '../component/genui/quiz_choice_chip.dart';
 import '../component/shimmer_wrapper.dart';
 import '../component/skeleton_box.dart';
+import 'profile_page.dart';
 
-class QuizChatPage extends ConsumerStatefulWidget {
+class QuizChatPage extends StatefulWidget {
   final DiagnosisProfile? profile;
 
   const QuizChatPage({super.key, this.profile});
 
   @override
-  ConsumerState<QuizChatPage> createState() => QuizChatPageState();
+  QuizChatPageState createState() => QuizChatPageState();
 }
 
-class QuizChatPageState extends ConsumerState<QuizChatPage> {
+class QuizChatPageState extends State<QuizChatPage> {
   final _controller = ChatMessagesController(
     paginationConfig: const PaginationConfig(reverseOrder: false),
   );
+
+  static const _comingSoonNotice =
+      '진단해 주셔서 고마워요!\n맞춤 문제풀이는 지금 준비 중이에요. 업데이트로 곧 열릴 예정이에요.';
+
+  @override
+  void initState() {
+    super.initState();
+    // TODO(임시): QuizViewModel 연결 시 준비 중 안내 제거
+    _controller.setMessages([
+      ChatMessage(
+        text: _comingSoonNotice,
+        user: chatAiUser,
+        createdAt: DateTime.now(),
+      ),
+    ]);
+  }
 
   @override
   void dispose() {
@@ -120,25 +132,27 @@ for (String subject in subjects) {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: ChatAppbar(
-          pageInfo: '문제풀이 · 네트워크',
-          currentState: '난이도 중',
+          pageInfo: '혼터디 AI · 문제풀이',
+          currentState: '준비 중',
           onNote: _navigateWidget(
             Icons.menu_book_outlined,
-            onTap: () {
-              /// TODO 노트 페이지 이동
-            },
+            // TODO: 풀이 기록 저장이 연결되면 노트 페이지로 이동
+            onTap: () => ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('준비 중이에요'))),
           ),
-          // TODO(임시): 프로필 화면이 연결되면 프로필의 진단 기록 관리로 이동
           onProfile: _navigateWidget(
             Icons.person_outline_rounded,
-            onTap: _confirmForgetDiagnosis,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const ProfilePage()),
+            ),
           ),
         ),
         // TODO(임시): QuizViewModel 연결 전까지 mock 응답
         body: ChatBody(
           controller: _controller,
+          inputEnabled: false,
           onSend: _onSendMock,
-          metadata: '3일전에 풀었던 문제입니다',
           resultRenderers: {
             'single_choice_question': (context, data) => QuizChoiceChip(
               data: data,
@@ -230,33 +244,6 @@ for (String subject in subjects) {
           },
         ),
       ),
-    );
-  }
-
-  Future<void> _confirmForgetDiagnosis() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => DialogWidget(
-        title: '진단 결과 기억 해제',
-        content: '저장된 진단 결과를 지우고 다시 진단해요. 지금까지의 진단 기록도 함께 삭제돼요.',
-        secondaryText: '취소',
-        secondaryOnPressed: () => Navigator.of(dialogContext).pop(false),
-        primaryText: '다시 진단하기',
-        primaryOnPressed: () => Navigator.of(dialogContext).pop(true),
-      ),
-    );
-    if (confirmed != true || !mounted) return;
-
-    final result = await ref
-        .read(diagnosisRepositoryProvider)
-        .deleteDiagnosisProfile();
-    if (!mounted) return;
-    if (result.exceptionOrNull() case final error?) {
-      await ErrorDialog.show(context: context, error: error);
-      return;
-    }
-    await Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const DiagnosisChatPage()),
     );
   }
 
