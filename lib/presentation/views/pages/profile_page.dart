@@ -1,82 +1,200 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hontudy/domain/exceptions.dart';
+import 'package:hontudy/domain/models/diagnosis_profile.dart';
+import 'package:hontudy/domain/models/user.dart';
+import 'package:hontudy/presentation/core/terms_link.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
+import 'package:hontudy/presentation/core/theme/shape.dart';
 import 'package:hontudy/presentation/core/theme/text_type.dart';
+import 'package:hontudy/presentation/viewmodels/profile_viewmodel.dart';
 import 'package:hontudy/presentation/views/component/chip_widget.dart';
 import 'package:hontudy/presentation/views/component/divider_widget.dart';
 
 import '../component/app_background.dart';
-import '../route/bottom_nav_bar.dart';
-import 'package:hontudy/presentation/core/theme/shape.dart';
+import '../component/dialog_widget.dart';
+import '../component/error_dialog.dart';
+import 'diagnosis_chat_page.dart';
+import 'sign_in_page.dart';
 
-class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+class ProfilePage extends ConsumerStatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
-  bool _pushEnabled = true;
+class _ProfilePageState extends ConsumerState<ProfilePage> {
+  bool _busy = false;
 
   @override
   Widget build(BuildContext context) {
-    return AppBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        bottomNavigationBar: const SafeArea(
-          child: BottomNavBar(
-            currentIndex: 2,
-          ),
-        ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '마이',
-                    style: TextType.titleLarge.copyWith(letterSpacing: -0.5),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+    final profile = ref.watch(profileViewModelProvider);
+
+    return PopScope(
+      canPop: !_busy,
+      child: AppBackground(
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: SafeArea(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 4, 16, 4),
+                  child: Row(
                     children: [
-                      const _AccountCard(
-                        initial: '수',
-                        name: '수민님',
-                        meta: 'sumin@gmail.com · Google 로그인',
+                      IconButton(
+                        onPressed: _busy
+                            ? null
+                            : () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded),
                       ),
-                      const SizedBox(height: 16),
-                      const _SectionLabel('기억하고 있는 진단 프로필'),
-                      const SizedBox(height: 8),
-                      const _DiagnosisCard(),
-                      const SizedBox(height: 16),
-                      _SettingsCard(
-                        pushEnabled: _pushEnabled,
-                        onPushChanged: (value) =>
-                            setState(() => _pushEnabled = value),
-                      ),
-                      const SizedBox(height: 16),
-                      const Center(
-                        child: Text(
-                          '버전 1.0.0 (MVP)',
-                          style: TextType.captionMedium,
+                      Text(
+                        '프로필',
+                        style: TextType.titleLarge.copyWith(
+                          letterSpacing: -0.5,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
+                if (_busy) const LinearProgressIndicator(),
+                Expanded(
+                  child: AbsorbPointer(
+                    absorbing: _busy,
+                    child: profile.when(
+                      data: (state) =>
+                          _buildContent(state.user, state.diagnosis),
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      error: (error, _) => Center(
+                        child: TextButton(
+                          onPressed: () =>
+                              ref.invalidate(profileViewModelProvider),
+                          child: const Text('불러오지 못했어요. 다시 시도'),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildContent(User? user, DiagnosisProfile? diagnosis) {
+    final name = (user?.displayName.isNotEmpty ?? false)
+        ? user!.displayName
+        : '이름 없음';
+    final provider = switch (user?.authProvider) {
+      AuthProvider.google => 'Google 로그인',
+      AuthProvider.apple => 'Apple 로그인',
+      null => '',
+    };
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _AccountCard(
+            initial: name.characters.first,
+            name: '$name님',
+            meta: [
+              user?.email ?? '',
+              provider,
+            ].where((text) => text.isNotEmpty).join(' · '),
+          ),
+          const SizedBox(height: 16),
+          const _SectionLabel('기억하고 있는 진단 프로필'),
+          const SizedBox(height: 8),
+          _DiagnosisCard(diagnosis: diagnosis, onRediagnose: _rediagnose),
+          const SizedBox(height: 16),
+          _SettingsCard(
+            onTerms: openTermsPage,
+            onSignOut: _signOut,
+            onDeleteAccount: _deleteAccount,
+          ),
+          const SizedBox(height: 16),
+          const Center(
+            child: Text('버전 1.0.0 (MVP)', style: TextType.captionMedium),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _confirm({
+    required String title,
+    required String content,
+    required String primaryText,
+  }) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => DialogWidget(
+        title: title,
+        content: content,
+        secondaryText: '취소',
+        secondaryOnPressed: () => Navigator.of(dialogContext).pop(false),
+        primaryText: primaryText,
+        primaryOnPressed: () => Navigator.of(dialogContext).pop(true),
+      ),
+    );
+    return confirmed == true && mounted;
+  }
+
+  Future<void> _run(Future<void> Function() action, Widget next) async {
+    setState(() => _busy = true);
+    try {
+      await action();
+      if (!mounted) return;
+      await Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => next),
+        (_) => false,
+      );
+    } on SignInCancelledException {
+      return;
+    } catch (error) {
+      if (!mounted) return;
+      await ErrorDialog.show(context: context, error: error);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _rediagnose() async {
+    if (!await _confirm(
+      title: '다시 진단하기',
+      content: '저장된 진단 결과를 지우고 다시 진단해요. 지금까지의 진단 기록도 함께 삭제돼요.',
+      primaryText: '다시 진단하기',
+    )) {
+      return;
+    }
+    await _run(
+      ref.read(profileViewModelProvider.notifier).forgetDiagnosis,
+      const DiagnosisChatPage(),
+    );
+  }
+
+  Future<void> _signOut() => _run(
+    ref.read(profileViewModelProvider.notifier).signOut,
+    const SignInPage(),
+  );
+
+  Future<void> _deleteAccount() async {
+    if (!await _confirm(
+      title: '회원 탈퇴',
+      content: '진단 기록과 풀이 기록이 모두 삭제되고 되돌릴 수 없어요. 본인 확인을 위해 한 번 더 로그인해요.',
+      primaryText: '탈퇴하기',
+    )) {
+      return;
+    }
+    await _run(
+      ref.read(profileViewModelProvider.notifier).deleteAccount,
+      const SignInPage(),
     );
   }
 }
@@ -174,10 +292,14 @@ class _SectionLabel extends StatelessWidget {
 }
 
 class _DiagnosisCard extends StatelessWidget {
-  const _DiagnosisCard();
+  final DiagnosisProfile? diagnosis;
+  final VoidCallback onRediagnose;
+
+  const _DiagnosisCard({required this.diagnosis, required this.onRediagnose});
 
   @override
   Widget build(BuildContext context) {
+    final diagnosis = this.diagnosis;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -194,37 +316,44 @@ class _DiagnosisCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Row(
-            children: [
-              Expanded(
-                child: _StatTile(label: '난이도', value: '2 / 5 · 입문+'),
+          if (diagnosis == null)
+            Text(
+              '기억하고 있는 진단 결과가 없어요',
+              style: TextType.bodySmall.copyWith(
+                color: context.colors.outline,
               ),
-              SizedBox(width: 10),
-              Expanded(
-                child: _StatTile(label: '목적', value: '취업·이직'),
+            )
+          else ...[
+            Row(
+              children: [
+                Expanded(
+                  child: _StatTile(
+                    label: '난이도',
+                    value: '${diagnosis.difficultyScore} / 5',
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _StatTile(label: '배경', value: diagnosis.background),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            _StatTile(label: '목적', value: diagnosis.purposeTags.join(', ')),
+            if (diagnosis.weakAreas.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 7,
+                runSpacing: 7,
+                children: [
+                  for (final area in diagnosis.weakAreas)
+                    ChipWidget(label: area),
+                ],
               ),
             ],
-          ),
+          ],
           const SizedBox(height: 12),
-          Wrap(
-            spacing: 7,
-            runSpacing: 7,
-            children: [
-              const ChipWidget(
-                label: '네트워크',
-              ),
-              const ChipWidget(
-                label: '운영체제',
-              ),
-              ChipWidget(
-                label: '자료구조',
-                backgroundColor: context.colors.outline.withAlpha(20),
-                textColor: context.colors.outline,
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          const _RediagnoseRow(),
+          _RediagnoseRow(onTap: onRediagnose),
         ],
       ),
     );
@@ -269,7 +398,9 @@ class _StatTile extends StatelessWidget {
 }
 
 class _RediagnoseRow extends StatelessWidget {
-  const _RediagnoseRow();
+  final VoidCallback onTap;
+
+  const _RediagnoseRow({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -278,9 +409,7 @@ class _RediagnoseRow extends StatelessWidget {
       borderRadius: AppShape.option,
       child: InkWell(
         borderRadius: AppShape.option,
-        onTap: () {
-          //TODO 재진단 채팅 이동
-        },
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Row(
@@ -320,12 +449,14 @@ class _RediagnoseRow extends StatelessWidget {
 }
 
 class _SettingsCard extends StatelessWidget {
-  final bool pushEnabled;
-  final ValueChanged<bool> onPushChanged;
+  final VoidCallback onTerms;
+  final VoidCallback onSignOut;
+  final VoidCallback onDeleteAccount;
 
   const _SettingsCard({
-    required this.pushEnabled,
-    required this.onPushChanged,
+    required this.onTerms,
+    required this.onSignOut,
+    required this.onDeleteAccount,
   });
 
   @override
@@ -345,14 +476,11 @@ class _SettingsCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          _SettingsRow(
-            label: '푸시 알림',
-            trailing: _Toggle(value: pushEnabled, onChanged: onPushChanged),
-          ),
+          _SettingsRow(label: '개인정보 및 이용약관', onTap: onTerms),
           const DividerWidget(),
-          const _SettingsRow(label: '로그아웃'),
+          _SettingsRow(label: '로그아웃', onTap: onSignOut),
           const DividerWidget(),
-          const _SettingsRow(label: '회원 탈퇴', danger: true),
+          _SettingsRow(label: '회원 탈퇴', onTap: onDeleteAccount, danger: true),
         ],
       ),
     );
@@ -361,79 +489,38 @@ class _SettingsCard extends StatelessWidget {
 
 class _SettingsRow extends StatelessWidget {
   final String label;
-  final Widget? trailing;
+  final VoidCallback onTap;
   final bool danger;
 
   const _SettingsRow({
     required this.label,
-    this.trailing,
+    required this.onTap,
     this.danger = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: trailing == null ? () {} : null,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                label,
-                style: TextType.bodySmall.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: danger ? context.colors.error : null,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextType.bodySmall.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: danger ? context.colors.error : null,
+                  ),
                 ),
               ),
-            ),
-            trailing ??
-                Icon(
-                  Icons.chevron_right,
-                  size: 20,
-                  color: context.colors.onPrimary.withAlpha(220),
-                ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Toggle extends StatelessWidget {
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  const _Toggle({required this.value, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onChanged(!value),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOut,
-        width: 46,
-        height: 28,
-        padding: const EdgeInsets.all(3),
-        alignment: value ? Alignment.centerRight : Alignment.centerLeft,
-        decoration: BoxDecoration(
-          color: value
-              ? context.colors.primary
-              : context.colors.outline.withAlpha(100),
-          borderRadius: AppShape.pill,
-        ),
-        child: Container(
-          width: 22,
-          height: 22,
-          decoration: BoxDecoration(
-            color: context.colors.surface,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: context.colors.outlineVariant,
-                blurRadius: 2,
-                offset: const Offset(0, 1),
+              Icon(
+                Icons.chevron_right,
+                size: 20,
+                color: context.colors.outline,
               ),
             ],
           ),
