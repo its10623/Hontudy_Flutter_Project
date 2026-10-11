@@ -78,7 +78,13 @@ class _AllMainsPageState extends ConsumerState<AllMainsPage> {
         : null;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+      // 셸이 extendBody라 하단 패딩에 탭 높이가 포함됨 — 마지막 항목이 탭에 가리지 않게
+      padding: EdgeInsets.fromLTRB(
+        16,
+        4,
+        16,
+        24 + MediaQuery.paddingOf(context).bottom,
+      ),
       children: [
         Row(
           children: [
