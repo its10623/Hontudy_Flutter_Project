@@ -1,3 +1,4 @@
+import 'package:hontudy/presentation/core/screenshot_mode.dart';
 import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      debugShowCheckedModeBanner: !kScreenshotMode,
       theme: AppTheme.light,
       // darkTheme: AppTheme.dark,
       routerConfig: appRouter,

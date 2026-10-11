@@ -1,3 +1,4 @@
+import 'package:hontudy/presentation/core/screenshot_mode.dart';
 import 'package:hontudy/presentation/views/route/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:math';
@@ -91,7 +92,9 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
               _buildFooter(state, message.customProperties?['id']),
         ),
         // TODO(임시): 프로필 화면 로그아웃이 연결되면(라우팅 작업 시) 삭제
-        floatingActionButton: kDebugMode ? const _DebugAccountBar() : null,
+        floatingActionButton: kDebugMode && !kScreenshotMode
+            ? const _DebugAccountBar()
+            : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       ),
     );
