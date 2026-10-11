@@ -20,6 +20,7 @@ class AiChatBubble extends StatelessWidget {
   final DateTime createdAt;
   final Widget? header;
   final Widget? footer;
+  final Widget? after;
 
   const AiChatBubble({
     super.key,
@@ -28,82 +29,92 @@ class AiChatBubble extends StatelessWidget {
     required this.createdAt,
     this.header,
     this.footer,
+    this.after,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: _itemSpacing,
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 354),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const MascotAvatar(),
-              const SizedBox(width: 10),
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ?header,
-                    Text(
-                      name,
-                      style: context.textStyles.labelSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: context.colors.primary,
+    final bubble = Align(
+      alignment: Alignment.centerLeft,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 354),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const MascotAvatar(),
+            const SizedBox(width: 10),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ?header,
+                  Text(
+                    name,
+                    style: context.textStyles.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: context.colors.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  if (text.isNotEmpty)
+                    Container(
+                      padding: _bubblePadding,
+                      decoration: BoxDecoration(
+                        color: context.colors.surfaceContainerLowest,
+                        borderRadius: AppShape.aiBubble,
+                        border: Border.all(
+                          color: context.colors.primary.withAlpha(30),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: context.colors.primary.withAlpha(18),
+                            blurRadius: 18,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        text,
+                        style: context.textStyles.bodyLarge?.copyWith(
+                          height: 1.6,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    if (text.isNotEmpty)
-                      Container(
-                        padding: _bubblePadding,
-                        decoration: BoxDecoration(
-                          color: context.colors.surfaceContainerLowest,
-                          borderRadius: AppShape.aiBubble,
-                          border: Border.all(
-                            color: context.colors.primary.withAlpha(30),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: context.colors.primary.withAlpha(18),
-                              blurRadius: 18,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
-                        ),
-                        child: Text(
-                          text,
-                          style: context.textStyles.bodyLarge?.copyWith(
-                            height: 1.6,
-                          ),
+                  if (footer case final footer?) ...[
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: context.colors.surfaceContainerLowest,
+                        borderRadius: AppShape.widgetCard,
+                        border: Border.all(
+                          color: context.colors.primary.withAlpha(30),
                         ),
                       ),
-                    if (footer case final footer?) ...[
-                      const SizedBox(height: 10),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: context.colors.surfaceContainerLowest,
-                          borderRadius: AppShape.widgetCard,
-                          border: Border.all(
-                            color: context.colors.primary.withAlpha(30),
-                          ),
-                        ),
-                        child: footer,
-                      ),
-                    ],
-                    const SizedBox(height: 6),
-                    _ChatTime(createdAt: createdAt),
+                      child: footer,
+                    ),
                   ],
-                ),
+                  const SizedBox(height: 6),
+                  _ChatTime(createdAt: createdAt),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
+    );
+    return Padding(
+      padding: _itemSpacing,
+      child: after == null
+          ? bubble
+          : Column(
+              children: [
+                bubble,
+                const SizedBox(height: 24),
+                after!,
+              ],
+            ),
     );
   }
 }
