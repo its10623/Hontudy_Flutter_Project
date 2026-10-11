@@ -14,6 +14,7 @@ class DiagnosisViewModel extends _$DiagnosisViewModel {
   static const _offTopicNotice =
       '혼터디는 IT·CS 학습을 돕는 서비스예요. 위 질문에 답해 주시면 맞춤 진단을 이어갈게요.';
   static const _restartNotice = '진단과 관련 없는 답변이 이어져서 처음 질문부터 다시 시작할게요.';
+  static const _rediagnoseNotice = '처음부터 다시 진단할게요.';
 
   @override
   DiagnosisState build() => _initialState();
@@ -72,6 +73,11 @@ class DiagnosisViewModel extends _$DiagnosisViewModel {
           await _classify();
       }
     }
+  }
+
+  void restart() {
+    if (state.phase is! Confirming) return;
+    state = _initialState(notice: _rediagnoseNotice);
   }
 
   Future<void> confirm({required bool remember}) async {

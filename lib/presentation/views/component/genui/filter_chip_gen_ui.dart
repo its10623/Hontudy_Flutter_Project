@@ -7,12 +7,14 @@ class FilterChipGenUi extends StatefulWidget {
   final List<String> options;
   final bool enabled;
   final ValueChanged<List<String>> onSubmit;
+  final String? answer;
 
   const FilterChipGenUi({
     super.key,
     required this.options,
     required this.enabled,
     required this.onSubmit,
+    this.answer,
   });
 
   @override
@@ -30,6 +32,7 @@ class _FilterChipGenUiState extends State<FilterChipGenUi> {
 
   @override
   Widget build(BuildContext context) {
+    final selected = widget.answer?.split(', ').toSet() ?? _selected;
     final canSubmit = widget.enabled && _selected.isNotEmpty;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -38,7 +41,7 @@ class _FilterChipGenUiState extends State<FilterChipGenUi> {
         for (final option in widget.options)
           _CheckRow(
             label: option,
-            selected: _selected.contains(option),
+            selected: selected.contains(option),
             onTap: widget.enabled ? () => _toggle(option) : null,
           ),
         if (widget.enabled)

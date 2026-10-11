@@ -42,7 +42,7 @@ final class DiagnosisViewModelProvider
 }
 
 String _$diagnosisViewModelHash() =>
-    r'ff1956666563481c70856d7d0f945b36be691cf9';
+    r'b2762fe922450c24946ca0409e1ac8390a81b58c';
 
 abstract class _$DiagnosisViewModel extends $Notifier<DiagnosisState> {
   DiagnosisState build();

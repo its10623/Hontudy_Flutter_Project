@@ -36,6 +36,26 @@ class DiagnosisState with _$DiagnosisState {
     return answers;
   }
 
+  Map<String, String> get answersByQuestionId {
+    final answers = <String, String>{};
+    String? pendingQuestionId;
+
+    for (final message in messages) {
+      switch (message) {
+        case AiQuestion(:final id):
+          pendingQuestionId = id;
+        case UserAnswer(:final text, :final offTopic):
+          if (offTopic || pendingQuestionId == null) continue;
+          answers[pendingQuestionId] = text;
+          pendingQuestionId = null;
+        case AiSummary():
+        case AiNotice():
+          break;
+      }
+    }
+    return answers;
+  }
+
   int get turnCount => history.length;
 
   AiQuestion? get activeQuestion {

@@ -1,3 +1,5 @@
+import 'package:hontudy/presentation/views/route/app_router.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -9,13 +11,12 @@ import 'package:hontudy/domain/models/diagnosis_turn.dart';
 import 'package:hontudy/presentation/core/theme/shape.dart';
 import 'package:hontudy/presentation/state/diagnosis_state.dart';
 import 'package:hontudy/presentation/viewmodels/diagnosis_viewmodel.dart';
-import 'package:hontudy/presentation/views/pages/quiz_chat_page.dart';
-import 'package:hontudy/presentation/views/pages/sign_in_page.dart';
 
 import '../../core/theme/context_theme_extension.dart';
 import '../component/app_background.dart';
 import '../component/chat/chat_appbar.dart';
 import '../component/chat/chat_body.dart';
+import '../component/dialog_widget.dart';
 import '../component/error_dialog.dart';
 import '../component/genui/diagnosis_choice_list.dart';
 import '../component/genui/filter_chip_gen_ui.dart';
@@ -64,9 +65,7 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
       if (next.phase case Completed(
         :final profile,
       ) when previous?.phase is! Completed) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => QuizChatPage(profile: profile)),
-        );
+        context.go(AppRoutes.home, extra: profile);
       }
     });
 
@@ -140,11 +139,13 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
       AiQuestion(:final content) => _buildQuestionWidget(
         content,
         enabled: state.activeQuestion?.id == id,
+        answer: state.answersByQuestionId[id],
       ),
       AiSummary(:final result) => SummaryConfirm(
         result: result,
         enabled: state.phase is Confirming,
         onConfirm: _confirm,
+        onRediagnose: _confirmRediagnose,
       ),
       _ => null,
     };
@@ -153,21 +154,42 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
   Widget? _buildQuestionWidget(
     DiagnosisContent content, {
     required bool enabled,
+    required String? answer,
   }) {
     final notifier = ref.read(diagnosisViewModelProvider.notifier);
-    return switch (content) {
+    final choices = switch (content) {
       SingleChoiceListContent(:final options) => DiagnosisChoiceList(
         options: options,
         enabled: enabled,
+        answer: answer,
         onSelected: notifier.submitAnswer,
       ),
       ChoiceChipsContent(:final options) => FilterChipGenUi(
         options: options,
         enabled: enabled,
+        answer: answer,
         onSubmit: (selected) => notifier.submitAnswer(selected.join(', ')),
       ),
       FreeTextInputContent() || SummaryConfirmContent() => null,
     };
+    if (choices == null || enabled || answer == null) return choices;
+    return _AnsweredChoices(answer: answer, choices: choices);
+  }
+
+  Future<void> _confirmRediagnose() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => DialogWidget(
+        title: '다시 진단하기',
+        content: '지금까지의 답변을 지우고 처음 질문부터 다시 진단해요.',
+        secondaryText: '취소',
+        secondaryOnPressed: () => Navigator.of(dialogContext).pop(false),
+        primaryText: '다시 진단하기',
+        primaryOnPressed: () => Navigator.of(dialogContext).pop(true),
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    ref.read(diagnosisViewModelProvider.notifier).restart();
   }
 
   Future<void> _confirm(bool remember) async {
@@ -179,6 +201,58 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
       if (!mounted) return;
       await ErrorDialog.show(context: context, error: error);
     }
+  }
+}
+
+class _AnsweredChoices extends StatefulWidget {
+  final String answer;
+  final Widget choices;
+
+  const _AnsweredChoices({required this.answer, required this.choices});
+
+  @override
+  State<_AnsweredChoices> createState() => _AnsweredChoicesState();
+}
+
+class _AnsweredChoicesState extends State<_AnsweredChoices> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = context.colors.primary;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        InkWell(
+          borderRadius: AppShape.option,
+          onTap: () => setState(() => _expanded = !_expanded),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            child: Row(
+              children: [
+                Icon(Icons.check_circle_rounded, size: 20, color: primary),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    widget.answer,
+                    style: context.textStyles.bodySmall,
+                    maxLines: _expanded ? null : 1,
+                    overflow: _expanded ? null : TextOverflow.ellipsis,
+                  ),
+                ),
+                Icon(
+                  _expanded
+                      ? Icons.keyboard_arrow_up_rounded
+                      : Icons.keyboard_arrow_down_rounded,
+                  color: context.colors.outline,
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (_expanded) ...[const SizedBox(height: 8), widget.choices],
+      ],
+    );
   }
 }
 
@@ -263,10 +337,7 @@ class _DebugSignOutButton extends ConsumerWidget {
         final result = await ref.read(userRepositoryProvider).signOut();
         if (!context.mounted) return;
         result.fold(
-          (_) => Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => const SignInPage()),
-            (_) => false,
-          ),
+          (_) => context.go(AppRoutes.signIn),
           (error) => ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('로그아웃 실패: $error')),
           ),

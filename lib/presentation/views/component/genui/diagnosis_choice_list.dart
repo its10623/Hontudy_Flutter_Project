@@ -6,12 +6,14 @@ class DiagnosisChoiceList extends StatefulWidget {
   final List<String> options;
   final bool enabled;
   final ValueChanged<String> onSelected;
+  final String? answer;
 
   const DiagnosisChoiceList({
     super.key,
     required this.options,
     required this.enabled,
     required this.onSelected,
+    this.answer,
   });
 
   @override
@@ -28,6 +30,7 @@ class _DiagnosisChoiceListState extends State<DiagnosisChoiceList> {
 
   @override
   Widget build(BuildContext context) {
+    final selected = widget.answer ?? _selected;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 8,
@@ -35,7 +38,7 @@ class _DiagnosisChoiceListState extends State<DiagnosisChoiceList> {
         for (final option in widget.options)
           _OptionRow(
             label: option,
-            selected: _selected == option,
+            selected: selected == option,
             onTap: widget.enabled ? () => _select(option) : null,
           ),
       ],

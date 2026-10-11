@@ -12,9 +12,11 @@ class SummaryConfirm extends StatefulWidget {
   final DiagnosisResult result;
   final bool enabled;
   final Future<void> Function(bool remember) onConfirm;
+  final VoidCallback onRediagnose;
 
   const SummaryConfirm({
     super.key,
+    required this.onRediagnose,
     required this.result,
     required this.enabled,
     required this.onConfirm,
@@ -126,6 +128,12 @@ class _SummaryConfirmState extends State<SummaryConfirm> {
           onPressed: canConfirm ? _confirm : null,
           text: _saving ? '저장 중...' : '네, 맞아요',
           color: ButtonColor.primary,
+        ),
+        const SizedBox(height: 8),
+        PrimaryButton(
+          onPressed: canConfirm ? widget.onRediagnose : null,
+          text: '다시 진단하기',
+          color: ButtonColor.surface,
         ),
       ],
     );
