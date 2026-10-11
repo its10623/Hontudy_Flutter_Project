@@ -1,3 +1,5 @@
+import 'package:go_router/go_router.dart';
+import 'package:hontudy/presentation/views/route/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hontudy/presentation/core/theme/app_colors.dart';
@@ -11,7 +13,6 @@ import 'package:hontudy/presentation/views/component/filter_chip_widget.dart';
 import 'package:hontudy/presentation/views/component/main_icon_tile.dart';
 import 'package:hontudy/presentation/views/component/note_status_views.dart';
 import 'package:hontudy/presentation/views/component/progress_bar_widget.dart';
-import 'package:hontudy/presentation/views/pages/note_detail_page.dart';
 import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class AllMainsPage extends ConsumerStatefulWidget {
@@ -96,11 +97,7 @@ class _AllMainsPageState extends ConsumerState<AllMainsPage> {
           _SolvedMainRow(
             summary: mainSummary,
             isWeakest: mainSummary.main == weakestMain,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => NoteDetailPage(main: mainSummary.main),
-              ),
-            ),
+            onTap: () => context.push(AppRoutes.noteDetail(mainSummary.main)),
           ),
           const SizedBox(height: 10),
         ],

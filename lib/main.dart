@@ -9,7 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hontudy/di/service_providers.dart';
 import 'package:hontudy/firebase_options.dart';
 import 'package:hontudy/presentation/core/theme/theme.dart';
-import 'package:hontudy/presentation/views/pages/splash_page.dart';
+import 'package:hontudy/presentation/views/route/app_router.dart';
 
 /// `flutter run --dart-define=USE_FUNCTIONS_EMULATOR=true`로 실행하면
 /// 배포된 함수 대신 로컬 Firebase 에뮬레이터의 함수를 호출한다.
@@ -40,8 +40,9 @@ Future<void> _activateAppCheck() {
 void _connectFunctionsEmulator() {
   // 안드로이드 에뮬레이터에서 호스트 PC의 localhost는 10.0.2.2다.
   final host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
-  FirebaseFunctions.instanceFor(region: functionsRegion)
-      .useFunctionsEmulator(host, 5001);
+  FirebaseFunctions.instanceFor(
+    region: functionsRegion,
+  ).useFunctionsEmulator(host, 5001);
 }
 
 Duration? _noRetry(int retryCount, Object error) => null;
@@ -51,10 +52,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      home: const Scaffold(body: SplashPage()),
+      // darkTheme: AppTheme.dark,
+      routerConfig: appRouter,
     );
   }
 }

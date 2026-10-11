@@ -16,7 +16,7 @@ final class NoteDetailViewModelProvider
     extends $AsyncNotifierProvider<NoteDetailViewModel, NoteDetail> {
   NoteDetailViewModelProvider._({
     required NoteDetailViewModelFamily super.from,
-    required String super.argument,
+    required String? super.argument,
   }) : super(
          retry: null,
          name: r'noteDetailViewModelProvider',
@@ -51,7 +51,7 @@ final class NoteDetailViewModelProvider
 }
 
 String _$noteDetailViewModelHash() =>
-    r'95af9a1bc825fbf7962985a4702459e436b3530f';
+    r'daaf39c8caece5687c0273244611d4b3f9ac1e7d';
 
 final class NoteDetailViewModelFamily extends $Family
     with
@@ -60,7 +60,7 @@ final class NoteDetailViewModelFamily extends $Family
           AsyncValue<NoteDetail>,
           NoteDetail,
           FutureOr<NoteDetail>,
-          String
+          String?
         > {
   NoteDetailViewModelFamily._()
     : super(
@@ -71,7 +71,7 @@ final class NoteDetailViewModelFamily extends $Family
         isAutoDispose: true,
       );
 
-  NoteDetailViewModelProvider call(String main) =>
+  NoteDetailViewModelProvider call(String? main) =>
       NoteDetailViewModelProvider._(argument: main, from: this);
 
   @override
@@ -79,10 +79,10 @@ final class NoteDetailViewModelFamily extends $Family
 }
 
 abstract class _$NoteDetailViewModel extends $AsyncNotifier<NoteDetail> {
-  late final _$args = ref.$arg as String;
-  String get main => _$args;
+  late final _$args = ref.$arg as String?;
+  String? get main => _$args;
 
-  FutureOr<NoteDetail> build(String main);
+  FutureOr<NoteDetail> build(String? main);
   @$mustCallSuper
   @override
   WhenComplete runBuild() {

@@ -9,7 +9,7 @@ part 'note_detail_viewmodel.g.dart';
 @riverpod
 class NoteDetailViewModel extends _$NoteDetailViewModel {
   @override
-  FutureOr<NoteDetail> build(String main) async {
+  FutureOr<NoteDetail> build(String? main) async {
     final records = await ref
         .watch(noteRepositoryProvider)
         .fetchSolvedRecords(filter: NoteFilter.all)

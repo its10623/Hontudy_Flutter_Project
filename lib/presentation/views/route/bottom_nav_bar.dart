@@ -6,7 +6,13 @@ import 'package:hontudy/presentation/core/theme/shape.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
-  const BottomNavBar({super.key, required this.currentIndex});
+  final ValueChanged<int> onTap;
+
+  const BottomNavBar({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,19 +37,19 @@ class BottomNavBar extends StatelessWidget {
             icon: Icons.home_outlined,
             label: '홈',
             isSelected: currentIndex == 0,
-            onTap: () {},
+            onTap: () => onTap(0),
           ),
           _NavItem(
             icon: Icons.menu_book_outlined,
             label: '노트',
             isSelected: currentIndex == 1,
-            onTap: () {},
+            onTap: () => onTap(1),
           ),
           _NavItem(
             icon: Icons.person_outline_rounded,
             label: '프로필',
             isSelected: currentIndex == 2,
-            onTap: () {},
+            onTap: () => onTap(2),
           ),
         ],
       ),
@@ -76,7 +82,7 @@ class _NavItemState extends State<_NavItem> {
       borderRadius: AppShape.floating,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => widget.onTap,
+        onTap: widget.onTap,
         splashColor: context.colors.primaryContainer.withAlpha(100),
         borderRadius: AppShape.floating,
         child: Container(

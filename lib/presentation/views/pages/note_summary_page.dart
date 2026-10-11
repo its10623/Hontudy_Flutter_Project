@@ -1,5 +1,5 @@
-import 'dart:ui';
-
+import 'package:go_router/go_router.dart';
+import 'package:hontudy/presentation/views/route/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hontudy/presentation/core/theme/context_theme_extension.dart';
@@ -8,14 +8,10 @@ import 'package:hontudy/presentation/state/note_summary_state.dart';
 import 'package:hontudy/presentation/viewmodels/note_summary_viewmodel.dart';
 import 'package:hontudy/presentation/views/component/app_background.dart';
 import 'package:hontudy/presentation/views/component/note_status_views.dart';
-import 'package:hontudy/presentation/views/pages/all_mains_page.dart';
-import 'package:hontudy/presentation/views/pages/note_detail_page.dart';
-import 'package:hontudy/presentation/views/pages/quiz_chat_page.dart';
 import 'package:hontudy/presentation/views/component/recent_wrong_answer_section.dart';
 import 'package:hontudy/presentation/views/component/shimmer_wrapper.dart';
 import 'package:hontudy/presentation/views/component/skeleton_box.dart';
 import 'package:hontudy/presentation/views/component/summary_card.dart';
-import 'package:hontudy/presentation/views/route/bottom_nav_bar.dart';
 
 import '../../core/format/days_ago.dart';
 import 'package:hontudy/presentation/core/theme/shape.dart';
@@ -30,18 +26,7 @@ class NoteSummaryPage extends ConsumerWidget {
     final summaryState = ref.watch(noteSummaryViewModelProvider);
     return AppBackground(
       child: Scaffold(
-        extendBody: true,
         backgroundColor: Colors.transparent,
-        bottomNavigationBar: ClipRRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
-            child: const SafeArea(
-              child: BottomNavBar(
-                currentIndex: 1,
-              ),
-            ),
-          ),
-        ),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           surfaceTintColor: Colors.transparent,
@@ -69,9 +54,7 @@ class NoteSummaryPage extends ConsumerWidget {
         ),
         body: switch (summaryState) {
           AsyncData(:final value) when value.isEmpty => NoteEmptyView(
-            onStartQuiz: () => Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const QuizChatPage()),
-            ),
+            onStartQuiz: () => context.go(AppRoutes.home),
           ),
           AsyncData(:final value) => _NoteSummaryBody(summary: value),
           AsyncError() => NoteLoadErrorView(
@@ -252,9 +235,7 @@ class _NoteSummaryBody extends StatelessWidget {
           ),
           _MainSummaryGrid(
             mains: summary.mains.skip(1).toList(),
-            onMore: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const AllMainsPage()),
-            ),
+            onMore: () => context.push(AppRoutes.noteAll),
             onDetail: (main) => _openDetail(context, main),
             unsolvedMains: summary.unsolvedMains,
           ),
@@ -266,7 +247,7 @@ class _NoteSummaryBody extends StatelessWidget {
                 style: TextType.captionMedium,
               ),
               TextButton(
-                onPressed: () {}, // TODO 오답만 보아보는 필터 필요
+                onPressed: () => context.push(AppRoutes.noteWrong),
                 child: Text(
                   '전체 보기',
                   style: TextType.captionMedium.copyWith(
@@ -353,11 +334,6 @@ class _NoteSummarySkeleton extends StatelessWidget {
   }
 }
 
-/// go_router 도입 전까지 쓰는 임시 이동
 void _openDetail(BuildContext context, String main, {String? initialQid}) {
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (_) => NoteDetailPage(main: main, initialQid: initialQid),
-    ),
-  );
+  context.push(AppRoutes.noteDetail(main, qid: initialQid));
 }

@@ -18,14 +18,19 @@ class NoteDetail {
 
   bool get isEmpty => records.isEmpty;
 
-  factory NoteDetail.fromRecords(String main, List<SolvedRecord> allRecords) {
+  /// [main]이 null이면 모든 주제의 기록을 모은다(틀린 문제 모아보기).
+  factory NoteDetail.fromRecords(String? main, List<SolvedRecord> allRecords) {
     final mainRecords =
-        allRecords.where((record) => record.quiz.category.main == main).toList()
+        allRecords
+            .where(
+              (record) => main == null || record.quiz.category.main == main,
+            )
+            .toList()
           ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
     final summary = mainRecords.isEmpty
         ? null
-        : MainSummary.fromRecords(main, mainRecords);
+        : MainSummary.fromRecords(main ?? '', mainRecords);
 
     return NoteDetail(
       summary: summary,

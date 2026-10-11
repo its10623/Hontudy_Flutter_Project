@@ -1,3 +1,5 @@
+import 'package:hontudy/presentation/views/route/app_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hontudy/domain/exceptions.dart';
@@ -14,8 +16,6 @@ import 'package:hontudy/presentation/views/component/divider_widget.dart';
 import '../component/app_background.dart';
 import '../component/dialog_widget.dart';
 import '../component/error_dialog.dart';
-import 'diagnosis_chat_page.dart';
-import 'sign_in_page.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
@@ -40,22 +40,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 4, 16, 4),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: _busy
-                            ? null
-                            : () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.arrow_back_ios_new_rounded),
-                      ),
-                      Text(
-                        '프로필',
-                        style: TextType.titleLarge.copyWith(
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                    ],
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '프로필',
+                      style: TextType.titleLarge.copyWith(letterSpacing: -0.5),
+                    ),
                   ),
                 ),
                 if (_busy) const LinearProgressIndicator(),
@@ -146,15 +137,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     return confirmed == true && mounted;
   }
 
-  Future<void> _run(Future<void> Function() action, Widget next) async {
+  Future<void> _run(Future<void> Function() action, String next) async {
     setState(() => _busy = true);
     try {
       await action();
       if (!mounted) return;
-      await Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => next),
-        (_) => false,
-      );
+      context.go(next);
     } on SignInCancelledException {
       return;
     } catch (error) {
@@ -175,13 +163,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     }
     await _run(
       ref.read(profileViewModelProvider.notifier).forgetDiagnosis,
-      const DiagnosisChatPage(),
+      AppRoutes.diagnosis,
     );
   }
 
   Future<void> _signOut() => _run(
     ref.read(profileViewModelProvider.notifier).signOut,
-    const SignInPage(),
+    AppRoutes.signIn,
   );
 
   Future<void> _deleteAccount() async {
@@ -194,7 +182,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     }
     await _run(
       ref.read(profileViewModelProvider.notifier).deleteAccount,
-      const SignInPage(),
+      AppRoutes.signIn,
     );
   }
 }

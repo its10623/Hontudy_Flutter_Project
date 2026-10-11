@@ -1,16 +1,17 @@
+import 'package:hontudy/presentation/views/route/app_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:auth_buttons/auth_buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hontudy/presentation/core/terms_link.dart';
 import 'package:hontudy/presentation/viewmodels/sign_in_viewmodel.dart';
 import 'package:hontudy/presentation/views/component/terms_agreement_sheet.dart';
-import 'package:hontudy/presentation/views/pages/quiz_chat_page.dart';
 import '../../../domain/models/user.dart';
 import '../../../domain/use_cases/determine_next_route_use_case.dart';
 import '../../core/theme/context_theme_extension.dart';
 import '../../core/theme/theme.dart';
 import '../component/error_dialog.dart';
-import 'diagnosis_chat_page.dart';
 
 class SignInPage extends ConsumerStatefulWidget {
   const SignInPage({super.key});
@@ -32,7 +33,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
         next,
       ) {
         next.whenData((route) async {
-          final Widget page;
+          final String location;
           switch (route) {
             case NextRoute.needsSignIn || null:
               return;
@@ -51,14 +52,12 @@ class _SignInPageState extends ConsumerState<SignInPage> {
               }
               return;
             case NextRoute.needDiagnosis:
-              page = const DiagnosisChatPage();
+              location = AppRoutes.diagnosis;
             case NextRoute.ready:
-              page = const QuizChatPage();
+              location = AppRoutes.home;
           }
           if (!context.mounted) return;
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => page),
-          );
+          context.go(location);
         });
         if (next is AsyncError) {
           ErrorDialog.show(
@@ -78,15 +77,12 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 120,
-                height: 120,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/icons/hontudy_icon.png'),
-                  ),
-                ),
+              SvgPicture.asset(
+                'assets/mascot/mascot_happy.svg',
+                width: 96,
+                height: 96,
               ),
+              const SizedBox(height: 16),
               Text.rich(
                 TextSpan(
                   children: [

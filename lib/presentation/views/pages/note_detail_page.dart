@@ -22,17 +22,25 @@ import '../component/chip_widget.dart';
 import '../component/note_status_views.dart';
 import '../component/shimmer_wrapper.dart';
 import '../component/skeleton_box.dart';
-import '../route/bottom_nav_bar.dart';
 import 'package:hontudy/presentation/core/theme/shape.dart';
 
+enum NoteRecordFilter {
+  all,
+  wrong,
+  correct,
+}
+
 class NoteDetailPage extends ConsumerStatefulWidget {
-  final String main;
+  /// null이면 모든 주제의 기록(틀린 문제 모아보기)
+  final String? main;
   final String? initialQid;
+  final NoteRecordFilter initialFilter;
 
   const NoteDetailPage({
     super.key,
     required this.main,
     this.initialQid,
+    this.initialFilter = NoteRecordFilter.all,
   });
 
   @override
@@ -58,16 +66,6 @@ class _NoteDetailPageState extends ConsumerState<NoteDetailPage> {
     return AppBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        bottomNavigationBar: ClipRRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
-            child: const SafeArea(
-              child: BottomNavBar(
-                currentIndex: 1,
-              ),
-            ),
-          ),
-        ),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           surfaceTintColor: Colors.transparent,
@@ -77,56 +75,59 @@ class _NoteDetailPageState extends ConsumerState<NoteDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.main,
+                widget.main ?? '틀린 문제 모아보기',
                 style: TextType.titleLarge.copyWith(letterSpacing: -0.5),
               ),
               if (summary case final s?)
                 Text(
                   [
-                    '${s.solvedCount}문제',
+                    if (widget.main != null) '${s.solvedCount}문제',
                     '오답 ${s.wrongCount}',
-                    ?s.weakestTopic,
+                    if (widget.main != null) ?s.weakestTopic,
                   ].join(' · '),
                   style: context.captionMedium,
                 ),
             ],
           ),
         ),
-        body: switch (detailState) {
-          AsyncData(:final value) when value.isEmpty =>
-            const NoteDetailEmptyView(
-              reason: NoteDetailEmptyReason.noRecords,
+        body: SafeArea(
+          top: false,
+          child: switch (detailState) {
+            AsyncData(:final value) when value.isEmpty =>
+              const NoteDetailEmptyView(
+                reason: NoteDetailEmptyReason.noRecords,
+              ),
+            AsyncData(:final value) => _NoteDetailBody(
+              noteDetail: value,
+              controller: _controller,
+              initialQid: widget.initialQid,
+              initialFilter: widget.initialFilter,
+              showMain: widget.main == null,
             ),
-          AsyncData(:final value) => _NoteDetailBody(
-            noteDetail: value,
-            controller: _controller,
-            initialQid: widget.initialQid,
-          ),
-          AsyncError() => NoteLoadErrorView(
-            onRetry: () =>
-                ref.invalidate(noteDetailViewModelProvider(widget.main)),
-          ),
-          _ => const _NoteDetailSkeleton(),
-        },
+            AsyncError() => NoteLoadErrorView(
+              onRetry: () =>
+                  ref.invalidate(noteDetailViewModelProvider(widget.main)),
+            ),
+            _ => const _NoteDetailSkeleton(),
+          },
+        ),
       ),
     );
   }
-}
-
-enum _RecordFilter {
-  all,
-  wrong,
-  correct,
 }
 
 class _NoteDetailBody extends StatefulWidget {
   final NoteDetail _noteDetail;
   final PageController _controller;
   final String? _initialQid;
+  final NoteRecordFilter _initialFilter;
+  final bool _showMain;
 
   const _NoteDetailBody({
     required this._noteDetail,
     required this._controller,
+    required this._initialFilter,
+    required this._showMain,
     this._initialQid,
   });
 
@@ -135,7 +136,7 @@ class _NoteDetailBody extends StatefulWidget {
 }
 
 class _NoteDetailBodyState extends State<_NoteDetailBody> {
-  _RecordFilter _filter = _RecordFilter.all;
+  late NoteRecordFilter _filter = widget._initialFilter;
 
   @override
   void initState() {
@@ -156,7 +157,7 @@ class _NoteDetailBodyState extends State<_NoteDetailBody> {
             (record) => record.quiz.qid == qid,
           );
     if (index == -1) return;
-    if (wrongIndex != -1) _filter = _RecordFilter.wrong;
+    if (wrongIndex != -1) _filter = NoteRecordFilter.wrong;
 
     // PageView가 그려진 뒤에야 컨트롤러가 붙어서 첫 프레임 이후에 이동
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -171,9 +172,9 @@ class _NoteDetailBodyState extends State<_NoteDetailBody> {
   @override
   Widget build(BuildContext context) {
     final records = switch (_filter) {
-      _RecordFilter.all => widget._noteDetail.records,
-      _RecordFilter.wrong => widget._noteDetail.wrongRecords,
-      _RecordFilter.correct => widget._noteDetail.correctRecords,
+      NoteRecordFilter.all => widget._noteDetail.records,
+      NoteRecordFilter.wrong => widget._noteDetail.wrongRecords,
+      NoteRecordFilter.correct => widget._noteDetail.correctRecords,
     };
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -183,7 +184,7 @@ class _NoteDetailBodyState extends State<_NoteDetailBody> {
           ChoiceChipWidget(
             selectedIndex: _filter.index,
             onSelected: (i) => setState(() {
-              _filter = _RecordFilter.values[i];
+              _filter = NoteRecordFilter.values[i];
               if (widget._controller.hasClients) {
                 widget._controller.jumpToPage(0);
               }
@@ -200,6 +201,7 @@ class _NoteDetailBodyState extends State<_NoteDetailBody> {
                 child: _NoteQuizCardCarousel(
                   controller: widget._controller,
                   quizzes: records,
+                  showMain: widget._showMain,
                   checkedQids: _checkedQids,
                   onCheckedChanged: (qid, checked) => setState(() {
                     checked ? _checkedQids.add(qid) : _checkedQids.remove(qid);
@@ -225,11 +227,11 @@ class _NoteDetailBodyState extends State<_NoteDetailBody> {
             Expanded(
               child: NoteDetailEmptyView(
                 reason: switch (_filter) {
-                  _RecordFilter.wrong => NoteDetailEmptyReason.noWrong,
-                  _RecordFilter.correct => NoteDetailEmptyReason.noCorrect,
-                  _RecordFilter.all => NoteDetailEmptyReason.noRecords,
+                  NoteRecordFilter.wrong => NoteDetailEmptyReason.noWrong,
+                  NoteRecordFilter.correct => NoteDetailEmptyReason.noCorrect,
+                  NoteRecordFilter.all => NoteDetailEmptyReason.noRecords,
                 },
-                onShowAll: () => setState(() => _filter = _RecordFilter.all),
+                onShowAll: () => setState(() => _filter = NoteRecordFilter.all),
               ),
             ),
           ],
@@ -242,12 +244,14 @@ class _NoteDetailBodyState extends State<_NoteDetailBody> {
 class _NoteQuizCardCarousel extends StatelessWidget {
   final List<SolvedRecord> quizzes;
   final PageController _controller;
+  final bool showMain;
   final Set<String> checkedQids;
   final void Function(String qid, bool checked) onCheckedChanged;
 
   const _NoteQuizCardCarousel({
     required this._controller,
     required this.quizzes,
+    required this.showMain,
     required this.checkedQids,
     required this.onCheckedChanged,
   });
@@ -277,6 +281,7 @@ class _NoteQuizCardCarousel extends StatelessWidget {
           child: _NoteQuizCard(
             key: ValueKey(qid),
             record: record,
+            showMain: showMain,
             isChecked: checkedQids.contains(qid),
             onCheckedChanged: (checked) => onCheckedChanged(qid, checked),
           ),
@@ -288,6 +293,7 @@ class _NoteQuizCardCarousel extends StatelessWidget {
 
 class _NoteQuizCard extends StatefulWidget {
   final SolvedRecord record;
+  final bool showMain;
   final bool isChecked;
   final ValueChanged<bool> onCheckedChanged;
 
@@ -295,6 +301,7 @@ class _NoteQuizCard extends StatefulWidget {
     required this.isChecked,
     required this.onCheckedChanged,
     required this.record,
+    required this.showMain,
     super.key,
   });
 
@@ -384,7 +391,11 @@ class _NoteQuizCardState extends State<_NoteQuizCard>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ChipWidget(label: widget.record.quiz.category.topic),
+                      ChipWidget(
+                        label: widget.showMain
+                            ? '${widget.record.quiz.category.main} · ${widget.record.quiz.category.topic}'
+                            : widget.record.quiz.category.topic,
+                      ),
                       Text(
                         formatDaysAgo(widget.record.timestamp),
                         style: context.captionMedium.copyWith(
@@ -436,31 +447,32 @@ class _NoteQuizCardState extends State<_NoteQuizCard>
           text: '해설 다시 보기',
           color: ButtonColor.primary,
         ),
-        Center(
-          child: GestureDetector(
-            onTap: () => widget.onCheckedChanged(!widget.isChecked),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Checkbox(
-                  value: widget.isChecked,
-                  onChanged: (value) => widget.onCheckedChanged(value ?? false),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  side: BorderSide(color: context.colors.outline, width: 1.5),
-                ),
-                Text(
-                  '이 문제 다시 출제',
-                  style: context.captionLarge.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        // TODO(임시): 다시 출제 기능 구현 전까지 숨김
+        // Center(
+        //   child: GestureDetector(
+        //     onTap: () => widget.onCheckedChanged(!widget.isChecked),
+        //     child: Row(
+        //       mainAxisSize: MainAxisSize.min,
+        //       mainAxisAlignment: MainAxisAlignment.center,
+        //       children: [
+        //         Checkbox(
+        //           value: widget.isChecked,
+        //           onChanged: (value) => widget.onCheckedChanged(value ?? false),
+        //           shape: RoundedRectangleBorder(
+        //             borderRadius: BorderRadius.circular(4),
+        //           ),
+        //           side: BorderSide(color: context.colors.outline, width: 1.5),
+        //         ),
+        //         Text(
+        //           '이 문제 다시 출제',
+        //           style: context.captionLarge.copyWith(
+        //             fontWeight: FontWeight.w700,
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
