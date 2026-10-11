@@ -5,7 +5,7 @@
 <path d="M60 18C58 11 51 7 43 8 45 15 51 19 60 18Z" fill="#A5E6C8"></path>
 <ellipse cx="34.8" cy="74.5" rx="6.72" ry="4.2" fill="#FFB3C7" opacity=".9"></ellipse>
 <ellipse cx="85.2" cy="74.5" rx="6.72" ry="4.2" fill="#FFB3C7" opacity=".9"></ellipse>
-<ellipse cx="45.3" cy="64" rx="5.46" ry="6.93" fill="#2B5CFF"></ellipse>
-<ellipse cx="74.7" cy="64" rx="5.46" ry="6.93" fill="#2B5CFF"></ellipse>
-<path d="M51.6 76.6c4.62 5.04 12.18 5.04 16.8 0" stroke="#2B5CFF" stroke-width="5.04" stroke-linecap="round" fill="none"></path>
+<ellipse cx="45.3" cy="64" rx="5.46" ry="6.93" fill="#3366FF"></ellipse>
+<ellipse cx="74.7" cy="64" rx="5.46" ry="6.93" fill="#3366FF"></ellipse>
+<path d="M51.6 76.6c4.62 5.04 12.18 5.04 16.8 0" stroke="#3366FF" stroke-width="5.04" stroke-linecap="round" fill="none"></path>
 </svg>
