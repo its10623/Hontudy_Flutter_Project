@@ -33,6 +33,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           borderRadius: AppShape.widgetCard,
         ),
         minimumSize: const Size(double.infinity, 50),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         side: widget.color != ButtonColor.primary
             ? BorderSide(width: 1, color: context.colors.outline.withAlpha(50))
             : null,
@@ -45,11 +46,18 @@ class _PrimaryButtonState extends State<PrimaryButton> {
               widget.icon,
               size: 20,
             ),
+            const SizedBox(width: 4),
           ],
-          const SizedBox(width: 4),
-          Text(
-            widget.text,
-            style: TextType.bodyLarge.copyWith(fontWeight: FontWeight.w600),
+          // 다이얼로그처럼 폭이 좁은 곳에서는 넘치지 않고 글자가 줄어들게 함
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                widget.text,
+                maxLines: 1,
+                style: TextType.bodyLarge.copyWith(fontWeight: FontWeight.w600),
+              ),
+            ),
           ),
         ],
       ),
