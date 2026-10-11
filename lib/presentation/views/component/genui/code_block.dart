@@ -19,8 +19,13 @@ class CodeBlock extends StatelessWidget {
     required this.code,
   });
 
+  static const _plainLanguages = {'', 'text', 'plaintext', 'plain'};
+
   @override
   Widget build(BuildContext context) {
+    final label = _plainLanguages.contains(language.toLowerCase())
+        ? '예시'
+        : language;
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -42,7 +47,7 @@ class CodeBlock extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 16),
                 child: Text(
-                  language,
+                  label,
                   style: GoogleFonts.firaCode(
                     fontSize: 14,
                     color: context.colors.outline,
@@ -67,20 +72,20 @@ class CodeBlock extends StatelessWidget {
             ],
           ),
           const DividerWidget(),
-          SizedBox(
-            width: double.infinity,
-            child: HighlightView(
-              code,
-              language: language,
-              theme: isDarkMode ? atomOneDarkTheme : githubTheme,
-              padding: const EdgeInsets.only(
-                left: 16,
-                right: 16,
-                top: 16,
-                bottom: 16,
-              ),
-              textStyle: GoogleFonts.firaCode(
-                fontSize: 14,
+          LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                child: HighlightView(
+                  code,
+                  language: language,
+                  theme: isDarkMode ? atomOneDarkTheme : githubTheme,
+                  padding: const EdgeInsets.all(16),
+                  textStyle: GoogleFonts.firaCode(
+                    fontSize: 14,
+                  ),
+                ),
               ),
             ),
           ),
