@@ -53,4 +53,24 @@ class CategoryScheme {
       topics: ['암호화', '인증/인가', '웹 보안', '네트워크 보안', '시큐어 코딩'],
     ),
   ];
+
+  static const _aliases = {
+    '컴퓨터네트워크': '네트워크',
+    '객체지향': '객체지향 프로그래밍',
+    'oop': '객체지향 프로그래밍',
+    'ai': '인공지능',
+    '정보보안': '보안',
+    'db': '데이터베이스',
+  };
+
+  /// LLM이 띄어쓰기를 바꾸거나("컴퓨터구조") 다른 이름("컴퓨터 네트워크")으로 보낸 메인 주제를
+  /// 기준 이름으로 맞춘다. 목록에 없는 주제면 null.
+  static String? normalizeMain(String raw) {
+    String key(String s) => s.replaceAll(RegExp(r'\s+'), '').toLowerCase();
+    final target = key(raw);
+    for (final category in mainCategories) {
+      if (key(category.name) == target) return category.name;
+    }
+    return _aliases[target];
+  }
 }
