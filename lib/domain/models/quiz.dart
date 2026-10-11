@@ -65,3 +65,6 @@ sealed class QuizContent with _$QuizContent {
     ShortAnswerContent() => 'short_answer_input',
   };
 }
+
+/// 출제 형식은 앱이 정한다. LLM은 호출마다 이전 형식을 몰라 객관식으로 쏠리기 때문.
+enum QuizFormat { singleChoice, shortAnswer }

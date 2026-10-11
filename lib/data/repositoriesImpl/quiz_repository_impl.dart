@@ -1,3 +1,4 @@
+import 'package:hontudy/data/llm_plain_text.dart';
 import 'package:hontudy/data/prompt_builder.dart';
 import 'package:hontudy/data/result_guard.dart';
 import 'package:hontudy/domain/models/diagnosis_profile.dart';
@@ -19,11 +20,13 @@ class QuizRepositoryImpl implements QuizRepository {
   AsyncResult<Quiz> requestQuiz({
     required DiagnosisProfile profile,
     required List<String> excludeKeywords,
+    required QuizFormat format,
   }) {
     return guardAsync(() async {
       final prompt = PromptBuilder.buildQuizPrompt(
         profile: profile,
         excludeKeywords: excludeKeywords,
+        format: format,
       );
       final json = await _ai.sendPrompt(
         messages: [
@@ -60,7 +63,6 @@ class QuizRepositoryImpl implements QuizRepository {
     });
   }
 
-
   /// 보기 수나 정답 번호가 맞지 않으면 화면에 그리지 않도록 거부.
   QuizContent _singleChoiceFromJson(
     Map<String, dynamic> json,
@@ -74,7 +76,9 @@ class QuizRepositoryImpl implements QuizRepository {
     if (rawOptions == null || rawOptions.length < 2 || rawOptions.length > 5) {
       throw FormatException('객관식 보기 수가 올바르지 않음: $rawOptions');
     }
-    final options = rawOptions.map((option) => option.toString()).toList();
+    final options = rawOptions
+        .map((option) => llmPlainText(option.toString()))
+        .toList();
     final correctIndex = rawIndex?.toInt();
     if (correctIndex == null ||
         correctIndex < 0 ||
@@ -103,7 +107,7 @@ class QuizRepositoryImpl implements QuizRepository {
 
     final referenceAnswer = quizContent is SingleChoiceContent
         ? quizContent.options[quizContent.correctIndex]
-        : json['reference_answer'] as String? ?? '';
+        : llmPlainText(json['reference_answer'] as String? ?? '');
 
     String? imageUrl;
     if (widgetType == 'image_diagram' && widgetContent != null) {
@@ -117,7 +121,7 @@ class QuizRepositoryImpl implements QuizRepository {
 
     return Quiz(
       qid: const Uuid().v4(),
-      questionText: json['question_text'] as String,
+      questionText: llmPlainText(json['question_text'] as String),
       category: Category(
         main: category['main'] as String,
         topic: category['topic'] as String,
@@ -126,18 +130,16 @@ class QuizRepositoryImpl implements QuizRepository {
       difficulty: json['difficulty'] as String,
       referenceAnswer: referenceAnswer,
       quizContent: quizContent,
-      codeSnippet: widgetType == 'code_block' && widgetContent != null
-          ? CodeSnippet(
-              language: widgetContent['language'] as String,
-              code: widgetContent['code'] as String,
-            )
-          : null,
+      codeSnippet:
+          _codeSnippetFromJson(json['code_snippet']) ??
+          (widgetType == 'code_block'
+              ? _codeSnippetFromJson(widgetContent)
+              : null),
       imageUrl: imageUrl,
     );
   }
 
   Future<QuizFeedback> _quizFeedbackFromJson(Map<String, dynamic> json) async {
-    final codeBlock = json['code_block'] as Map<String, dynamic>?;
     final imagePrompt = json['image_prompt'] as String?;
     final imageUrl = imagePrompt == null
         ? null
@@ -145,17 +147,25 @@ class QuizRepositoryImpl implements QuizRepository {
             prompt: imagePrompt,
           );
 
+    final isOffTopic = json['is_off_topic'] == true;
     return QuizFeedback(
-      isCorrect: json['is_correct'] as bool,
-      feedbackText: json['feedback_text'] as String,
-      keyPoint: json['key_point'] as String?,
+      isCorrect: !isOffTopic && json['is_correct'] as bool,
+      isOffTopic: isOffTopic,
+      feedbackText: llmPlainText(json['feedback_text'] as String),
+      keyPoint: llmPlainTextOrNull(json['key_point'] as String?),
       imageUrl: imageUrl,
-      codeSnippet: codeBlock == null
-          ? null
-          : CodeSnippet(
-              language: codeBlock['language'] as String,
-              code: codeBlock['code'] as String,
-            ),
+      codeSnippet: _codeSnippetFromJson(json['code_block']),
+    );
+  }
+
+  CodeSnippet? _codeSnippetFromJson(Object? raw) {
+    if (raw is! Map<String, dynamic>) return null;
+    final code = raw['code'];
+    if (code is! String || code.trim().isEmpty) return null;
+    final language = raw['language'];
+    return CodeSnippet(
+      language: language is String ? language : 'text',
+      code: code,
     );
   }
 }

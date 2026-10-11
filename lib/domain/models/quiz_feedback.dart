@@ -1,4 +1,3 @@
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hontudy/domain/models/quiz.dart';
 
@@ -11,6 +10,7 @@ class QuizFeedback with _$QuizFeedback {
   final String? keyPoint;
   final CodeSnippet? codeSnippet;
   final String? imageUrl;
+  final bool isOffTopic;
 
   const QuizFeedback({
     required this.isCorrect,
@@ -18,5 +18,6 @@ class QuizFeedback with _$QuizFeedback {
     this.keyPoint,
     this.codeSnippet,
     this.imageUrl,
+    this.isOffTopic = false,
   });
 }

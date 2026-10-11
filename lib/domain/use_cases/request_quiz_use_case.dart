@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:hontudy/domain/exceptions.dart';
 import 'package:hontudy/domain/models/diagnosis_profile.dart';
 import 'package:hontudy/domain/repositories/diagnosis_repository.dart';
@@ -23,12 +25,15 @@ class RequestQuizUseCase {
   final DiagnosisRepository _diagnosisRepository;
 
   static const _maxRetries = 5;
+  static const _singleChoiceRatio = 0.6;
+  final Random _random;
 
   RequestQuizUseCase({
     required this._quizRepository,
     required this._noteRepository,
     required this._diagnosisRepository,
-  });
+    Random? random,
+  }) : _random = random ?? Random();
 
   Future<RequestQuizResult> call({DiagnosisProfile? diagnosisProfile}) async {
     final excludeKeywords = await _noteRepository
@@ -49,6 +54,9 @@ class RequestQuizUseCase {
         );
     if (profile == null) throw DiagnosisProfileEmptyException();
 
+    final format = _random.nextDouble() < _singleChoiceRatio
+        ? QuizFormat.singleChoice
+        : QuizFormat.shortAnswer;
     final keywords = List<String>.from(excludeKeywords);
     for (var attempt = 0; attempt < _maxRetries; attempt++) {
       try {
@@ -56,6 +64,7 @@ class RequestQuizUseCase {
             .requestQuiz(
               profile: profile,
               excludeKeywords: keywords,
+              format: format,
             )
             .fold(
               (success) => success,

@@ -8,6 +8,7 @@ abstract class QuizRepository {
   AsyncResult<Quiz> requestQuiz({
     required DiagnosisProfile profile,
     required List<String> excludeKeywords,
+    required QuizFormat format,
   });
 
   AsyncResult<QuizFeedback> submitAnswer({

@@ -27,20 +27,20 @@ $QuizFeedbackCopyWith<QuizFeedback> get copyWith => _$QuizFeedbackCopyWithImpl<Q
 @override
 bool operator ==(Object other) {
   final _this = this as QuizFeedback;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is QuizFeedback&&(identical(other.isCorrect, _this.isCorrect) || other.isCorrect == _this.isCorrect)&&(identical(other.feedbackText, _this.feedbackText) || other.feedbackText == _this.feedbackText)&&(identical(other.keyPoint, _this.keyPoint) || other.keyPoint == _this.keyPoint)&&(identical(other.codeSnippet, _this.codeSnippet) || other.codeSnippet == _this.codeSnippet)&&(identical(other.imageUrl, _this.imageUrl) || other.imageUrl == _this.imageUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is QuizFeedback&&(identical(other.isCorrect, _this.isCorrect) || other.isCorrect == _this.isCorrect)&&(identical(other.feedbackText, _this.feedbackText) || other.feedbackText == _this.feedbackText)&&(identical(other.keyPoint, _this.keyPoint) || other.keyPoint == _this.keyPoint)&&(identical(other.codeSnippet, _this.codeSnippet) || other.codeSnippet == _this.codeSnippet)&&(identical(other.imageUrl, _this.imageUrl) || other.imageUrl == _this.imageUrl)&&(identical(other.isOffTopic, _this.isOffTopic) || other.isOffTopic == _this.isOffTopic));
 }
 
 
 @override
 int get hashCode {
   final _this = this as QuizFeedback;
-  return Object.hash(runtimeType,_this.isCorrect,_this.feedbackText,_this.keyPoint,_this.codeSnippet,_this.imageUrl);
+  return Object.hash(runtimeType,_this.isCorrect,_this.feedbackText,_this.keyPoint,_this.codeSnippet,_this.imageUrl,_this.isOffTopic);
 }
 
 @override
 String toString() {
   final _this = this as QuizFeedback;
-  return 'QuizFeedback(isCorrect: ${_this.isCorrect}, feedbackText: ${_this.feedbackText}, keyPoint: ${_this.keyPoint}, codeSnippet: ${_this.codeSnippet}, imageUrl: ${_this.imageUrl})';
+  return 'QuizFeedback(isCorrect: ${_this.isCorrect}, feedbackText: ${_this.feedbackText}, keyPoint: ${_this.keyPoint}, codeSnippet: ${_this.codeSnippet}, imageUrl: ${_this.imageUrl}, isOffTopic: ${_this.isOffTopic})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $QuizFeedbackCopyWith<$Res>  {
   factory $QuizFeedbackCopyWith(QuizFeedback value, $Res Function(QuizFeedback) _then) = _$QuizFeedbackCopyWithImpl;
 @useResult
 $Res call({
- bool isCorrect, String feedbackText, String? keyPoint, CodeSnippet? codeSnippet, String? imageUrl
+ bool isCorrect, String feedbackText, String? keyPoint, CodeSnippet? codeSnippet, String? imageUrl, bool isOffTopic
 });
 
 
@@ -68,14 +68,15 @@ class _$QuizFeedbackCopyWithImpl<$Res>
 
 /// Create a copy of QuizFeedback
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isCorrect = null,Object? feedbackText = null,Object? keyPoint = freezed,Object? codeSnippet = freezed,Object? imageUrl = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isCorrect = null,Object? feedbackText = null,Object? keyPoint = freezed,Object? codeSnippet = freezed,Object? imageUrl = freezed,Object? isOffTopic = null,}) {
   return _then(QuizFeedback(
 isCorrect: null == isCorrect ? _self.isCorrect : isCorrect // ignore: cast_nullable_to_non_nullable
 as bool,feedbackText: null == feedbackText ? _self.feedbackText : feedbackText // ignore: cast_nullable_to_non_nullable
 as String,keyPoint: freezed == keyPoint ? _self.keyPoint : keyPoint // ignore: cast_nullable_to_non_nullable
 as String?,codeSnippet: freezed == codeSnippet ? _self.codeSnippet : codeSnippet // ignore: cast_nullable_to_non_nullable
 as CodeSnippet?,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,isOffTopic: null == isOffTopic ? _self.isOffTopic : isOffTopic // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

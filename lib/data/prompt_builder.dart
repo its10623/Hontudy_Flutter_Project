@@ -168,6 +168,7 @@ ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
   static String buildQuizPrompt({
     required DiagnosisProfile profile,
     required List<String> excludeKeywords,
+    required QuizFormat format,
   }) {
     return '''
 ${_role('당신은 대학교 컴퓨터공학 학부 수준의 검증된 지식만 다루는 1타 강사입니다.')}
@@ -176,6 +177,7 @@ ${_taskDescription('''아래 사용자 프로필에 맞는 문제를 1개 출제
 - 난이도: 스코어 ${profile.difficultyScore} → ${_difficultyMapping(profile.difficultyScore)} 난이도로 출제
 - 목적: ${profile.purposeTags.join(', ')} → ${_purposeTagEffects(profile.purposeTags)} 를 문제 스타일에 반영''')}
 ${_constraints([
+      _formatRule(format),
       '최신 트렌드/미검증 기술블로그 의견 배제',
       '인사말/서론/설명 문구 절대 포함 금지 ("네, 문제를 만들어 드릴게요" 등)',
       '정답은 무조건 1개, 애매한 논란 소지 있는 문장 금지',
@@ -184,6 +186,8 @@ ${_constraints([
       '제외 키워드를 다 피해서 이 서브주제 내에서 더 이상 출제할 개념이 없다면, 억지로 애매하거나 중복된 문제를 만들지 말고 is_exhausted: true만 반환하세요 (이 경우 다른 필드는 비워도 됨)',
       'widget_type이 single_choice_question이면 correct_index로만 정답을 표기하고 reference_answer는 null로 두세요. 그 외 위젯 타입(short_answer_input/code_block/math_formula/image_diagram)은 reference_answer에 모범 답안을 문장으로 작성하세요',
       'widget_type이 image_diagram이면 widget_content에 실제 이미지 URL이 아니라 이미지 생성 AI에게 넘길 설명 텍스트를 image_prompt 필드로 채우세요 (예: {"image_prompt": "이진 탐색 트리 구조를 보여주는 다이어그램"})',
+      '코드·명령어·연산 순서처럼 고정폭으로 봐야 하는 내용은 question_text에 넣지 말고 widget_type과 상관없이 code_snippet에 분리하세요. 필요 없으면 null',
+      'question_text·choices·reference_answer는 마크다운(**, 백틱)과 LaTeX 없이 평문으로 작성하고, 수식은 2^12처럼 일반 텍스트로, 줄바꿈은 실제 줄바꿈 문자로 쓰세요',
     ])}
 ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
       'is_exhausted': 'boolean — true면 아래 필드 생략 가능',
@@ -195,6 +199,7 @@ ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
       'choices': ['string', '...'],
       'correct_index': 'number (0~4) | null',
       'reference_answer': 'string | null',
+      'code_snippet': '{ "language": string, "code": string } | null',
       'self_check_passed': 'boolean',
     })}
 ${_validateSelfPrompt('''출력하기 전, 위 제약조건을 모두 지켰는지 스스로 점검하세요.
@@ -202,6 +207,13 @@ ${_validateSelfPrompt('''출력하기 전, 위 제약조건을 모두 지켰는�
 검토를 통과했다면 self_check_passed를 true로 표시하세요.''')}
 ''';
   }
+
+  static String _formatRule(QuizFormat format) => switch (format) {
+    QuizFormat.singleChoice =>
+      '이번 문제는 반드시 객관식으로 출제하세요: widget_type은 single_choice_question, choices 4~5개, correct_index 필수',
+    QuizFormat.shortAnswer =>
+      '이번 문제는 반드시 주관식(서술형 단답)으로 출제하세요: widget_type은 short_answer_input(그림이 꼭 있어야 풀 수 있는 문제만 image_diagram), choices와 correct_index는 null, reference_answer 필수. 한두 문장으로 답할 수 있는 범위로 출제',
+  };
 
   static String buildFeedbackPrompt({
     required Quiz quiz,
@@ -216,8 +228,10 @@ ${_constraints([
       '정답과 해설만 주지 말고 오답에 대한 구체적 피드백 포함',
       '객관식 오답 선지는 정답과 미세한 뉘앙스 차이가 아니라 핵심 개념을 명백히 거스르는 것으로 이미 구성돼 있음 — 왜 틀렸는지 핵심 개념 기준으로 설명',
       '주관식은 표현이 달라도 핵심 개념이 맞으면 정답으로 판단 (예: "NAT"와 "네트워크 주소 변환"은 동일 정답) — 글자 단위 일치를 요구하지 말 것',
-      '중요한 단어/문장은 Bold 처리',
-      '이해를 돕는 짧은 코드 블럭/수식 활용 가능',
+      '사용자 답변이 문제와 무관하면(잡담, 음식 추천, 장난, 의미 없는 글자 등) is_off_topic은 true, is_correct는 false로 두고, 사용자가 같은 문제를 다시 풀 수 있으므로 정답·힌트를 절대 언급하지 마세요. 이 경우 feedback_text는 빈 문자열, key_point·code_block·image_prompt는 모두 null',
+      '앱이 정답/오답을 따로 표시하므로 "정답입니다"·"오답입니다" 같은 판정 문구로 시작하지 말고 바로 설명부터 쓰세요',
+      'feedback_text·key_point는 마크다운(**, 백틱)과 LaTeX 없이 평문으로 작성하고, 수식은 2^12처럼 일반 텍스트로 쓰세요. 강조가 필요한 핵심은 key_point로 분리하세요',
+      '코드 예시가 필요하면 feedback_text에 넣지 말고 code_block에 분리하세요',
       '불필요한 서론 없이 바로 피드백',
       '이해를 돕는 데 시각 자료(다이어그램)가 유용하면 image_prompt(실제 URL이 아니라 이미지 생성 AI에게 넘길 설명 텍스트)를 채우고, 코드 예시가 유용하면 code_block을 채우세요 — 상호배타적이지 않으므로 둘 다 필요하면 둘 다 채워도 됨. 필요 없으면 각각 null',
       '설명이 길어질 경우, 핵심만 한 줄로 요약한 key_point를 추가로 제공하세요 (짧은 설명이면 null로 생략 가능)',
@@ -226,7 +240,8 @@ ${_encapsulateUserInput('user_response', userAnswer)}
 ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
       'widget_type': 'answer_feedback',
       'is_correct': 'boolean — 위젯 타입 무관하게 이 프롬프트가 항상 직접 판단',
-      'feedback_text': 'string (마크다운 Bold 포함)',
+      'is_off_topic': 'boolean — 답변이 문제와 무관하면 true, 틀렸더라도 문제에 답하려 한 경우는 false',
+      'feedback_text': 'string (평문)',
       'key_point': 'string | null — 핵심 요약 1줄, 짧은 설명이면 생략',
       'code_block': '{ "language": string, "code": string } | null',
       'image_prompt': 'string | null — 실제 URL이 아니라 이미지 생성 AI에게 넘길 설명 텍스트',

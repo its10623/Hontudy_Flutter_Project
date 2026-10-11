@@ -28,6 +28,8 @@ class SubmitQuizAnswerUseCase {
           (feedback) => feedback,
           (failure) => throw failure,
         );
+    // 문제와 무관한 답은 풀이로 치지 않고 노트,재출제 제외에 섞이지 않게 함
+    if (feedback.isOffTopic) return feedback;
     final time = DateTime.now();
     final record = SolvedRecord(
       timestamp: time,
