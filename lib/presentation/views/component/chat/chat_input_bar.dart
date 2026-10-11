@@ -75,10 +75,11 @@ class _ChatInputBarState extends State<ChatInputBar> {
               ),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.mic_none),
-            onPressed: widget.enabled ? widget.onMicTap : null,
-          ),
+          // TODO(임시): 음성 입력(STT) 구현 전까지 숨김
+          // IconButton(
+          //   icon: const Icon(Icons.mic_none),
+          //   onPressed: widget.enabled ? widget.onMicTap : null,
+          // ),
           const SizedBox(width: 4),
           _SendButton(onTap: widget.enabled ? _send : null),
         ],
