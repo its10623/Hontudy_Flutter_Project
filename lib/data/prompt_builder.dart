@@ -181,7 +181,7 @@ ${_constraints([
       '최신 트렌드/미검증 기술블로그 의견 배제',
       '인사말/서론/설명 문구 절대 포함 금지 ("네, 문제를 만들어 드릴게요" 등)',
       '정답은 무조건 1개, 애매한 논란 소지 있는 문장 금지',
-      '카테고리는 메인/메인주제/서브주제 3단계로 세분화',
+      '카테고리는 메인/메인주제/서브주제 3단계로 세분화하고, category.main은 아래 참고 데이터의 main_categories name 중 하나를 글자 그대로(띄어쓰기 포함) 쓰세요. topic도 가능하면 그 메인의 topics 중에서 고르세요',
       '아래 제외 키워드에 해당하는 주제는 출제하지 마세요: ${excludeKeywords.join(', ')}',
       '제외 키워드를 다 피해서 이 서브주제 내에서 더 이상 출제할 개념이 없다면, 억지로 애매하거나 중복된 문제를 만들지 말고 is_exhausted: true만 반환하세요 (이 경우 다른 필드는 비워도 됨)',
       'widget_type이 single_choice_question이면 correct_index로만 정답을 표기하고 reference_answer는 null로 두세요. 그 외 위젯 타입(short_answer_input/code_block/math_formula/image_diagram)은 reference_answer에 모범 답안을 문장으로 작성하세요',
@@ -189,6 +189,8 @@ ${_constraints([
       '코드·명령어·연산 순서처럼 고정폭으로 봐야 하는 내용은 question_text에 넣지 말고 widget_type과 상관없이 code_snippet에 분리하세요. 필요 없으면 null',
       'question_text·choices·reference_answer는 마크다운(**, 백틱)과 LaTeX 없이 평문으로 작성하고, 수식은 2^12처럼 일반 텍스트로, 줄바꿈은 실제 줄바꿈 문자로 쓰세요',
     ])}
+${_referenceData('''아래는 메인 주제 기준 목록입니다 (category.main은 반드시 이 중 하나):
+${_serializeCategoryCatalog()}''')}
 ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
       'is_exhausted': 'boolean — true면 아래 필드 생략 가능',
       'category': {'main': 'string', 'topic': 'string', 'subtopic': 'string'},

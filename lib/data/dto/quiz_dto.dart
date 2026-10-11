@@ -1,3 +1,4 @@
+import 'package:hontudy/domain/models/category_scheme.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../domain/models/quiz.dart';
@@ -117,7 +118,7 @@ class QuizMapper {
 class CategoryMapper {
   static Category toDomain(CategoryDto dto) {
     return Category(
-      main: dto.main,
+      main: CategoryScheme.normalizeMain(dto.main) ?? dto.main,
       topic: dto.topic,
       subTopic: dto.subTopic,
     );

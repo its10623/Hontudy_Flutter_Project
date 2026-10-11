@@ -1,3 +1,4 @@
+import 'package:hontudy/domain/models/category_scheme.dart';
 import 'package:hontudy/data/llm_plain_text.dart';
 import 'package:hontudy/data/prompt_builder.dart';
 import 'package:hontudy/data/result_guard.dart';
@@ -123,7 +124,7 @@ class QuizRepositoryImpl implements QuizRepository {
       qid: const Uuid().v4(),
       questionText: llmPlainText(json['question_text'] as String),
       category: Category(
-        main: category['main'] as String,
+        main: _mainCategoryFromJson(category['main']),
         topic: category['topic'] as String,
         subTopic: category['subtopic'] as String,
       ),
@@ -156,6 +157,13 @@ class QuizRepositoryImpl implements QuizRepository {
       imageUrl: imageUrl,
       codeSnippet: _codeSnippetFromJson(json['code_block']),
     );
+  }
+
+  /// 기준 목록 밖의 주제는 노트에서 중복·미분류로 보이므로 거부
+  String _mainCategoryFromJson(Object? raw) {
+    final main = raw is String ? CategoryScheme.normalizeMain(raw) : null;
+    if (main == null) throw FormatException('알 수 없는 메인 주제: $raw');
+    return main;
   }
 
   CodeSnippet? _codeSnippetFromJson(Object? raw) {
