@@ -18,6 +18,14 @@ class AppColors {
   static const Color quiz = Color(0xFFF2762E);
   static const Color textHighlightAmber = Color(0xFFA8730B);
 
+  // 스플래시
+  static const Color splashBackground = Color(0xFF2B5CFF);
+  static const Color splashCircle = Color(0xFF4169FF);
+  static const Color splashMint = Color(0xFF9BE3C4);
+  static const Color splashPeach = Color(0xFFFFC9B0);
+  static const Color splashLavender = Color(0xFFCFC2FF);
+  static const Color splashYellow = Color(0xFFFFE38A);
+
   // Light
   static const Color primarySurface = Color(0xFFFFFFFF);
   static const Color primaryContainer = Color(0xFFCCD9FF);
