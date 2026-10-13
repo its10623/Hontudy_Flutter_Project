@@ -33,7 +33,7 @@ class DiagnosisScheme {
     PurposeTag(
       tag: '입문 학습',
       meaning: '처음 배우는 중',
-      effect: '개념 위주, 기초 용어 설명 포함',
+      effect: '개념 위주, 기초 용어로 쉽게 묻기',
     ),
     PurposeTag(
       tag: '실무 역량 강화',
@@ -81,4 +81,3 @@ class PurposeTag {
     required this.effect,
   });
 }
-

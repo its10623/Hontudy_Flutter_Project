@@ -173,14 +173,16 @@ ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
     return '''
 ${_role('당신은 대학교 컴퓨터공학 학부 수준의 검증된 지식만 다루는 1타 강사입니다.')}
 ${_taskDescription('''아래 사용자 프로필에 맞는 문제를 1개 출제하세요.
-- 배경: ${profile.background} (전공자면 전문용어 그대로, 비전공자면 쉬운 비유 포함해 설명)
+- 배경: ${profile.background} (전공자면 전문용어 그대로, 비전공자면 문제 문장을 쉬운 말로)
 - 난이도: 스코어 ${profile.difficultyScore} → ${_difficultyMapping(profile.difficultyScore)} 난이도로 출제
 - 목적: ${profile.purposeTags.join(', ')} → ${_purposeTagEffects(profile.purposeTags)} 를 문제 스타일에 반영''')}
 ${_constraints([
       _formatRule(format),
       '최신 트렌드/미검증 기술블로그 의견 배제',
+      '텍스트는 항상 높임말을 사용하세요',
       '인사말/서론/설명 문구 절대 포함 금지 ("네, 문제를 만들어 드릴게요" 등)',
       '정답은 무조건 1개, 애매한 논란 소지 있는 문장 금지',
+      'question_text에는 묻는 내용만 쓰세요. 정답이나 정답을 짐작하게 하는 정의·비유·부연 설명·힌트는 넣지 마세요',
       '카테고리는 메인/메인주제/서브주제 3단계로 세분화하고, category.main은 아래 참고 데이터의 main_categories name 중 하나를 글자 그대로(띄어쓰기 포함) 쓰세요. topic도 가능하면 그 메인의 topics 중에서 고르세요',
       '아래 제외 키워드에 해당하는 주제는 출제하지 마세요: ${excludeKeywords.join(', ')}',
       '제외 키워드를 다 피해서 이 서브주제 내에서 더 이상 출제할 개념이 없다면, 억지로 애매하거나 중복된 문제를 만들지 말고 is_exhausted: true만 반환하세요 (이 경우 다른 필드는 비워도 됨)',
@@ -205,6 +207,7 @@ ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
       'self_check_passed': 'boolean',
     })}
 ${_validateSelfPrompt('''출력하기 전, 위 제약조건을 모두 지켰는지 스스로 점검하세요.
+특히 question_text만 읽고 정답을 알 수 있으면 위반입니다.
 위반 사항이 있다면 문제를 다시 작성한 뒤 최종안만 출력하고,
 검토를 통과했다면 self_check_passed를 true로 표시하세요.''')}
 ''';
@@ -230,7 +233,8 @@ ${_constraints([
       '정답과 해설만 주지 말고 오답에 대한 구체적 피드백 포함',
       '객관식 오답 선지는 정답과 미세한 뉘앙스 차이가 아니라 핵심 개념을 명백히 거스르는 것으로 이미 구성돼 있음 — 왜 틀렸는지 핵심 개념 기준으로 설명',
       '주관식은 표현이 달라도 핵심 개념이 맞으면 정답으로 판단 (예: "NAT"와 "네트워크 주소 변환"은 동일 정답) — 글자 단위 일치를 요구하지 말 것',
-      '사용자 답변이 문제와 무관하면(잡담, 음식 추천, 장난, 의미 없는 글자 등) is_off_topic은 true, is_correct는 false로 두고, 사용자가 같은 문제를 다시 풀 수 있으므로 정답·힌트를 절대 언급하지 마세요. 이 경우 feedback_text는 빈 문자열, key_point·code_block·image_prompt는 모두 null',
+      '사용자 답변이 IT·CS 학습 답변이 아니면(잡담, 음식 추천, 장난, 의미 없는 글자 등) is_off_topic은 true, is_correct는 false로 두고, 사용자가 같은 문제를 다시 풀 수 있으므로 정답·힌트를 절대 언급하지 마세요. 이 경우 feedback_text는 빈 문자열, key_point·code_block·image_prompt는 모두 null',
+      '다른 CS 개념으로 답했거나 질문을 잘못 이해한 경우는 오답(is_off_topic: false)으로 채점하고 해설 제공',
       '앱이 정답/오답을 따로 표시하므로 "정답입니다"·"오답입니다" 같은 판정 문구로 시작하지 말고 바로 설명부터 쓰세요',
       'feedback_text·key_point는 마크다운(**, 백틱)과 LaTeX 없이 평문으로 작성하고, 수식은 2^12처럼 일반 텍스트로 쓰세요. 강조가 필요한 핵심은 key_point로 분리하세요',
       '코드 예시가 필요하면 feedback_text에 넣지 말고 code_block에 분리하세요',
