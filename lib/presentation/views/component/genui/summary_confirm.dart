@@ -54,7 +54,7 @@ class _SummaryConfirmState extends State<SummaryConfirm> {
           ),
           child: Column(
             children: [
-              _SummaryRow(category: '배경', value: profile.background),
+              _SummaryRow(category: '배경', value: profile.background ?? '-'),
               const DividerWidget(),
               _SummaryRow(
                 category: '난이도',

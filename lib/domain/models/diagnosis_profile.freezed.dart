@@ -51,7 +51,7 @@ abstract mixin class $DiagnosisProfileCopyWith<$Res>  {
   factory $DiagnosisProfileCopyWith(DiagnosisProfile value, $Res Function(DiagnosisProfile) _then) = _$DiagnosisProfileCopyWithImpl;
 @useResult
 $Res call({
- String background, int difficultyScore, List<String> purposeTags, List<String> weakAreas, DateTime timestamp
+ String? background, int difficultyScore, List<String> purposeTags, List<String> weakAreas, DateTime timestamp
 });
 
 
@@ -68,10 +68,10 @@ class _$DiagnosisProfileCopyWithImpl<$Res>
 
 /// Create a copy of DiagnosisProfile
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? background = null,Object? difficultyScore = null,Object? purposeTags = null,Object? weakAreas = null,Object? timestamp = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? background = freezed,Object? difficultyScore = null,Object? purposeTags = null,Object? weakAreas = null,Object? timestamp = null,}) {
   return _then(DiagnosisProfile(
-background: null == background ? _self.background : background // ignore: cast_nullable_to_non_nullable
-as String,difficultyScore: null == difficultyScore ? _self.difficultyScore : difficultyScore // ignore: cast_nullable_to_non_nullable
+background: freezed == background ? _self.background : background // ignore: cast_nullable_to_non_nullable
+as String?,difficultyScore: null == difficultyScore ? _self.difficultyScore : difficultyScore // ignore: cast_nullable_to_non_nullable
 as int,purposeTags: null == purposeTags ? _self.purposeTags : purposeTags // ignore: cast_nullable_to_non_nullable
 as List<String>,weakAreas: null == weakAreas ? _self.weakAreas : weakAreas // ignore: cast_nullable_to_non_nullable
 as List<String>,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable

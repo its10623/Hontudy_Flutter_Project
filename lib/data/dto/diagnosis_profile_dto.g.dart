@@ -8,7 +8,7 @@ part of 'diagnosis_profile_dto.dart';
 
 DiagnosisProfileDto _$DiagnosisProfileDtoFromJson(Map<String, dynamic> json) =>
     DiagnosisProfileDto(
-      background: json['background'] as String,
+      background: json['background'] as String?,
       difficultyScore: (json['difficultyScore'] as num).toInt(),
       purposeTags: (json['purposeTags'] as List<dynamic>)
           .map((e) => e as String)

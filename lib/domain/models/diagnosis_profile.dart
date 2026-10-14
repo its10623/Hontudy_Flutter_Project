@@ -4,14 +4,14 @@ part 'diagnosis_profile.freezed.dart';
 
 @freezed
 class DiagnosisProfile with _$DiagnosisProfile {
-  final String background;
+  final String? background;
   final int difficultyScore;
   final List<String> purposeTags;
   final List<String> weakAreas;
   final DateTime timestamp;
 
   const DiagnosisProfile({
-    required this.background,
+    this.background,
     required this.difficultyScore,
     required this.purposeTags,
     required this.weakAreas,

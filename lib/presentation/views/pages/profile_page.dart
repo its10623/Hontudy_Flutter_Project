@@ -322,7 +322,7 @@ class _DiagnosisCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: _StatTile(label: '배경', value: diagnosis.background),
+                  child: _StatTile(label: '배경', value: diagnosis.background ?? '-'),
                 ),
               ],
             ),

@@ -91,7 +91,7 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
     });
   }
 
-  List<String> _whitelistedStrings(
+  List<String> _allowedValues(
     Object? raw, {
     required Iterable<String> allowed,
     int? limit,
@@ -104,6 +104,15 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
         .toSet()
         .toList();
     return limit == null ? values : values.take(limit).toList();
+  }
+
+  String? _allowedValueOrNull(
+    Object? raw, {
+    required Iterable<String> allowed,
+  }) {
+    if (raw is! String) return null;
+    final value = raw.trim();
+    return allowed.contains(value) ? value : null;
   }
 
   int _parseInt(Object? raw, {required String field}) {
@@ -133,18 +142,21 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
   DiagnosisResult _diagnosisResultFromJson(Map<String, dynamic> json) {
     return DiagnosisResult(
       profile: DiagnosisProfile(
-        background: json['background'] as String,
+        background: _allowedValueOrNull(
+          json['background'],
+          allowed: DiagnosisScheme.backgrounds,
+        ),
         difficultyScore: _intInRange(
           json['difficulty_score'],
           field: 'difficulty_score',
           min: 1,
           max: 5,
         ),
-        purposeTags: _whitelistedStrings(
+        purposeTags: _allowedValues(
           json['purpose_tags'],
           allowed: DiagnosisScheme.purposeTags.map((purpose) => purpose.tag),
         ),
-        weakAreas: _whitelistedStrings(
+        weakAreas: _allowedValues(
           json['weak_areas'],
           allowed: CategoryScheme.mainCategories.map((main) => main.name),
           limit: 3,

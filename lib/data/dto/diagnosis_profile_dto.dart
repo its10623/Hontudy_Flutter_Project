@@ -6,7 +6,7 @@ part 'diagnosis_profile_dto.g.dart';
 
 @JsonSerializable()
 class DiagnosisProfileDto {
-  final String background;
+  final String? background;
   final int difficultyScore;
   final List<String> purposeTags;
   final List<String> weakAreas;
@@ -14,7 +14,7 @@ class DiagnosisProfileDto {
   final DateTime timestamp;
 
   const DiagnosisProfileDto({
-    required this.background,
+    this.background,
     required this.difficultyScore,
     required this.purposeTags,
     required this.weakAreas,
