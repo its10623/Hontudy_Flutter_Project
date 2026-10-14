@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hontudy/di/repository_providers.dart';
 import 'package:hontudy/domain/models/diagnosis_turn.dart';
 import 'package:hontudy/presentation/state/diagnosis_state.dart';
@@ -114,6 +115,9 @@ class DiagnosisViewModel extends _$DiagnosisViewModel {
         ),
       );
       return;
+    }
+    if (kDebugMode) {
+      debugPrint('[Diagnosis]현재 턴: ${state.turnCount + 1} 현재 확신도: ${turn.confidence} 다음 행동: ${turn.nextAction}');
     }
 
     switch (turn.nextAction) {
