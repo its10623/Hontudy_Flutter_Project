@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:hontudy/domain/exceptions.dart';
+import 'package:hontudy/domain/models/category_scheme.dart';
 import 'package:hontudy/domain/models/diagnosis_profile.dart';
 import 'package:hontudy/domain/repositories/diagnosis_repository.dart';
 import 'package:hontudy/domain/repositories/note_repository.dart';
@@ -26,6 +27,7 @@ class RequestQuizUseCase {
 
   static const _maxRetries = 5;
   static const _singleChoiceRatio = 0.6;
+  static const _weakAreasRatio = 0.7;
   final Random _random;
 
   RequestQuizUseCase({
@@ -57,6 +59,16 @@ class RequestQuizUseCase {
     final format = _random.nextDouble() < _singleChoiceRatio
         ? QuizFormat.singleChoice
         : QuizFormat.shortAnswer;
+    final useWeakArea =
+        profile.weakAreas.isNotEmpty &&
+        _random.nextDouble() < _weakAreasRatio;
+    final categoryList = CategoryScheme.mainCategories
+        .map((c) => c.name)
+        .toList();
+    final targetMain = useWeakArea
+        ? profile.weakAreas[_random.nextInt(profile.weakAreas.length)]
+        : categoryList[_random.nextInt(categoryList.length)];
+
     final keywords = List<String>.from(excludeKeywords);
     for (var attempt = 0; attempt < _maxRetries; attempt++) {
       try {
@@ -65,6 +77,7 @@ class RequestQuizUseCase {
               profile: profile,
               excludeKeywords: keywords,
               format: format,
+              targetMain: targetMain,
             )
             .fold(
               (success) => success,

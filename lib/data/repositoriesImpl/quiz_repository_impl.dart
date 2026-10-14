@@ -22,12 +22,14 @@ class QuizRepositoryImpl implements QuizRepository {
     required DiagnosisProfile profile,
     required List<String> excludeKeywords,
     required QuizFormat format,
+    required String targetMain,
   }) {
     return guardAsync(() async {
       final prompt = PromptBuilder.buildQuizPrompt(
         profile: profile,
         excludeKeywords: excludeKeywords,
         format: format,
+        targetMain: targetMain,
       );
       final json = await _ai.sendPrompt(
         messages: [

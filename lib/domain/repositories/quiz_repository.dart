@@ -9,6 +9,7 @@ abstract class QuizRepository {
     required DiagnosisProfile profile,
     required List<String> excludeKeywords,
     required QuizFormat format,
+    required String targetMain,
   });
 
   AsyncResult<QuizFeedback> submitAnswer({
