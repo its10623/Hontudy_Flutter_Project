@@ -54,7 +54,7 @@ class NoteSummaryPage extends ConsumerWidget {
         ),
         body: switch (summaryState) {
           AsyncData(:final value) when value.isEmpty => NoteEmptyView(
-            onStartQuiz: () => context.go(AppRoutes.home),
+            onStartQuiz: () => StatefulNavigationShell.of(context).goBranch(0),
           ),
           AsyncData(:final value) => _NoteSummaryBody(summary: value),
           AsyncError() => NoteLoadErrorView(
