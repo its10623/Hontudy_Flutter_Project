@@ -9,7 +9,7 @@
 import {randomUUID} from "node:crypto";
 
 import {initializeApp} from "firebase-admin/app";
-import {FieldValue, getFirestore} from "firebase-admin/firestore";
+import {FieldValue, getFirestore, Timestamp} from "firebase-admin/firestore";
 import {getDownloadURL, getStorage} from "firebase-admin/storage";
 import {logger} from "firebase-functions";
 import {
@@ -23,6 +23,7 @@ import {
   HttpsError,
   onCall,
 } from "firebase-functions/v2/https";
+import * as functionsV1 from "firebase-functions/v1";
 
 initializeApp();
 
@@ -58,6 +59,8 @@ const MAX_STT_PROMPT_CHARS = 1_000;
 const ALLOWED_ROLES = new Set(["system", "user", "assistant"]);
 const RETRYABLE_STATUS = new Set([500, 503]);
 const MAX_RETRIES = 2;
+// aiUsage 문서는 Firestore TTL 정책(expireAt 필드)으로 이 기간 뒤 자동 삭제된다.
+const USAGE_RETENTION_DAYS = 30;
 
 const commonOptions = {
   region: REGION,
@@ -109,6 +112,9 @@ async function consumeDailyQuota(uid: string): Promise<void> {
         date: seoulDate(),
         count: FieldValue.increment(1),
         updatedAt: FieldValue.serverTimestamp(),
+        expireAt: Timestamp.fromMillis(
+          Date.now() + USAGE_RETENTION_DAYS * 24 * 60 * 60 * 1000,
+        ),
       },
       {merge: true},
     );
@@ -372,3 +378,35 @@ export const generateImage = onCall(
     return {url: await getDownloadURL(file)};
   },
 );
+
+// ── cleanupUserData ───────────────────────────────────────
+
+/**
+ * 계정이 삭제되면 앱이 지울 수 없는 데이터(생성 이미지, AI 사용량 기록)를 정리한다.
+ * 계정 삭제 이벤트는 2세대에 없어 1세대 트리거를 쓴다. 두 작업 모두 다시 실행해도
+ * 결과가 같아서 실패 시 자동 재시도를 켠다.
+ */
+export const cleanupUserData = functionsV1
+  .runWith({failurePolicy: true})
+  .region(REGION)
+  .auth.user()
+  .onDelete(async (user) => {
+    const uid = user.uid;
+    const db = getFirestore();
+
+    const [, deletedUsageDocs] = await Promise.all([
+      getStorage().bucket().deleteFiles({prefix: `quizImages/${uid}/`}),
+      (async () => {
+        const snapshot = await db
+          .collection("aiUsage")
+          .where("uid", "==", uid)
+          .get();
+        const writer = db.bulkWriter();
+        snapshot.docs.forEach((doc) => writer.delete(doc.ref));
+        await writer.close();
+        return snapshot.size;
+      })(),
+    ]);
+
+    logger.info("탈퇴 사용자 데이터 정리 완료", {deletedUsageDocs});
+  });
