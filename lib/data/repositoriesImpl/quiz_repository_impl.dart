@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseException;
 import 'package:hontudy/domain/models/category_scheme.dart';
 import 'package:hontudy/data/llm_plain_text.dart';
 import 'package:hontudy/data/prompt_builder.dart';
@@ -112,15 +113,9 @@ class QuizRepositoryImpl implements QuizRepository {
         ? quizContent.options[quizContent.correctIndex]
         : llmPlainText(json['reference_answer'] as String? ?? '');
 
-    String? imageUrl;
-    if (widgetType == 'image_diagram' && widgetContent != null) {
-      final imagePrompt = widgetContent['image_prompt'] as String?;
-      if (imagePrompt != null) {
-        imageUrl = await _ai.generateImage(
-          prompt: imagePrompt,
-        );
-      }
-    }
+    final imageUrl = widgetType == 'image_diagram'
+        ? await _requiredImageUrl(widgetContent?['image_prompt'])
+        : null;
 
     return Quiz(
       qid: const Uuid().v4(),
@@ -146,9 +141,7 @@ class QuizRepositoryImpl implements QuizRepository {
     final imagePrompt = json['image_prompt'] as String?;
     final imageUrl = imagePrompt == null
         ? null
-        : await _ai.generateImage(
-            prompt: imagePrompt,
-          );
+        : await _optionalImageUrl(imagePrompt);
 
     final isOffTopic = json['is_off_topic'] == true;
     return QuizFeedback(
@@ -161,7 +154,37 @@ class QuizRepositoryImpl implements QuizRepository {
     );
   }
 
-  /// 기준 목록 밖의 주제는 노트에서 중복·미분류로 보이므로 거부
+  /// 이미지를 만들지 못하면 문제 재출제
+  Future<String> _requiredImageUrl(Object? imagePrompt) async {
+    if (imagePrompt is! String || imagePrompt.trim().isEmpty) {
+      throw QuizImageUnavailableException();
+    }
+    try {
+      final prompt = PromptBuilder.buildQuizImagePrompt(
+        imagePrompt: imagePrompt,
+      );
+      return await _ai.generateImage(prompt: prompt);
+    } on FirebaseException catch (e) {
+      if (e.code == 'resource-exhausted') rethrow;
+      throw QuizImageUnavailableException();
+    } on Exception {
+      throw QuizImageUnavailableException();
+    }
+  }
+
+  /// 해설 이미지는 보조 자료라 실패해도 해설만 보여 준다.
+  Future<String?> _optionalImageUrl(String imagePrompt) async {
+    try {
+      final prompt = PromptBuilder.buildExplanationImagePrompt(
+        imagePrompt: imagePrompt,
+      );
+      return await _ai.generateImage(prompt: prompt);
+    } on Exception {
+      return null;
+    }
+  }
+
+  /// 기준 목록 밖의 주제는 노트에서 중복,미분류로 보이므로 거부
   String _mainCategoryFromJson(Object? raw) {
     final main = raw is String ? CategoryScheme.normalizeMain(raw) : null;
     if (main == null) throw FormatException('알 수 없는 메인 주제: $raw');

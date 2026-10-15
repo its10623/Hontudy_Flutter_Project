@@ -26,6 +26,7 @@ class RequestQuizUseCase {
   final DiagnosisRepository _diagnosisRepository;
 
   static const _maxRetries = 5;
+  static const _maxImageFailures = 2;
   static const _singleChoiceRatio = 0.6;
   static const _weakAreasRatio = 0.7;
   final Random _random;
@@ -60,8 +61,7 @@ class RequestQuizUseCase {
         ? QuizFormat.singleChoice
         : QuizFormat.shortAnswer;
     final useWeakArea =
-        profile.weakAreas.isNotEmpty &&
-        _random.nextDouble() < _weakAreasRatio;
+        profile.weakAreas.isNotEmpty && _random.nextDouble() < _weakAreasRatio;
     final categoryList = CategoryScheme.mainCategories
         .map((c) => c.name)
         .toList();
@@ -70,6 +70,7 @@ class RequestQuizUseCase {
         : categoryList[_random.nextInt(categoryList.length)];
 
     final keywords = List<String>.from(excludeKeywords);
+    var imageFailures = 0;
     for (var attempt = 0; attempt < _maxRetries; attempt++) {
       try {
         final quiz = await _quizRepository
@@ -87,6 +88,8 @@ class RequestQuizUseCase {
       } on QuizDomainExhaustedException {
         if (keywords.isEmpty) break;
         keywords.removeLast();
+      } on QuizImageUnavailableException {
+        if (++imageFailures >= _maxImageFailures) rethrow;
       }
     }
     return ReviewModeRequired();

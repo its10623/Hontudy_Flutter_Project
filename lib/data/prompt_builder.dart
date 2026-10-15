@@ -166,7 +166,7 @@ ${_constraints([
       'reasoning은 사용자에게 그대로 노출될 수 있으므로, "difficulty_score=2로 판단" 같은 내부 변수명 언급 없이 자연스러운 문장으로 작성',
       'background_detail은 대화에서 언급된 구체적 경험을 짧게 요약. 언급된 게 없으면 null',
       'weak_areas는 category_catalog의 메인 카테고리 중에서만 1~3개 선택. 화이트리스트 밖의 값은 출력 금지. 확인되지 않으면 null',
-      'weak_areas는 사용자가 특정 주제의 문제를 요청했거나 집중하고 싶다고 말하면 그 주제를 포함'
+      'weak_areas는 사용자가 특정 주제의 문제를 요청했거나 집중하고 싶다고 말하면 그 주제를 포함',
     ])}
 ${_referenceData('''${_serializeDiagnosisCatalog()}
 ${_serializeCategoryCatalog()}''')}
@@ -210,7 +210,10 @@ ${_constraints([
       '아래 제외 키워드에 해당하는 주제는 출제하지 마세요: ${excludeKeywords.join(', ')}',
       '제외 키워드를 다 피해서 이 서브주제 내에서 더 이상 출제할 개념이 없다면, 억지로 애매하거나 중복된 문제를 만들지 말고 is_exhausted: true만 반환하세요 (이 경우 다른 필드는 비워도 됨)',
       'widget_type이 single_choice_question이면 correct_index로만 정답을 표기하고 reference_answer는 null로 두세요. 그 외 위젯 타입(short_answer_input/code_block/math_formula/image_diagram)은 reference_answer에 모범 답안을 문장으로 작성하세요',
-      'widget_type이 image_diagram이면 widget_content에 실제 이미지 URL이 아니라 이미지 생성 AI에게 넘길 설명 텍스트를 image_prompt 필드로 채우세요 (예: {"image_prompt": "이진 탐색 트리 구조를 보여주는 다이어그램"})',
+      'widget_type이 image_diagram이면 widget_content.image_prompt에 이미지 생성 AI에게 넘길 그림 설명을 쓰세요. '
+          '그림의 이름이나 개념 명칭을 묻지 말고, 그림 속 요소의 역할·흐름·결과를 묻는 문제만 출제하세요 '
+          '(예: "그림에서 ③ 단계로 넘어갈 때 바뀌는 값은?", "이 트리에 15를 넣으면 어느 위치에 들어가나요?"). '
+          'image_prompt에는 정답 개념의 이름(한글·영문 모두)을 쓰지 말고, 그릴 구성 요소와 배치·흐름만 묘사하세요',
       '코드·명령어·연산 순서처럼 고정폭으로 봐야 하는 내용은 question_text에 넣지 말고 widget_type과 상관없이 code_snippet에 분리하세요. 필요 없으면 null',
       'question_text·choices·reference_answer는 마크다운(**, 백틱)과 LaTeX 없이 평문으로 작성하고, 수식은 2^12처럼 일반 텍스트로, 줄바꿈은 실제 줄바꿈 문자로 쓰세요',
     ])}
@@ -231,6 +234,7 @@ ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
     })}
 ${_validateSelfPrompt('''출력하기 전, 위 제약조건을 모두 지켰는지 스스로 점검하세요.
 특히 question_text만 읽고 정답을 알 수 있으면 위반입니다.
+image_diagram이면 image_prompt만 읽고 정답을 알 수 있어도 위반입니다.
 위반 사항이 있다면 문제를 다시 작성한 뒤 최종안만 출력하고,
 검토를 통과했다면 self_check_passed를 true로 표시하세요.''')}
 ''';
@@ -269,6 +273,22 @@ ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
       'image_prompt': 'string | null — 실제 URL이 아니라 이미지 생성 AI에게 넘길 설명 텍스트',
     })}
 ''';
+  }
+
+  static String buildQuizImagePrompt({required String imagePrompt}) {
+    return '[그림 규칙]\n'
+        '1. 그림 안의 구성 요소 라벨은 짧은 한국어로 쓰세요. CPU·패킷처럼 영문이 더 익숙한 일반 용어는 영문 그대로 써도 됩니다.\n'
+        '2. 그림 제목은 넣지 마세요.\n'
+        '3. 문제의 정답이 될 개념의 이름은 한글·영문 모두 그림에 쓰지 마세요.\n'
+        '4. 설명 문장 없이 도형·화살표·짧은 라벨로만 표현하세요.\n'
+        '[그림 설명]\n$imagePrompt';
+  }
+
+  static String buildExplanationImagePrompt({required String imagePrompt}) {
+    return '[그림 규칙]\n'
+        '1. 라벨은 꼭 필요한 것만 짧은 한국어로 쓰세요. 같은 말을 영문으로 병기하지 마세요.\n'
+        '2. 개념을 정확히 나타내고, 설명에 없는 내용은 추가하지 마세요.\n'
+        '[그림 설명]\n$imagePrompt';
   }
 
   static String buildSttPrompt(List<String> csTermHints) {

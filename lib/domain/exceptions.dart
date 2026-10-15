@@ -15,6 +15,11 @@ class SignInCancelledException implements DomainException {
   String toString() => 'SignInCancelledException: 사용자가 소셜 로그인을 취소함';
 }
 
+class QuizImageUnavailableException implements DomainException {
+  @override
+  String toString() => 'QuizImageUnavailableException: 그림이 필요한 문제의 이미지를 만들지 못함';
+}
+
 class AiUsageLimitExceededException implements DomainException {
   @override
   String toString() =>
