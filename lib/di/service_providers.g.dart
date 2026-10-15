@@ -21,7 +21,7 @@ final class AuthServiceProvider
         argument: null,
         retry: null,
         name: r'authServiceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -48,7 +48,7 @@ final class AuthServiceProvider
   }
 }
 
-String _$authServiceHash() => r'4ec7dd3409b1adcbac86a9f89ced41827be98ba8';
+String _$authServiceHash() => r'00110bb31fe2c06cacd005f761b7c43770fc13c5';
 
 @ProviderFor(firestoreService)
 final firestoreServiceProvider = FirestoreServiceProvider._();
@@ -67,7 +67,7 @@ final class FirestoreServiceProvider
         argument: null,
         retry: null,
         name: r'firestoreServiceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -94,7 +94,7 @@ final class FirestoreServiceProvider
   }
 }
 
-String _$firestoreServiceHash() => r'60ff847ea870b353b433504c7f164ea13f87009a';
+String _$firestoreServiceHash() => r'64bb5d50049dc65279aa722f222743756f003e68';
 
 @ProviderFor(aiFunctionsService)
 final aiFunctionsServiceProvider = AiFunctionsServiceProvider._();
@@ -113,7 +113,7 @@ final class AiFunctionsServiceProvider
         argument: null,
         retry: null,
         name: r'aiFunctionsServiceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -142,4 +142,4 @@ final class AiFunctionsServiceProvider
 }
 
 String _$aiFunctionsServiceHash() =>
-    r'6a6ce4b032ac9ccf77cb74618865946797572a16';
+    r'e3da1f6614e50d772eaa24186a59b3068a9f35d4';

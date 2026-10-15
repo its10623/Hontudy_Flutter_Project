@@ -10,20 +10,19 @@ import '../data/services/remotes/ai_functions_service.dart';
 
 part 'service_providers.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AuthService authService(Ref ref) {
   return AuthService(FirebaseAuth.instance, GoogleSignIn.instance);
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 FirestoreService firestoreService(Ref ref) {
   return FirestoreService(FirebaseFirestore.instance);
 }
 
-/// Cloud Functions 리전은 서버(functions/src/index.ts)의 REGION과 같아야 한다.
 const functionsRegion = 'us-central1';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AiFunctionsService aiFunctionsService(Ref ref) {
   return AiFunctionsService(
     FirebaseFunctions.instanceFor(region: functionsRegion),
