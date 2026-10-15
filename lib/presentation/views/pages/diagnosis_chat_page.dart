@@ -1,4 +1,3 @@
-import 'package:hontudy/presentation/core/screenshot_mode.dart';
 import 'package:hontudy/presentation/views/route/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:math';
@@ -7,12 +6,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hontudy/di/repository_providers.dart';
 import 'package:hontudy/domain/models/diagnosis_turn.dart';
 import 'package:hontudy/presentation/core/theme/shape.dart';
 import 'package:hontudy/presentation/state/diagnosis_state.dart';
 import 'package:hontudy/presentation/viewmodels/diagnosis_viewmodel.dart';
 
+import '../../../domain/exceptions.dart';
 import '../../core/theme/context_theme_extension.dart';
 import '../component/app_background.dart';
 import '../component/chat/chat_appbar.dart';
@@ -82,7 +81,7 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
         appBar: ChatAppbar(
           pageInfo: '혼터디 AI · 맞춤 문제 진단',
           currentState: isSummary ? '진단 결과 확인' : '$questionNumber번째 질문',
-          progress: isSummary ? 1 : questionNumber / maxTurns,
+          progress: isSummary ? 1 : questionNumber / (maxTurns + 1),
         ),
         body: ChatBody(
           controller: _controller,
@@ -91,11 +90,6 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
           footerBuilder: (context, message) =>
               _buildFooter(state, message.customProperties?['id']),
         ),
-        // TODO(임시): 프로필 화면 로그아웃이 연결되면(라우팅 작업 시) 삭제
-        floatingActionButton: kDebugMode && !kScreenshotMode
-            ? const _DebugAccountBar()
-            : null,
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       ),
     );
   }
@@ -118,7 +112,12 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
           state.phase is Classifying ||
           state.phase is Failed)
         ChatMessage(
-          text: state.phase is Failed ? '응답을 받지 못했어요.' : '',
+          text: switch (state.phase) {
+            Failed(error: AiUsageLimitExceededException()) =>
+              '하루 사용 한도 초과 했어요.\n내일 다시 진단 해주세요',
+            Failed() => '응답을 받지 못했어요.',
+            _ => '',
+          },
           user: chatAiUser,
           createdAt: DateTime.now(),
           customProperties: {'id': _statusId},
@@ -128,13 +127,15 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
 
   Widget? _buildFooter(DiagnosisState state, Object? id) {
     if (id == _statusId) {
-      return state.phase is Failed
-          ? PrimaryButton(
-              onPressed: ref.read(diagnosisViewModelProvider.notifier).retry,
-              text: '다시 시도',
-              color: ButtonColor.surface,
-            )
-          : const _ThinkingSkeleton();
+      return switch (state.phase) {
+        Failed(error: AiUsageLimitExceededException()) => null,
+        Failed() => PrimaryButton(
+          onPressed: ref.read(diagnosisViewModelProvider.notifier).retry,
+          text: '다시 시도',
+          color: ButtonColor.surface,
+        ),
+        _ => const _ThinkingSkeleton(),
+      };
     }
 
     final message = state.messages.where((m) => m.id == id).firstOrNull;
@@ -281,72 +282,6 @@ class _ThinkingSkeleton extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// 디버그 빌드 전용: 현재 계정(제공업체·이름·이메일) 확인 + 로그아웃.
-/// Apple 최초 로그인 이름 저장, Android 웹 흐름의 이름 반영 여부를 앱에서 바로 보려고 둔 것.
-class _DebugAccountBar extends ConsumerWidget {
-  const _DebugAccountBar();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userRepositoryProvider).currentUser;
-    final name = (user?.displayName.isNotEmpty ?? false)
-        ? user!.displayName
-        : '(이름 없음)';
-    final label = user == null
-        ? '로그인 안 됨'
-        : '[${user.authProvider.name}] $name · ${user.email}';
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 260),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: context.colors.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              label,
-              style: context.captionSmall,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        const _DebugSignOutButton(),
-      ],
-    );
-  }
-}
-
-/// 디버그 빌드 전용 임시 로그아웃 버튼.
-/// 로그인 테스트를 반복하려고 둔 것이라 ViewModel 없이 Repository를 직접 부른다.
-class _DebugSignOutButton extends ConsumerWidget {
-  const _DebugSignOutButton();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return FloatingActionButton.small(
-      heroTag: 'debugSignOut',
-      tooltip: '로그아웃 (디버그)',
-      onPressed: () async {
-        final result = await ref.read(userRepositoryProvider).signOut();
-        if (!context.mounted) return;
-        result.fold(
-          (_) => context.go(AppRoutes.signIn),
-          (error) => ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('로그아웃 실패: $error')),
-          ),
-        );
-      },
-      child: const Icon(Icons.logout),
     );
   }
 }

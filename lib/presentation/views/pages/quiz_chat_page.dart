@@ -126,6 +126,7 @@ class _QuizChatPageState extends ConsumerState<QuizChatPage> {
     Answering() => '난이도 ${state.quiz?.difficulty ?? ''}',
     Grading() => '채점 중',
     Graded() => '채점 완료',
+    QuizFailed(error: AiUsageLimitExceededException()) => '하루 사용 한도 초과',
     QuizFailed() => '잠시 문제가 생겼어요',
     ReviewMode() => '복습 모드',
   };
@@ -169,6 +170,7 @@ class _QuizChatPageState extends ConsumerState<QuizChatPage> {
         ),
       if (showStatus)
         _aiMessage(_statusId, switch (phase) {
+          QuizFailed(error: AiUsageLimitExceededException()) => '하루 사용 한도 초과 했어요\n내일 다시 풀 수 있어요',
           QuizFailed() => '응답을 받지 못했어요.',
           ReviewMode() => '지금 수준에서 낼 수 있는 새 문제를 모두 풀었어요. 조금 뒤에 다시 받아 보세요.',
           _ => '',
@@ -213,6 +215,11 @@ class _QuizChatPageState extends ConsumerState<QuizChatPage> {
         QuizFailed(error: DiagnosisProfileEmptyException()) => PrimaryButton(
           onPressed: () => context.go(AppRoutes.diagnosis),
           text: '진단하러 가기',
+          color: ButtonColor.primary,
+        ),
+        QuizFailed(error: AiUsageLimitExceededException()) => PrimaryButton(
+          onPressed: () => StatefulNavigationShell.of(context).goBranch(1),
+          text: '복습하러 가기',
           color: ButtonColor.primary,
         ),
         QuizFailed() => PrimaryButton(
@@ -398,7 +405,7 @@ class _HeaderLink extends StatelessWidget {
         child: SizedBox(
           width: 40,
           height: 40,
-          child: Icon(icon, size: 20, color: context.colors.onSurface),
+          child: Icon(icon, size: 20, color: context.colors.primary),
         ),
       ),
     );
