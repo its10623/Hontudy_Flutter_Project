@@ -10,7 +10,6 @@ part 'diagnosis_viewmodel.g.dart';
 @riverpod
 class DiagnosisViewModel extends _$DiagnosisViewModel {
   static const maxTurns = 8;
-
   static const _maxOffTopic = 3;
   static const _offTopicNotice =
       '혼터디는 IT·CS 학습을 돕는 서비스예요. 위 질문에 답해 주시면 맞춤 진단을 이어갈게요.';
@@ -117,7 +116,9 @@ class DiagnosisViewModel extends _$DiagnosisViewModel {
       return;
     }
     if (kDebugMode) {
-      debugPrint('[Diagnosis]현재 턴: ${state.turnCount + 1} 현재 확신도: ${turn.confidence} 다음 행동: ${turn.nextAction}');
+      debugPrint(
+        '[Diagnosis]현재 턴: ${state.turnCount + 1} 현재 확신도: ${turn.confidence} 다음 행동: ${turn.nextAction}',
+      );
     }
 
     switch (turn.nextAction) {

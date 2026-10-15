@@ -12,7 +12,7 @@ part 'quiz_viewmodel.g.dart';
 class QuizViewModel extends _$QuizViewModel {
   @override
   QuizState build(DiagnosisProfile? profile) {
-    // 진단 직후에만 바로 출제하고, 앱을 다시 켠 경우엔 사용자가 시작을 누를 때까지 기다림
+    // 진단 직후에만 바로 출제하고, 앱을 다시 켠 경우엔 사용자가 시작을 눌러서 시작
     if (profile == null) return const QuizState(phase: QuizPhase.idle());
     Future.microtask(_requestQuiz);
     return const QuizState(phase: QuizPhase.loadingQuiz());

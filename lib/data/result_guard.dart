@@ -3,7 +3,6 @@ import 'package:hontudy/domain/exceptions.dart';
 import 'package:result_dart/result_dart.dart';
 
 /// Service가 던진 원본 예외를 domain 예외로 분류해 Failure로 감싼다.
-///
 /// AI 호출은 Cloud Functions(callable)를 거치는데, `FirebaseFunctionsException`도
 /// `FirebaseException`을 상속하므로 아래 Firebase 분기에서 함께 처리된다.
 Future<ResultDart<S, Exception>> guardAsync<S extends Object>(

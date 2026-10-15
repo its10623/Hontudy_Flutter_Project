@@ -35,13 +35,14 @@ class AiFunctionsService {
   }) async {
     final file = File(filePath);
     final bytes = await file.readAsBytes();
-    final result = await _callable('transcribeAudio').call<Map<String, dynamic>>(
-      {
-        'audioBase64': base64Encode(bytes),
-        'fileName': file.uri.pathSegments.last,
-        'prompt': PromptBuilder.buildSttPrompt(csTermHints ?? []),
-      },
-    );
+    final result = await _callable('transcribeAudio')
+        .call<Map<String, dynamic>>(
+          {
+            'audioBase64': base64Encode(bytes),
+            'fileName': file.uri.pathSegments.last,
+            'prompt': PromptBuilder.buildSttPrompt(csTermHints ?? []),
+          },
+        );
     return result.data['text'] as String;
   }
 
