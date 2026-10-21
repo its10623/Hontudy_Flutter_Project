@@ -9,7 +9,7 @@
 
 |                             AI 진단                             |                          문제 풀이                           |                              노트 요약                               |                              노트 상세                              |
 |:---------------------------------------------------------------:|:------------------------------------------------------------:|:--------------------------------------------------------------------:|:-------------------------------------------------------------------:|
-| <img src="docs/images/diagnosis.gif" width="200" alt="AI 진단"> | <img src="docs/images/quiz.gif" width="200" alt="문제 풀이"> | <img src="docs/images/note_summary.jpg" width="200" alt="노트 요약"> | <img src="docs/images/note_detail.jpg" width="200" alt="노트 상세"> |
+| <img src="docs/images/diagnosis.gif" width="180" alt="AI 진단"> | <img src="docs/images/quiz.gif" width="180" alt="문제 풀이"> | <img src="docs/images/note_summary.jpg" width="180" alt="노트 요약"> | <img src="docs/images/note_detail.jpg" width="180" alt="노트 상세"> |
 
 > 데모는 AI 응답 대기 구간을 잘라내고 일부 배속했습니다. 실제 속도는 아래 [전체 시연 영상](#전체-시연-영상)에서 볼 수 있습니다.
 
@@ -36,13 +36,9 @@
 
 ### 전체 시연 영상
 
-**AI 진단 (1분 48초)**
-
-https://github.com/user-attachments/assets/0a80472c-a84e-4feb-b94c-2438b1c375a5
-
-**문제 풀이 (1분 25초)**
-
-https://github.com/user-attachments/assets/be0c80f0-d1f0-48f5-a5d7-6527ee25b8a1
+| AI 진단 (1분 48초) | 문제 풀이 (1분 25초) |
+|:---:|:---:|
+| <video src="https://github.com/user-attachments/assets/0a80472c-a84e-4feb-b94c-2438b1c375a5" width="300" controls></video> | <video src="https://github.com/user-attachments/assets/be0c80f0-d1f0-48f5-a5d7-6527ee25b8a1" width="300" controls></video> |
 
 <br>
 
