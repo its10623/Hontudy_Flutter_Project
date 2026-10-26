@@ -21,6 +21,7 @@ class AiChatBubble extends StatelessWidget {
   final Widget? header;
   final Widget? footer;
   final Widget? after;
+  final VoidCallback? onLongPressed;
 
   const AiChatBubble({
     super.key,
@@ -30,6 +31,7 @@ class AiChatBubble extends StatelessWidget {
     this.header,
     this.footer,
     this.after,
+    this.onLongPressed,
   });
 
   @override
@@ -56,43 +58,50 @@ class AiChatBubble extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
+
                   if (text.isNotEmpty)
-                    Container(
-                      padding: _bubblePadding,
-                      decoration: BoxDecoration(
-                        color: context.colors.surfaceContainerLowest,
-                        borderRadius: AppShape.aiBubble,
-                        border: Border.all(
-                          color: context.colors.primary.withAlpha(30),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: context.colors.primary.withAlpha(18),
-                            blurRadius: 18,
-                            offset: const Offset(0, 6),
+                    GestureDetector(
+                      onLongPress: onLongPressed,
+                      child: Container(
+                        padding: _bubblePadding,
+                        decoration: BoxDecoration(
+                          color: context.colors.surfaceContainerLowest,
+                          borderRadius: AppShape.aiBubble,
+                          border: Border.all(
+                            color: context.colors.primary.withAlpha(30),
                           ),
-                        ],
-                      ),
-                      child: Text(
-                        text,
-                        style: context.textStyles.bodyLarge?.copyWith(
-                          height: 1.6,
+                          boxShadow: [
+                            BoxShadow(
+                              color: context.colors.primary.withAlpha(18),
+                              blurRadius: 18,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          text,
+                          style: context.textStyles.bodyLarge?.copyWith(
+                            height: 1.6,
+                          ),
                         ),
                       ),
                     ),
                   if (footer case final footer?) ...[
                     const SizedBox(height: 10),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: context.colors.surfaceContainerLowest,
-                        borderRadius: AppShape.widgetCard,
-                        border: Border.all(
-                          color: context.colors.primary.withAlpha(30),
+                    GestureDetector(
+                      onLongPress: onLongPressed,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: context.colors.surfaceContainerLowest,
+                          borderRadius: AppShape.widgetCard,
+                          border: Border.all(
+                            color: context.colors.primary.withAlpha(30),
+                          ),
                         ),
+                        child: footer,
                       ),
-                      child: footer,
                     ),
                   ],
                   const SizedBox(height: 6),

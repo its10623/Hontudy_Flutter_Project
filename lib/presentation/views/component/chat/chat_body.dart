@@ -20,6 +20,7 @@ class ChatBody extends StatefulWidget {
   final String? inputHint;
   final ChatFooterBuilder? afterBuilder;
   final ChatFooterBuilder? footerBuilder;
+  final void Function(ChatMessage message)? onAiMessageLongPress;
   final String? metadata;
   final Map<String, ResultBuilder> resultRenderers;
   final Map<String, ResultBuilder> resultLoadingRenderers;
@@ -35,6 +36,7 @@ class ChatBody extends StatefulWidget {
     this.metadata,
     this.resultRenderers = const {},
     this.resultLoadingRenderers = const {},
+    this.onAiMessageLongPress,
   });
 
   @override
@@ -173,6 +175,9 @@ class _ChatBodyState extends State<ChatBody> {
           header: widget.metadata != null ? _metadataBadge() : null,
           footer: widget.footerBuilder?.call(context, message),
           after: widget.afterBuilder?.call(context, message),
+          onLongPressed: widget.onAiMessageLongPress == null
+              ? null
+              : () => widget.onAiMessageLongPress!(message),
         );
       },
     );

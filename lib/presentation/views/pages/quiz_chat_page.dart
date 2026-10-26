@@ -2,7 +2,9 @@ import 'package:hontudy/presentation/views/route/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart'
+    hide NetworkException;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hontudy/domain/exceptions.dart';
@@ -14,10 +16,12 @@ import 'package:hontudy/presentation/core/theme/shape.dart';
 import 'package:hontudy/presentation/state/quiz_state.dart';
 import 'package:hontudy/presentation/viewmodels/quiz_viewmodel.dart';
 
+import '../../../domain/models/report.dart';
 import '../../core/theme/context_theme_extension.dart';
 import '../component/app_background.dart';
 import '../component/chat/chat_appbar.dart';
 import '../component/chat/chat_body.dart';
+import '../component/chat/report_dialog.dart';
 import '../component/genui/answer_feedback.dart';
 import '../component/genui/code_block.dart';
 import '../component/genui/image_widget.dart';
@@ -115,6 +119,22 @@ class _QuizChatPageState extends ConsumerState<QuizChatPage> {
                 onSend: notifier.submitAnswer,
                 footerBuilder: (context, message) =>
                     _buildFooter(state, message.customProperties?['id']),
+                onAiMessageLongPress: (message) {
+                  final id = message.customProperties?['id'];
+                  final aiResponse = _reportableTextOf(state, id);
+                  if (aiResponse == null) return;
+                  HapticFeedback.mediumImpact();
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) => ReportDialog(
+                      userPrompt: _userPromptOf(state, id),
+                      aiResponse: aiResponse,
+                      reportScreen: ReportScreen.quiz,
+                      quiz: quiz,
+                    ),
+                  );
+                },
               ),
       ),
     );
@@ -170,9 +190,12 @@ class _QuizChatPageState extends ConsumerState<QuizChatPage> {
         ),
       if (showStatus)
         _aiMessage(_statusId, switch (phase) {
-          QuizFailed(error: AiUsageLimitExceededException()) => '하루 사용 한도 초과 했어요\n내일 다시 풀 수 있어요',
+          QuizFailed(error: AiUsageLimitExceededException()) =>
+            '하루 사용 한도 초과 했어요\n내일 다시 풀 수 있어요',
+          QuizFailed(error: NetworkException()) => '인터넷 연결을 확인하고 다시 시도해 주세요.',
           QuizFailed() => '응답을 받지 못했어요.',
-          ReviewMode() => '지금 수준에서 낼 수 있는 새 문제를 모두 풀었어요. 조금 뒤에 다시 받아 보세요.',
+          ReviewMode() =>
+            '지금 수준에서 낼 수 있는 새 문제를 모두 풀었어요. 노트에서 복습하거나 조금 뒤에 다시 받아 보세요.',
           _ => '',
         }),
     ];
@@ -188,6 +211,16 @@ class _QuizChatPageState extends ConsumerState<QuizChatPage> {
   }
 
   DateTime _timeOf(String id) => _times.putIfAbsent(id, DateTime.now);
+
+  String? _reportableTextOf(QuizState state, Object? id) => switch (id) {
+    _quizId => state.quiz?.questionText,
+    _feedbackId when state.feedback?.isOffTopic == false =>
+      state.feedback?.feedbackText,
+    _ => null,
+  };
+
+  String _userPromptOf(QuizState state, Object? id) =>
+      id == _feedbackId ? state.userAnswer ?? '' : '';
 
   Widget? _buildFooter(QuizState state, Object? id) {
     final notifier = ref.read(_provider.notifier);
@@ -227,10 +260,21 @@ class _QuizChatPageState extends ConsumerState<QuizChatPage> {
           text: '다시 시도',
           color: ButtonColor.surface,
         ),
-        ReviewMode() => PrimaryButton(
-          onPressed: notifier.nextQuiz,
-          text: '새 문제 다시 받기',
-          color: ButtonColor.surface,
+        ReviewMode() => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 12,
+          children: [
+            PrimaryButton(
+              onPressed: () => StatefulNavigationShell.of(context).goBranch(1),
+              text: '복습하러 가기',
+              color: ButtonColor.primary,
+            ),
+            PrimaryButton(
+              onPressed: notifier.nextQuiz,
+              text: '새 문제 다시 받기',
+              color: ButtonColor.surface,
+            ),
+          ],
         ),
         Grading() => const _WorkingSkeleton(label: '해설을 쓰고 있어요'),
         _ => const _WorkingSkeleton(label: '문제를 만들고 있어요'),

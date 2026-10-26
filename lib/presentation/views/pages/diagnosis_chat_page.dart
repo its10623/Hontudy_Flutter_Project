@@ -1,10 +1,14 @@
+import 'package:hontudy/domain/models/report.dart';
+import 'package:hontudy/presentation/views/component/chat/report_dialog.dart';
 import 'package:hontudy/presentation/views/route/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart'
+    hide NetworkException;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hontudy/domain/models/diagnosis_turn.dart';
 import 'package:hontudy/presentation/core/theme/shape.dart';
@@ -89,6 +93,21 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
           onSend: notifier.submitAnswer,
           footerBuilder: (context, message) =>
               _buildFooter(state, message.customProperties?['id']),
+          onAiMessageLongPress: (message) {
+            final id = message.customProperties?['id'];
+            final aiResponse = state.reportableTextOf(id);
+            if (aiResponse == null) return;
+            HapticFeedback.mediumImpact();
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (_) => ReportDialog(
+                userPrompt: state.userAnswerBefore(id),
+                aiResponse: aiResponse,
+                reportScreen: ReportScreen.diagnosis,
+              ),
+            );
+          },
         ),
       ),
     );
@@ -115,6 +134,7 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
           text: switch (state.phase) {
             Failed(error: AiUsageLimitExceededException()) =>
               '하루 사용 한도 초과 했어요.\n내일 다시 진단 해주세요',
+            Failed(error: NetworkException()) => '인터넷 연결을 확인하고 다시 시도해 주세요.',
             Failed() => '응답을 받지 못했어요.',
             _ => '',
           },

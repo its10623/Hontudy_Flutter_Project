@@ -91,6 +91,39 @@ class DiagnosisState with _$DiagnosisState {
 
   DiagnosisResult? get summaryResult =>
       messages.whereType<AiSummary>().lastOrNull?.result;
+
+  String? reportableTextOf(Object? messageId) {
+    final message = messages.where((m) => m.id == messageId).firstOrNull;
+    final firstQuestionId = messages.whereType<AiQuestion>().firstOrNull?.id;
+    return switch (message) {
+      AiQuestion(:final id, :final questionText) when id != firstQuestionId =>
+        questionText,
+      AiSummary(:final result) => _summaryText(result),
+      _ => null,
+    };
+  }
+
+  String _summaryText(DiagnosisResult result) {
+    final profile = result.profile;
+    return [
+      '배경: ${profile.background ?? '판단 보류'}',
+      '난이도: ${profile.difficultyScore}/5',
+      '목적: ${profile.purposeTags.join(', ')}',
+      '약한 영역: ${profile.weakAreas.join(', ')}',
+      ?result.backgroundDetail,
+      result.reasoning,
+    ].join('\n');
+  }
+
+  String userAnswerBefore(Object? messageId) {
+    final index = messages.indexWhere((message) => message.id == messageId);
+    if (index <= 0) return '';
+
+    for (final message in messages.sublist(0, index).reversed) {
+      if (message is UserAnswer) return message.text;
+    }
+    return '';
+  }
 }
 
 @freezed
