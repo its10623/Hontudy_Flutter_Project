@@ -1,0 +1,54 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'report_viewmodel.dart';
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(ReportViewModel)
+final reportViewModelProvider = ReportViewModelProvider._();
+
+final class ReportViewModelProvider
+    extends $AsyncNotifierProvider<ReportViewModel, void> {
+  ReportViewModelProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'reportViewModelProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$reportViewModelHash();
+
+  @$internal
+  @override
+  ReportViewModel create() => ReportViewModel();
+}
+
+String _$reportViewModelHash() => r'a70b5cf57baf0c9395635da191759fd31a641a2f';
+
+abstract class _$ReportViewModel extends $AsyncNotifier<void> {
+  FutureOr<void> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<void>, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<void>, void>,
+              AsyncValue<void>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
