@@ -15,6 +15,14 @@ class AuthService {
 
   AuthService(this._firebaseAuth, this._googleSignIn);
 
+  String requireUid() {
+    final uid = _firebaseAuth.currentUser?.uid;
+    if (uid == null) {
+      throw FirebaseAuthException(code: 'no-current-user');
+    }
+    return uid;
+  }
+
   Future<UserCredential> signInWithGoogle() async {
     final credential = await _googleCredential();
     return _firebaseAuth.signInWithCredential(credential);

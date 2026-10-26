@@ -23,12 +23,13 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
     required this._ai,
   });
 
-  String _requiredUid() => _auth.currentUser!.uid;
-
   @override
   AsyncResult<void> saveDiagnosisProfile(DiagnosisProfile profile) async {
     return guardAsync(() async {
-      await _firestore.saveDiagnosisProfile(_requiredUid(), profile);
+      await _firestore.saveDiagnosisProfile(
+        _auth.requireUid(),
+        DiagnosisProfileMapper.toDto(profile),
+      );
       return unit;
     });
   }
@@ -74,7 +75,7 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
   @override
   AsyncResult<(DiagnosisProfile?,)> fetchDiagnosisProfile() {
     return guardAsync(() async {
-      final dto = await _firestore.fetchDiagnosisProfile(_requiredUid());
+      final dto = await _firestore.fetchDiagnosisProfile(_auth.requireUid());
       final profile = dto == null ? null : DiagnosisProfileMapper.toDomain(dto);
       return (profile,);
     });
@@ -84,7 +85,7 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
   AsyncResult<List<DiagnosisProfile>> fetchDiagnosisProfileHistory() {
     return guardAsync(() async {
       final dtos = await _firestore.fetchDiagnosisProfileHistory(
-        _requiredUid(),
+        _auth.requireUid(),
       );
       final profile = dtos.map(DiagnosisProfileMapper.toDomain).toList();
       return profile;
@@ -205,7 +206,7 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
   @override
   AsyncResult<void> deleteDiagnosisProfile() {
     return guardAsync(() async {
-      await _firestore.deleteDiagnosisProfileHistory(_requiredUid());
+      await _firestore.deleteDiagnosisProfileHistory(_auth.requireUid());
       return unit;
     });
   }

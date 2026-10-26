@@ -26,6 +26,11 @@ class AiUsageLimitExceededException implements DomainException {
       'AiUsageLimitExceededException: 오늘 사용할 수 있는 AI 요청을 모두 사용함';
 }
 
+class NotSignedInException implements DomainException {
+  @override
+  String toString() => 'NotSignedInException: 다시 로그인해 주세요';
+}
+
 class NetworkException implements Exception {
   final Object cause;
 

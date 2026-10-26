@@ -14,15 +14,13 @@ import '../services/remotes/firestore_service.dart';
 import '../user_mapper.dart';
 
 class UserRepositoryImpl implements UserRepository {
-  final AuthService _authService;
+  final AuthService _auth;
   final FirestoreService _firestoreService;
 
   UserRepositoryImpl({
-    required this._authService,
+    required this._auth,
     required this._firestoreService,
   });
-
-  String _requireUid() => _authService.currentUser!.uid;
 
   Future<T> _throwIfCancelled<T>(Future<T> Function() authCall) async {
     try {
@@ -48,7 +46,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   AsyncResult<AuthSignInResult> signInWithGoogle() {
     return guardAsync(() async {
-      final credential = await _throwIfCancelled(_authService.signInWithGoogle);
+      final credential = await _throwIfCancelled(_auth.signInWithGoogle);
       final isNewUser = credential.additionalUserInfo?.isNewUser ?? false;
       final user = UserMapper.toDomain(credential.user!);
       return (user: user, isNewUser: isNewUser);
@@ -58,9 +56,9 @@ class UserRepositoryImpl implements UserRepository {
   @override
   AsyncResult<AuthSignInResult> signInWithApple() {
     return guardAsync(() async {
-      final credential = await _throwIfCancelled(_authService.signInWithApple);
+      final credential = await _throwIfCancelled(_auth.signInWithApple);
       final isNewUser = credential.additionalUserInfo?.isNewUser ?? false;
-      final user = UserMapper.toDomain(_authService.currentUser!);
+      final user = UserMapper.toDomain(_auth.currentUser!);
       return (user: user, isNewUser: isNewUser);
     });
   }
@@ -68,8 +66,8 @@ class UserRepositoryImpl implements UserRepository {
   @override
   AsyncResult<User> updateDisplayName(String displayName) {
     return guardAsync(() async {
-      await _authService.updateDisplayName(displayName);
-      final firebaseUser = _authService.currentUser;
+      await _auth.updateDisplayName(displayName);
+      final firebaseUser = _auth.currentUser;
       return UserMapper.toDomain(firebaseUser!);
     });
   }
@@ -77,20 +75,20 @@ class UserRepositoryImpl implements UserRepository {
   @override
   AsyncResult<void> signOut() {
     return guardAsync(() async {
-      await _authService.signOut();
+      await _auth.signOut();
       return unit;
     });
   }
 
   @override
   User? get currentUser {
-    final firebaseUser = _authService.currentUser;
+    final firebaseUser = _auth.currentUser;
     return firebaseUser == null ? null : UserMapper.toDomain(firebaseUser);
   }
 
   @override
   Stream<User?> authStateChanges() {
-    return _authService.authStateChanges().map(
+    return _auth.authStateChanges().map(
       (firebaseUser) =>
           firebaseUser == null ? null : UserMapper.toDomain(firebaseUser),
     );
@@ -99,7 +97,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   AsyncResult<void> deleteAccount() {
     return guardAsync(() async {
-      await _authService.deleteAccount();
+      await _auth.deleteAccount();
       return unit;
     });
   }
@@ -107,7 +105,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   AsyncResult<void> deleteUserData() {
     return guardAsync(() async {
-      await _firestoreService.deleteUserDocument(_requireUid());
+      await _firestoreService.deleteUserDocument(_auth.requireUid());
       return unit;
     });
   }
@@ -115,7 +113,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   AsyncResult<void> reauthenticateWithGoogle() {
     return guardAsync(() async {
-      await _throwIfCancelled(_authService.reauthenticateWithGoogle);
+      await _throwIfCancelled(_auth.reauthenticateWithGoogle);
       return unit;
     });
   }
@@ -123,14 +121,14 @@ class UserRepositoryImpl implements UserRepository {
   @override
   AsyncResult<String> reauthenticateWithApple() {
     return guardAsync(
-      () => _throwIfCancelled(_authService.reauthenticateWithApple),
+      () => _throwIfCancelled(_auth.reauthenticateWithApple),
     );
   }
 
   @override
   AsyncResult<void> revokeAppleToken(String token) {
     return guardAsync(() async {
-      await _authService.revokeAppleToken(token);
+      await _auth.revokeAppleToken(token);
       return unit;
     });
   }
@@ -138,7 +136,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   AsyncResult<void> saveTermsAgreement() {
     return guardAsync(() async {
-      await _firestoreService.saveTermsAgreement(_requireUid());
+      await _firestoreService.saveTermsAgreement(_auth.requireUid());
       return unit;
     });
   }
@@ -146,7 +144,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   AsyncResult<bool> fetchTermsAgreement() {
     return guardAsync(
-      () => _firestoreService.fetchTermsAgreement(_requireUid()),
+      () => _firestoreService.fetchTermsAgreement(_auth.requireUid()),
     );
   }
 }

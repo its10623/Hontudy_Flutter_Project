@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hontudy/data/dto/diagnosis_profile_dto.dart';
 import 'package:hontudy/data/dto/solved_record_dto.dart';
-import 'package:hontudy/domain/models/diagnosis_profile.dart';
-import 'package:hontudy/domain/models/solved_record.dart';
 
-import '../../../domain/repositories/note_repository.dart';
+import '../../dto/report_dto.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore;
@@ -20,14 +18,17 @@ class FirestoreService {
   CollectionReference<Map<String, dynamic>> _solvedRecordRef(String uid) =>
       _userRef.doc(uid).collection('solvedRecord');
 
-  Future<void> saveDiagnosisProfile(String uid, DiagnosisProfile profile) {
+  CollectionReference<Map<String, dynamic>> get _reportRef =>
+      _firestore.collection('reports');
+
+  Future<void> saveDiagnosisProfile(String uid, DiagnosisProfileDto profile) {
     return _diagnosisProfileRef(
       uid,
-    ).add(DiagnosisProfileMapper.toDto(profile).toJson());
+    ).add(profile.toJson());
   }
 
-  Future<void> saveSolvedRecord(String uid, SolvedRecord record) {
-    return _solvedRecordRef(uid).add(SolvedRecordMapper.toDto(record).toJson());
+  Future<void> saveSolvedRecord(String uid, SolvedRecordDto record) {
+    return _solvedRecordRef(uid).add(record.toJson());
   }
 
   Future<void> saveTermsAgreement(String uid) {
@@ -74,16 +75,15 @@ class FirestoreService {
 
   Future<List<SolvedRecordDto>> fetchSolvedRecords(
     String uid, {
-    required NoteFilter filter,
+    bool? isCorrect,
     int? limit,
   }) async {
     Query<Map<String, dynamic>> query = _solvedRecordRef(
       uid,
     ).orderBy('timestamp', descending: true);
-    if (filter == NoteFilter.correctOnly) {
+
+    if (isCorrect != null) {
       query = query.where('quizFeedback.isCorrect', isEqualTo: true);
-    } else if (filter == NoteFilter.wrongOnly) {
-      query = query.where('quizFeedback.isCorrect', isEqualTo: false);
     }
 
     if (limit != null) {
@@ -120,5 +120,9 @@ class FirestoreService {
       }
       await batch.commit();
     }
+  }
+
+  Future<void> saveReport(ReportDto report) async {
+    await _reportRef.add(report.toJson());
   }
 }

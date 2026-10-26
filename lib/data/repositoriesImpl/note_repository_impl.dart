@@ -13,22 +13,34 @@ class NoteRepositoryImpl implements NoteRepository {
 
   NoteRepositoryImpl({required this._auth, required this._firestore});
 
-  String _requireUid() => _auth.currentUser!.uid;
-
   @override
   AsyncResult<List<SolvedRecord>> fetchRecentSolvedRecords(int days) {
     return guardAsync(() async {
-      final dtos = await _firestore.fetchRecentSolvedRecords(_requireUid(), days);
+      final dtos = await _firestore.fetchRecentSolvedRecords(
+        _auth.requireUid(),
+        days,
+      );
       final records = dtos.map(SolvedRecordMapper.toDomain).toList();
       return records;
     });
   }
 
   @override
-  AsyncResult<List<SolvedRecord>> fetchSolvedRecords(
-      {required NoteFilter filter, int? limit}) {
+  AsyncResult<List<SolvedRecord>> fetchSolvedRecords({
+    required NoteFilter filter,
+    int? limit,
+  }) {
     return guardAsync(() async {
-      final dtos = await _firestore.fetchSolvedRecords(_requireUid(), filter: filter, limit: limit);
+      final isCorrect = switch (filter) {
+        NoteFilter.all => null,
+        NoteFilter.correctOnly => true,
+        NoteFilter.wrongOnly => false,
+      };
+      final dtos = await _firestore.fetchSolvedRecords(
+        _auth.requireUid(),
+        isCorrect: isCorrect,
+        limit: limit,
+      );
       final records = dtos.map(SolvedRecordMapper.toDomain).toList();
       return records;
     });
@@ -37,7 +49,10 @@ class NoteRepositoryImpl implements NoteRepository {
   @override
   AsyncResult<void> saveSolvedRecord(SolvedRecord record) {
     return guardAsync(() async {
-      await _firestore.saveSolvedRecord(_requireUid(), record);
+      await _firestore.saveSolvedRecord(
+        _auth.requireUid(),
+        SolvedRecordMapper.toDto(record),
+      );
       return unit;
     });
   }
@@ -45,9 +60,8 @@ class NoteRepositoryImpl implements NoteRepository {
   @override
   AsyncResult<void> deleteSolvedRecordHistory() {
     return guardAsync(() async {
-      await _firestore.deleteSolvedRecordHistory(_requireUid());
+      await _firestore.deleteSolvedRecordHistory(_auth.requireUid());
       return unit;
     });
   }
-
 }

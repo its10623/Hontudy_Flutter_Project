@@ -32,6 +32,10 @@ Future<ResultDart<S, Exception>> guardAsync<S extends Object>(
       return Failure(NetworkException(e));
     }
 
+    if (e.code == 'no-current-user') {
+      return Failure(NotSignedInException());
+    }
+
     // unauthenticated / permission-denied(App Check 실패 포함) 등
     return Failure(UnknownException(e));
   } catch (e) {
