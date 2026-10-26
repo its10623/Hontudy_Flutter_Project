@@ -143,3 +143,86 @@ final class AiFunctionsServiceProvider
 
 String _$aiFunctionsServiceHash() =>
     r'e3da1f6614e50d772eaa24186a59b3068a9f35d4';
+
+@ProviderFor(preferencesService)
+final preferencesServiceProvider = PreferencesServiceProvider._();
+
+final class PreferencesServiceProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<PreferenceService>,
+          PreferenceService,
+          FutureOr<PreferenceService>
+        >
+    with
+        $FutureModifier<PreferenceService>,
+        $FutureProvider<PreferenceService> {
+  PreferencesServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'preferencesServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$preferencesServiceHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<PreferenceService> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<PreferenceService> create(Ref ref) {
+    return preferencesService(ref);
+  }
+}
+
+String _$preferencesServiceHash() =>
+    r'2cbf48212cf2e58d1ddfb1780d08e7493a53ec48';
+
+@ProviderFor(appInfoService)
+final appInfoServiceProvider = AppInfoServiceProvider._();
+
+final class AppInfoServiceProvider
+    extends $FunctionalProvider<AppInfoService, AppInfoService, AppInfoService>
+    with $Provider<AppInfoService> {
+  AppInfoServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'appInfoServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$appInfoServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<AppInfoService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  AppInfoService create(Ref ref) {
+    return appInfoService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AppInfoService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AppInfoService>(value),
+    );
+  }
+}
+
+String _$appInfoServiceHash() => r'85dd5bd3e1baa05e6dddba68933800c3eca11208';

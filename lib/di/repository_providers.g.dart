@@ -48,7 +48,7 @@ final class UserRepositoryProvider
   }
 }
 
-String _$userRepositoryHash() => r'a1600bfd2f6a269587d6ca59502354f29cbc6421';
+String _$userRepositoryHash() => r'5a46ea50e85f595bed578aa31890f247443dd6da';
 
 @ProviderFor(diagnosisRepository)
 final diagnosisRepositoryProvider = DiagnosisRepositoryProvider._();
@@ -179,3 +179,49 @@ final class NoteRepositoryProvider
 }
 
 String _$noteRepositoryHash() => r'5ae2af485d181f23a437a77b441e6dcdbe226c61';
+
+@ProviderFor(reportRepository)
+final reportRepositoryProvider = ReportRepositoryProvider._();
+
+final class ReportRepositoryProvider
+    extends
+        $FunctionalProvider<
+          ReportRepository,
+          ReportRepository,
+          ReportRepository
+        >
+    with $Provider<ReportRepository> {
+  ReportRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'reportRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$reportRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<ReportRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ReportRepository create(Ref ref) {
+    return reportRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ReportRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ReportRepository>(value),
+    );
+  }
+}
+
+String _$reportRepositoryHash() => r'b36b88b1aec2a8a5e949825a2a0531b8b43c4d92';

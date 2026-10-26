@@ -1,3 +1,5 @@
+import 'package:hontudy/data/repositoriesImpl/report_repository_impl.dart';
+import 'package:hontudy/domain/repositories/report_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../data/repositoriesImpl/diagnosis_repository_impl.dart';
@@ -15,7 +17,7 @@ part 'repository_providers.g.dart';
 @riverpod
 UserRepository userRepository(Ref ref) {
   return UserRepositoryImpl(
-    authService: ref.watch(authServiceProvider),
+    auth: ref.watch(authServiceProvider),
     firestoreService: ref.watch(firestoreServiceProvider),
   );
 }
@@ -41,5 +43,14 @@ NoteRepository noteRepository(Ref ref) {
   return NoteRepositoryImpl(
     auth: ref.watch(authServiceProvider),
     firestore: ref.watch(firestoreServiceProvider),
+  );
+}
+
+@riverpod
+ReportRepository reportRepository(Ref ref) {
+  return ReportRepositoryImpl(
+    firestore: ref.watch(firestoreServiceProvider),
+    auth: ref.watch(authServiceProvider),
+    appInfo: ref.watch(appInfoServiceProvider),
   );
 }
