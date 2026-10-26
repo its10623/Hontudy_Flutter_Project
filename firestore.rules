@@ -3,6 +3,8 @@ rules_version = '2';
 // 혼터디 Firestore 보안 규칙
 // - 앱은 로그인한 본인의 users/{uid} 문서와 그 하위 컬렉션만 읽고 쓴다.
 //   (약관 동의 여부, diagnosisProfile, solvedRecord)
+// - reports(AI 응답 신고)는 본인 uid로 생성(create)만 허용한다.
+//   읽기·수정·삭제는 막고, 신고 검토는 Firebase 콘솔에서 한다.
 // - aiUsage(사용자별 하루 AI 호출 카운터)는 Cloud Functions가 Admin SDK로만 쓰므로
 //   앱에서는 접근할 수 없다. Admin SDK는 보안 규칙의 영향을 받지 않는다.
 // - 여기에 명시하지 않은 경로는 모두 거부된다.
@@ -12,12 +14,42 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == uid;
     }
 
+    function isBoundedString(value, maxSize) {
+      return value is string && value.size() <= maxSize;
+    }
+
+    function isValidReport(data) {
+      return data.keys().hasOnly([
+          'uid', 'userPrompt', 'aiResponse', 'reportReason', 'quiz',
+          'reportScreen', 'description', 'appVersion', 'timestamp'
+        ])
+        && data.keys().hasAll([
+          'uid', 'userPrompt', 'aiResponse', 'reportReason',
+          'reportScreen', 'appVersion', 'timestamp'
+        ])
+        && isOwner(data.uid)
+        && isBoundedString(data.userPrompt, 5000)
+        && isBoundedString(data.aiResponse, 5000)
+        && data.reportReason in [
+          'inappropriate', 'hallucination', 'privacyLeak', 'incorrectData', 'other'
+        ]
+        && data.reportScreen in ['diagnosis', 'quiz']
+        && (data.description == null || isBoundedString(data.description, 500))
+        && (data.quiz == null || data.quiz is map)
+        && isBoundedString(data.appVersion, 20)
+        && data.timestamp is timestamp;
+    }
+
     match /users/{uid} {
       allow read, write: if isOwner(uid);
 
       match /{subcollection=**} {
         allow read, write: if isOwner(uid);
       }
+    }
+
+    match /reports/{reportId} {
+      allow create: if isValidReport(request.resource.data);
     }
   }
 }
