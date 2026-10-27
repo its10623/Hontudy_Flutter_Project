@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hontudy/data/dto/diagnosis_profile_dto.dart';
 import 'package:hontudy/data/dto/solved_record_dto.dart';
@@ -123,6 +125,6 @@ class FirestoreService {
   }
 
   Future<void> saveReport(ReportDto report) async {
-    await _reportRef.add(report.toJson());
+    unawaited(_reportRef.doc().set(report.toJson()));
   }
 }
