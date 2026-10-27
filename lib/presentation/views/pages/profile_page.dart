@@ -54,8 +54,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   child: AbsorbPointer(
                     absorbing: _busy,
                     child: profile.when(
-                      data: (state) =>
-                          _buildContent(state.user, state.diagnosis),
+                      data: (state) => _buildContent(
+                        state.user,
+                        state.diagnosis,
+                        state.appVersion,
+                      ),
                       loading: () =>
                           const Center(child: CircularProgressIndicator()),
                       error: (error, _) => Center(
@@ -76,7 +79,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
   }
 
-  Widget _buildContent(User? user, DiagnosisProfile? diagnosis) {
+  Widget _buildContent(
+    User? user,
+    DiagnosisProfile? diagnosis,
+    String appVersion,
+  ) {
     final name = (user?.displayName.isNotEmpty ?? false)
         ? user!.displayName
         : '이름 없음';
@@ -108,10 +115,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             onTerms: openTermsPage,
             onSignOut: _signOut,
             onDeleteAccount: _deleteAccount,
+            onContactUs: _contactUs,
           ),
           const SizedBox(height: 16),
-          const Center(
-            child: Text('버전 1.0.0 (MVP)', style: TextType.captionMedium),
+          Center(
+            child: Text('버전 $appVersion', style: TextType.captionMedium),
           ),
         ],
       ),
@@ -165,6 +173,15 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       ref.read(profileViewModelProvider.notifier).forgetDiagnosis,
       AppRoutes.diagnosis,
     );
+  }
+
+  Future<void> _contactUs() async {
+    try {
+      await ref.read(profileViewModelProvider.notifier).contactUs();
+    } catch (e) {
+      if (!mounted) return;
+      await ErrorDialog.show(context: context, error: e);
+    }
   }
 
   Future<void> _signOut() => _run(
@@ -322,7 +339,10 @@ class _DiagnosisCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: _StatTile(label: '배경', value: diagnosis.background ?? '-'),
+                  child: _StatTile(
+                    label: '배경',
+                    value: diagnosis.background ?? '-',
+                  ),
                 ),
               ],
             ),
@@ -440,11 +460,13 @@ class _SettingsCard extends StatelessWidget {
   final VoidCallback onTerms;
   final VoidCallback onSignOut;
   final VoidCallback onDeleteAccount;
+  final VoidCallback onContactUs;
 
   const _SettingsCard({
     required this.onTerms,
     required this.onSignOut,
     required this.onDeleteAccount,
+    required this.onContactUs,
   });
 
   @override
@@ -465,6 +487,8 @@ class _SettingsCard extends StatelessWidget {
       child: Column(
         children: [
           _SettingsRow(label: '개인정보 및 이용약관', onTap: onTerms),
+          const DividerWidget(),
+          _SettingsRow(label: '문의하기', onTap: onContactUs),
           const DividerWidget(),
           _SettingsRow(label: '로그아웃', onTap: onSignOut),
           const DividerWidget(),

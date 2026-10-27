@@ -13,9 +13,13 @@ class ProfileViewModel extends _$ProfileViewModel {
       diagnosis,
     ) = (await ref.watch(diagnosisRepositoryProvider).fetchDiagnosisProfile())
         .getOrThrow();
+    final appVersion =
+        (await ref.watch(appInfoRepositoryProvider).fetchAppVersion())
+            .getOrDefault('-');
     return ProfileState(
       user: ref.watch(userRepositoryProvider).currentUser,
       diagnosis: diagnosis,
+      appVersion: appVersion,
     );
   }
 
@@ -30,5 +34,9 @@ class ProfileViewModel extends _$ProfileViewModel {
 
   Future<void> deleteAccount() async {
     await ref.read(deleteAccountUseCaseProvider).call();
+  }
+
+  Future<void> contactUs() async {
+    (await ref.read(supportRepositoryProvider).sendInquiry()).getOrThrow();
   }
 }

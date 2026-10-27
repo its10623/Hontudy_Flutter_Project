@@ -4,6 +4,11 @@ import 'package:hontudy/domain/models/user.dart';
 class ProfileState {
   final User? user;
   final DiagnosisProfile? diagnosis;
+  final String appVersion;
 
-  const ProfileState({required this.user, required this.diagnosis});
+  const ProfileState({
+    required this.user,
+    required this.diagnosis,
+    required this.appVersion,
+  });
 }
