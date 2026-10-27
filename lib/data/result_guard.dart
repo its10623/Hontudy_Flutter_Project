@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:hontudy/domain/exceptions.dart';
 import 'package:result_dart/result_dart.dart';
 
@@ -12,6 +13,8 @@ Future<ResultDart<S, Exception>> guardAsync<S extends Object>(
     return Success(await action());
   } on DomainException catch (e) {
     return Failure(e);
+  } on FlutterEmailSenderNotAvailableException {
+    return Failure(MailAppUnavailableException());
   } on FirebaseException catch (e) {
     // 서버 함수의 사용자별 하루 한도 초과
     if (e.code == 'resource-exhausted') {

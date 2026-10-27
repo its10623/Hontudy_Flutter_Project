@@ -21,6 +21,10 @@ class ErrorDialog {
         '내일 다시 시도해 주세요',
       ),
       NotSignedInException() => ('로그인 오류', '다시 로그인해 주세요'),
+      MailAppUnavailableException() => (
+        '메일 앱을 찾을 수 없어요',
+        'smoothsm.dev@gmail.com으로 보내 주세요',
+      ),
       _ => ('오류', '알 수 없는 오류가 발생했습니다'),
     };
 

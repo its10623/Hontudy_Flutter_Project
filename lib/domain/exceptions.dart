@@ -31,6 +31,11 @@ class NotSignedInException implements DomainException {
   String toString() => 'NotSignedInException: 다시 로그인해 주세요';
 }
 
+class MailAppUnavailableException implements DomainException {
+  @override
+  String toString() => 'MailAppUnavailableException: 메일 앱을 쓸 수 없음';
+}
+
 class NetworkException implements Exception {
   final Object cause;
 
