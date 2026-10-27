@@ -89,16 +89,17 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
             const SizedBox(height: 16),
             DropdownButtonFormField<ReportReason>(
               isExpanded: true,
-              decoration: const InputDecoration(
-                labelText: '신고 사유',
-                border: OutlineInputBorder(borderRadius: AppShape.widgetCard),
+              borderRadius: AppShape.option,
+              dropdownColor: context.colors.surface,
+              style: context.textStyles.bodyLarge,
+              decoration: _fieldDecoration(
+                context,
+                label: '신고 사유',
+                radius: AppShape.option,
               ),
               items: [
                 for (final reason in ReportReason.values)
-                  DropdownMenuItem(
-                    value: reason,
-                    child: Text(reason.label, style: TextType.bodySmall),
-                  ),
+                  DropdownMenuItem(value: reason, child: Text(reason.label)),
               ],
               onChanged: isLoading
                   ? null
@@ -110,15 +111,12 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
               enabled: !isLoading,
               maxLines: 4,
               maxLength: _maxDescriptionLength,
-              style: TextType.bodySmall,
-              decoration: InputDecoration(
-                labelText: '상세 내용 (선택)',
-                hintText: '문제가 되는 부분을 적어 주시면 검토에 도움이 됩니다.',
-                hintStyle: context.captionLarge,
-                alignLabelWithHint: true,
-                border: const OutlineInputBorder(
-                  borderRadius: AppShape.widgetCard,
-                ),
+              style: context.textStyles.bodyLarge,
+              decoration: _fieldDecoration(
+                context,
+                label: '상세 내용 (선택)',
+                hint: '문제가 되는 부분을 적어 주시면 검토에 도움이 됩니다.',
+                radius: AppShape.widgetCard,
               ),
             ),
           ],
@@ -149,6 +147,35 @@ class _ReportDialogState extends ConsumerState<ReportDialog> {
       ],
     );
   }
+}
+
+InputDecoration _fieldDecoration(
+  BuildContext context, {
+  required String label,
+  required BorderRadius radius,
+  String? hint,
+}) {
+  OutlineInputBorder outline(Color color, {double width = 1}) =>
+      OutlineInputBorder(
+        borderRadius: radius,
+        borderSide: BorderSide(color: color, width: width),
+      );
+
+  return InputDecoration(
+    labelText: label,
+    labelStyle: context.captionLarge,
+    floatingLabelStyle: context.captionLarge.copyWith(
+      color: context.colors.primary,
+    ),
+    hintText: hint,
+    hintStyle: context.captionLarge,
+    alignLabelWithHint: true,
+    counterStyle: context.captionSmall,
+    border: outline(context.colors.outline.withAlpha(50)),
+    enabledBorder: outline(context.colors.outline.withAlpha(50)),
+    disabledBorder: outline(context.colors.outline.withAlpha(25)),
+    focusedBorder: outline(context.colors.primary, width: 2),
+  );
 }
 
 extension ReportReasonLabel on ReportReason {
