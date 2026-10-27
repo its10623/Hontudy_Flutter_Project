@@ -20,11 +20,15 @@ class ReportRepositoryImpl implements ReportRepository {
   });
 
   @override
-  AsyncResult<void> report(Report report) {
+  AsyncResult<void> sendReport(Report report) {
     return guardAsync(() async {
       final appVersion = await _appInfo.fetchAppVersion();
       await _firestore.saveReport(
-        ReportMapper.toDto(report, _auth.requireUid(), appVersion),
+        ReportMapper.toDto(
+          report,
+          _auth.requireUid(),
+          '${appVersion.version}+${appVersion.buildNumber}',
+        ),
       );
       return unit;
     });

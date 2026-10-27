@@ -12,7 +12,7 @@ class ReportViewModel extends _$ReportViewModel {
   Future<void> submitReport(Report report) async {
     state = const AsyncLoading();
     final repo = ref.read(reportRepositoryProvider);
-    final result = await repo.report(report);
+    final result = await repo.sendReport(report);
     if (!ref.mounted) return;
 
     result.fold(

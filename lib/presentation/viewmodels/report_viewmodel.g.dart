@@ -33,7 +33,7 @@ final class ReportViewModelProvider
   ReportViewModel create() => ReportViewModel();
 }
 
-String _$reportViewModelHash() => r'a70b5cf57baf0c9395635da191759fd31a641a2f';
+String _$reportViewModelHash() => r'1c903d09f5425c33c0e7d7ac857b5b52c0a4b473';
 
 abstract class _$ReportViewModel extends $AsyncNotifier<void> {
   FutureOr<void> build();
