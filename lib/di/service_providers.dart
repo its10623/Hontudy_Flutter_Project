@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hontudy/data/services/local/device_info_service.dart';
+import 'package:hontudy/data/services/local/email_service.dart';
 import 'package:hontudy/data/services/local/preferences_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,4 +42,14 @@ Future<PreferenceService> preferencesService(Ref ref) async {
 @Riverpod(keepAlive: true)
 AppInfoService appInfoService(Ref ref) {
   return AppInfoService();
+}
+
+@Riverpod(keepAlive: true)
+EmailService emailService(Ref ref) {
+  return EmailService();
+}
+
+@Riverpod(keepAlive: true)
+DeviceInfoService deviceInfoService(Ref ref) {
+  return DeviceInfoService();
 }

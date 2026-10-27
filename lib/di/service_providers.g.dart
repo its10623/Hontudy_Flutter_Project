@@ -226,3 +226,91 @@ final class AppInfoServiceProvider
 }
 
 String _$appInfoServiceHash() => r'85dd5bd3e1baa05e6dddba68933800c3eca11208';
+
+@ProviderFor(emailService)
+final emailServiceProvider = EmailServiceProvider._();
+
+final class EmailServiceProvider
+    extends $FunctionalProvider<EmailService, EmailService, EmailService>
+    with $Provider<EmailService> {
+  EmailServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'emailServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$emailServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<EmailService> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  EmailService create(Ref ref) {
+    return emailService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(EmailService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<EmailService>(value),
+    );
+  }
+}
+
+String _$emailServiceHash() => r'7263cab1c16c34e093b59abd2b84351f9ad3b886';
+
+@ProviderFor(deviceInfoService)
+final deviceInfoServiceProvider = DeviceInfoServiceProvider._();
+
+final class DeviceInfoServiceProvider
+    extends
+        $FunctionalProvider<
+          DeviceInfoService,
+          DeviceInfoService,
+          DeviceInfoService
+        >
+    with $Provider<DeviceInfoService> {
+  DeviceInfoServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deviceInfoServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deviceInfoServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<DeviceInfoService> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  DeviceInfoService create(Ref ref) {
+    return deviceInfoService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DeviceInfoService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DeviceInfoService>(value),
+    );
+  }
+}
+
+String _$deviceInfoServiceHash() => r'f1b68c968366fbc5fdec5c4b9e9f5b0fd2d4ad09';

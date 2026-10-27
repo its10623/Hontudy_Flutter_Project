@@ -1,10 +1,14 @@
 import 'package:hontudy/data/repositoriesImpl/report_repository_impl.dart';
+import 'package:hontudy/domain/repositories/app_info_repository.dart';
 import 'package:hontudy/domain/repositories/report_repository.dart';
+import 'package:hontudy/domain/repositories/support_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../data/repositoriesImpl/app_info_repository_impl.dart';
 import '../data/repositoriesImpl/diagnosis_repository_impl.dart';
 import '../data/repositoriesImpl/note_repository_impl.dart';
 import '../data/repositoriesImpl/quiz_repository_impl.dart';
+import '../data/repositoriesImpl/support_repository_impl.dart';
 import '../data/repositoriesImpl/user_repository_impl.dart';
 import '../domain/repositories/diagnosis_repository.dart';
 import '../domain/repositories/note_repository.dart';
@@ -52,5 +56,21 @@ ReportRepository reportRepository(Ref ref) {
     firestore: ref.watch(firestoreServiceProvider),
     auth: ref.watch(authServiceProvider),
     appInfo: ref.watch(appInfoServiceProvider),
+  );
+}
+
+@riverpod
+AppInfoRepository appInfoRepository(Ref ref) {
+  return AppInfoRepositoryImpl(
+    appInfo: ref.watch(appInfoServiceProvider),
+  );
+}
+
+@riverpod
+SupportRepository supportRepository(Ref ref) {
+  return SupportRepositoryImpl(
+    email: ref.watch(emailServiceProvider),
+    appInfo: ref.watch(appInfoServiceProvider),
+    deviceInfo: ref.watch(deviceInfoServiceProvider),
   );
 }

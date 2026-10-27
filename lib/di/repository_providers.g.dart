@@ -225,3 +225,97 @@ final class ReportRepositoryProvider
 }
 
 String _$reportRepositoryHash() => r'b36b88b1aec2a8a5e949825a2a0531b8b43c4d92';
+
+@ProviderFor(appInfoRepository)
+final appInfoRepositoryProvider = AppInfoRepositoryProvider._();
+
+final class AppInfoRepositoryProvider
+    extends
+        $FunctionalProvider<
+          AppInfoRepository,
+          AppInfoRepository,
+          AppInfoRepository
+        >
+    with $Provider<AppInfoRepository> {
+  AppInfoRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'appInfoRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$appInfoRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<AppInfoRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  AppInfoRepository create(Ref ref) {
+    return appInfoRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AppInfoRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AppInfoRepository>(value),
+    );
+  }
+}
+
+String _$appInfoRepositoryHash() => r'abe3a56c7c704448b2065cd132d5d61454334dbe';
+
+@ProviderFor(supportRepository)
+final supportRepositoryProvider = SupportRepositoryProvider._();
+
+final class SupportRepositoryProvider
+    extends
+        $FunctionalProvider<
+          SupportRepository,
+          SupportRepository,
+          SupportRepository
+        >
+    with $Provider<SupportRepository> {
+  SupportRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'supportRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$supportRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<SupportRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SupportRepository create(Ref ref) {
+    return supportRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SupportRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SupportRepository>(value),
+    );
+  }
+}
+
+String _$supportRepositoryHash() => r'de1f8094eaba2c1cee2995b0f5f23722a0d50aa0';
