@@ -73,3 +73,4 @@ functions/.secret.local
 functions/.env.local
 firebase-debug.log
 firebase-debug.*.log
+.firebase/
