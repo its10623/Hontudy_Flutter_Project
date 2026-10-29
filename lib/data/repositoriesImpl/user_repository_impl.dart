@@ -13,6 +13,8 @@ import '../services/remotes/auth_service.dart';
 import '../services/remotes/firestore_service.dart';
 import '../user_mapper.dart';
 
+const firebaseAuthExceptions = {'web-context-canceled', 'popup-closed-by-user', 'cancelled-popup-request'};
+
 class UserRepositoryImpl implements UserRepository {
   final AuthService _auth;
   final FirestoreService _firestoreService;
@@ -36,7 +38,7 @@ class UserRepositoryImpl implements UserRepository {
       }
       rethrow;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'web-context-canceled') {
+      if (firebaseAuthExceptions.contains(e.code)) {
         throw SignInCancelledException();
       }
       rethrow;

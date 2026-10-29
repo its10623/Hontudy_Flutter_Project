@@ -36,6 +36,11 @@ class MailAppUnavailableException implements DomainException {
   String toString() => 'MailAppUnavailableException: 메일 앱을 쓸 수 없음';
 }
 
+class WebPopupBlockedException implements DomainException {
+  @override
+  String toString() => 'WebPopupBlockedException: 팝업 차단되었음';
+}
+
 class NetworkException implements Exception {
   final Object cause;
 

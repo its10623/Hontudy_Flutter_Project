@@ -39,6 +39,10 @@ Future<ResultDart<S, Exception>> guardAsync<S extends Object>(
       return Failure(NotSignedInException());
     }
 
+    if (e.code == 'popup-blocked') {
+      return Failure(NotSignedInException());
+    }
+
     // unauthenticated / permission-denied(App Check 실패 포함) 등
     return Failure(UnknownException(e));
   } catch (e) {

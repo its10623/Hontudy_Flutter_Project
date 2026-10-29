@@ -4,8 +4,13 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
+const appleReAuthExceptionMessage = 'Apple 재인증 결과에 access token이 없음';
+const notCurrentUserExceptionMessage = '로그인된 사용자가 없어 재인증할 수 없음';
+const regex = r'[가-힣]';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth;
@@ -24,11 +29,17 @@ class AuthService {
   }
 
   Future<UserCredential> signInWithGoogle() async {
+    if (kIsWeb) {
+      return await _firebaseAuth.signInWithPopup(GoogleAuthProvider());
+    }
     final credential = await _googleCredential();
     return _firebaseAuth.signInWithCredential(credential);
   }
 
   Future<UserCredential> signInWithApple() async {
+    if (kIsWeb) {
+      return await _firebaseAuth.signInWithPopup(_appleProvider());
+    }
     if (Platform.isAndroid) {
       final userCredential = await _firebaseAuth.signInWithProvider(
         _appleProvider(),
@@ -52,8 +63,9 @@ class AuthService {
   }
 
   Future<void> signOut() async {
+    if (!kIsWeb) await _googleSignIn.signOut();
+
     await _firebaseAuth.signOut();
-    await _googleSignIn.signOut();
   }
 
   User? get currentUser => _firebaseAuth.currentUser;
@@ -65,6 +77,10 @@ class AuthService {
   }
 
   Future<void> reauthenticateWithGoogle() async {
+    if (kIsWeb) {
+      await currentUser?.reauthenticateWithPopup(GoogleAuthProvider());
+      return;
+    }
     final credential = await _googleCredential();
     await _firebaseAuth.currentUser?.reauthenticateWithCredential(credential);
   }
@@ -72,7 +88,17 @@ class AuthService {
   /// 재인증하고, 탈퇴 시 Apple 연결을 끊는 데 쓸 토큰을 돌려줌
   Future<String> reauthenticateWithApple() async {
     final user = _firebaseAuth.currentUser;
-    if (user == null) throw StateError('로그인된 사용자가 없어 재인증할 수 없음');
+    if (user == null) throw StateError(notCurrentUserExceptionMessage);
+
+    if (kIsWeb) {
+      final userCredential = await user.reauthenticateWithPopup(_appleProvider());
+      final accessToken = userCredential.credential?.accessToken;
+      if (accessToken == null) {
+        throw StateError(appleReAuthExceptionMessage);
+      } else {
+        return accessToken;
+      }
+    }
 
     if (Platform.isAndroid) {
       final userCredential = await user.reauthenticateWithProvider(
@@ -80,7 +106,7 @@ class AuthService {
       );
       final accessToken = userCredential.credential?.accessToken;
       if (accessToken == null) {
-        throw StateError('Apple 재인증 결과에 access token이 없음');
+        throw StateError(appleReAuthExceptionMessage);
       }
       return accessToken;
     }
@@ -91,11 +117,12 @@ class AuthService {
 
   /// Apple ID 설정의 "Apple로 로그인" 연결을 끊기
   Future<void> revokeAppleToken(String token) async {
+    if (kIsWeb) return;
     if (Platform.isAndroid) {
       await _firebaseAuth.revokeAccessToken(token);
-      return;
+    } else {
+      await _firebaseAuth.revokeTokenWithAuthorizationCode(token);
     }
-    await _firebaseAuth.revokeTokenWithAuthorizationCode(token);
   }
 
   Future<OAuthCredential> _googleCredential() async {
@@ -138,7 +165,7 @@ class AuthService {
     final f = family?.trim() ?? '';
     if (user == null || (g.isEmpty && f.isEmpty)) return;
 
-    final isKorean = RegExp(r'[가-힣]').hasMatch('$f$g');
+    final isKorean = RegExp(regex).hasMatch('$f$g');
     await user.updateDisplayName(isKorean ? '$f$g' : '$g $f'.trim());
   }
 
