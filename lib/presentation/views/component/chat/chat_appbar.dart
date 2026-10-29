@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hontudy/presentation/core/theme/app_layout.dart';
 import 'package:hontudy/presentation/views/component/divider_widget.dart';
 
 import '../../../core/theme/context_theme_extension.dart';
@@ -60,10 +61,10 @@ class ChatAppbar extends StatelessWidget implements PreferredSizeWidget {
                   ],
                 ),
               ),
-              ?onNote,
+              ?AppLayout.isWide(context) ? null : onNote,
               if (onNote != null && onProfile != null)
                 const SizedBox(width: 10),
-              ?onProfile,
+              ?AppLayout.isWide(context) ? null : onProfile,
             ],
           ),
           if (progress case final progress?) ...[

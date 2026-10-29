@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hontudy/domain/models/diagnosis_profile.dart';
+import 'package:hontudy/presentation/core/theme/app_layout.dart';
 import 'package:hontudy/presentation/views/pages/all_mains_page.dart';
 import 'package:hontudy/presentation/views/pages/diagnosis_chat_page.dart';
 import 'package:hontudy/presentation/views/pages/note_detail_page.dart';
@@ -9,7 +10,9 @@ import 'package:hontudy/presentation/views/pages/profile_page.dart';
 import 'package:hontudy/presentation/views/pages/quiz_chat_page.dart';
 import 'package:hontudy/presentation/views/pages/sign_in_page.dart';
 import 'package:hontudy/presentation/views/pages/splash_page.dart';
+import 'package:hontudy/presentation/views/route/side_nav_bar.dart';
 
+import '../component/responsive_center.dart';
 import 'bottom_nav_bar.dart';
 import 'exit_guard.dart';
 
@@ -38,11 +41,12 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.signIn,
-      builder: (_, _) => const SignInPage(),
+      builder: (_, _) => const ResponsiveCenter(child: SignInPage()),
     ),
     GoRoute(
       path: AppRoutes.diagnosis,
-      builder: (_, _) => const ExitGuard(child: DiagnosisChatPage()),
+      builder: (_, _) =>
+          const ResponsiveCenter(child: ExitGuard(child: DiagnosisChatPage())),
     ),
     StatefulShellRoute.indexedStack(
       builder: (_, _, navigationShell) =>
@@ -105,23 +109,43 @@ class _TabShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isWide = AppLayout.isWide(context);
+    final showBottomBar = !isWide && navigationShell.currentIndex != 0;
     return ExitGuard(
-      child: Scaffold(
-        extendBody: true,
-        backgroundColor: Colors.transparent,
-        body: navigationShell,
-        // 문제풀이(홈) 탭은 몰입을 위해 탭을 숨기고 헤더 버튼으로 이동
-        bottomNavigationBar: navigationShell.currentIndex == 0
-            ? null
-            : SafeArea(
-                child: BottomNavBar(
-                  currentIndex: navigationShell.currentIndex,
-                  onTap: (index) => navigationShell.goBranch(
-                    index,
-                    initialLocation: index == navigationShell.currentIndex,
-                  ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (isWide)
+            SafeArea(
+              child: SideNavBar(
+                currentIndex: navigationShell.currentIndex,
+                onTap: (index) => navigationShell.goBranch(
+                  index,
+                  initialLocation: index == navigationShell.currentIndex,
                 ),
               ),
+            ),
+          Expanded(
+            child: Scaffold(
+              extendBody: true,
+              backgroundColor: Colors.transparent,
+              body: ResponsiveCenter(child: navigationShell),
+              // 문제풀이(홈) 탭은 몰입을 위해 탭을 숨기고 헤더 버튼으로 이동
+              bottomNavigationBar: showBottomBar
+                  ? SafeArea(
+                      child: BottomNavBar(
+                        currentIndex: navigationShell.currentIndex,
+                        onTap: (index) => navigationShell.goBranch(
+                          index,
+                          initialLocation:
+                              index == navigationShell.currentIndex,
+                        ),
+                      ),
+                    )
+                  : null,
+            ),
+          ),
+        ],
       ),
     );
   }
