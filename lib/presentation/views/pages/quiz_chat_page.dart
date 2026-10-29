@@ -89,11 +89,13 @@ class _QuizChatPageState extends ConsumerState<QuizChatPage> {
           currentState: _headerState(state),
           onNote: _HeaderLink(
             icon: Icons.menu_book_outlined,
-            onTap: () => context.go(AppRoutes.note),
+            onTap: () =>
+                Router.neglect(context, () => context.go(AppRoutes.note)),
           ),
           onProfile: _HeaderLink(
             icon: Icons.person_outline_rounded,
-            onTap: () => context.go(AppRoutes.profile),
+            onTap: () =>
+                Router.neglect(context, () => context.go(AppRoutes.profile)),
           ),
         ),
         body: state.phase is Idle
@@ -191,7 +193,7 @@ class _QuizChatPageState extends ConsumerState<QuizChatPage> {
       if (showStatus)
         _aiMessage(_statusId, switch (phase) {
           QuizFailed(error: AiUsageLimitExceededException()) =>
-            '하루 사용 한도 초과 했어요\n내일 다시 풀 수 있어요',
+            '하루 사용 한도 초과했어요\n내일 다시 풀 수 있어요',
           QuizFailed(error: NetworkException()) => '인터넷 연결을 확인하고 다시 시도해 주세요.',
           QuizFailed() => '응답을 받지 못했어요.',
           ReviewMode() =>
@@ -246,7 +248,8 @@ class _QuizChatPageState extends ConsumerState<QuizChatPage> {
       ),
       _statusId => switch (phase) {
         QuizFailed(error: DiagnosisProfileEmptyException()) => PrimaryButton(
-          onPressed: () => context.go(AppRoutes.diagnosis),
+          onPressed: () =>
+              Router.neglect(context, () => context.go(AppRoutes.diagnosis)),
           text: '진단하러 가기',
           color: ButtonColor.primary,
         ),

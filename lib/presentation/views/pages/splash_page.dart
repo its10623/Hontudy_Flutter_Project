@@ -21,12 +21,15 @@ class SplashPage extends ConsumerWidget {
       next,
     ) {
       next.whenData((route) {
-        context.go(switch (route) {
-          NextRoute.needsSignIn ||
-          NextRoute.needsTermsAgreement => AppRoutes.signIn,
-          NextRoute.needDiagnosis => AppRoutes.diagnosis,
-          NextRoute.ready => AppRoutes.home,
-        });
+        Router.neglect(
+          context,
+          () => context.go(switch (route) {
+            NextRoute.needsSignIn ||
+            NextRoute.needsTermsAgreement => AppRoutes.signIn,
+            NextRoute.needDiagnosis => AppRoutes.diagnosis,
+            NextRoute.ready => AppRoutes.home,
+          }),
+        );
       });
       if (next is AsyncError) {
         ErrorDialog.show(

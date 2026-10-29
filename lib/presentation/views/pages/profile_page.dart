@@ -150,7 +150,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     try {
       await action();
       if (!mounted) return;
-      context.go(next);
+      Router.neglect(context, () => context.go(next));
     } on SignInCancelledException {
       return;
     } catch (error) {

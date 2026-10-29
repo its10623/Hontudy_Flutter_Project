@@ -57,7 +57,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
               location = AppRoutes.home;
           }
           if (!context.mounted) return;
-          context.go(location);
+          Router.neglect(context, () => context.go(location));
         });
         if (next is AsyncError) {
           ErrorDialog.show(

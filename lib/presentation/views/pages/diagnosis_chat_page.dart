@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen_ai_chat_ui/flutter_gen_ai_chat_ui.dart'
     hide NetworkException;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hontudy/domain/models/diagnosis_profile.dart';
 import 'package:hontudy/domain/models/diagnosis_turn.dart';
 import 'package:hontudy/presentation/core/theme/shape.dart';
 import 'package:hontudy/presentation/state/diagnosis_state.dart';
@@ -69,7 +70,10 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
       if (next.phase case Completed(
         :final profile,
       ) when previous?.phase is! Completed) {
-        context.go(AppRoutes.home, extra: profile);
+        Router.neglect(
+          context,
+          () => context.go(AppRoutes.home, extra: profile),
+        );
       }
     });
 
@@ -86,6 +90,7 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
           pageInfo: '혼터디 AI · 맞춤 문제 진단',
           currentState: isSummary ? '진단 결과 확인' : '$questionNumber번째 질문',
           progress: isSummary ? 1 : questionNumber / (maxTurns + 1),
+          onProfile: kDebugMode ? const _DebugSkipButton() : null,
         ),
         body: ChatBody(
           controller: _controller,
@@ -133,7 +138,7 @@ class _DiagnosisChatPageState extends ConsumerState<DiagnosisChatPage> {
         ChatMessage(
           text: switch (state.phase) {
             Failed(error: AiUsageLimitExceededException()) =>
-              '하루 사용 한도 초과 했어요.\n내일 다시 진단 해주세요',
+              '하루 사용 한도 초과했어요.\n내일 다시 진단해주세요',
             Failed(error: NetworkException()) => '인터넷 연결을 확인하고 다시 시도해 주세요.',
             Failed() => '응답을 받지 못했어요.',
             _ => '',
@@ -301,6 +306,35 @@ class _ThinkingSkeleton extends StatelessWidget {
             borderRadius: AppShape.skeletonBar,
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// 디버그 빌드 전용: 진단을 건너뛰고 임시 프로필로 문제풀이 화면에 들어간다.
+/// 프로필은 Firestore에 저장하지 않는다.
+class _DebugSkipButton extends StatelessWidget {
+  const _DebugSkipButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () => Router.neglect(
+        context,
+        () => context.go(
+          AppRoutes.home,
+          extra: DiagnosisProfile(
+            background: '비전공자',
+            difficultyScore: 3,
+            purposeTags: const ['취업·이직 준비'],
+            weakAreas: const [],
+            timestamp: DateTime.now(),
+          ),
+        ),
+      ),
+      child: Text(
+        '건너뛰기',
+        style: context.captionMedium.copyWith(color: context.colors.primary),
       ),
     );
   }
