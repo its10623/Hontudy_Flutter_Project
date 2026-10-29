@@ -19,6 +19,7 @@ class _CheckBoxWidgetState extends State<CheckBoxWidget> {
   Widget build(BuildContext context) {
     return Center(
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () => widget.onCheckedChanged(!widget.isChecked),
         child: Row(
           mainAxisSize: MainAxisSize.min,

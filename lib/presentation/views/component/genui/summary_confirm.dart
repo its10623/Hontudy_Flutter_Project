@@ -81,46 +81,52 @@ class _SummaryConfirmState extends State<SummaryConfirm> {
           style: context.captionMedium,
         ),
         const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          decoration: BoxDecoration(
-            color: _remember
-                ? context.colors.primaryContainer.withAlpha(150)
-                : context.colors.outlineVariant.withAlpha(100),
-            border: Border.all(
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: canConfirm
+              ? () => setState(() => _remember = !_remember)
+              : null,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            decoration: BoxDecoration(
               color: _remember
-                  ? context.colors.primary
-                  : context.colors.outlineVariant,
-            ),
-            borderRadius: AppShape.widgetCard,
-          ),
-          child: CheckBoxWidget(
-            isChecked: _remember,
-            onCheckedChanged: canConfirm
-                ? (value) => setState(() => _remember = value)
-                : (_) {},
-            text: Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '이 정보 기억하기',
-                    style: context.captionLarge.copyWith(
-                      color: context.colors.primary,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Text(
-                    '다음엔 진단 없이 바로 문제부터 시작합니다',
-                    style: TextType.captionLarge.copyWith(
-                      color: context.colors.outline,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+                  ? context.colors.primaryContainer.withAlpha(150)
+                  : context.colors.outlineVariant.withAlpha(100),
+              border: Border.all(
+                color: _remember
+                    ? context.colors.primary
+                    : context.colors.outlineVariant,
               ),
+              borderRadius: AppShape.widgetCard,
             ),
-            shape: const CircleBorder(),
+            child: CheckBoxWidget(
+              isChecked: _remember,
+              onCheckedChanged: canConfirm
+                  ? (value) => setState(() => _remember = value)
+                  : (_) {},
+              text: Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '이 정보 기억하기',
+                      style: context.captionLarge.copyWith(
+                        color: context.colors.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      '다음엔 진단 없이 바로 문제부터 시작합니다',
+                      style: TextType.captionLarge.copyWith(
+                        color: context.colors.outline,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              shape: const CircleBorder(),
+            ),
           ),
         ),
         const SizedBox(height: 12),
