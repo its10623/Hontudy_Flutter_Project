@@ -2,7 +2,7 @@ name: hontudy
 description: "플러터 개인 프로젝트 입니다."
 publish_to: 'none'
 
-version: 1.0.1+2
+version: 1.0.2+3
 
 environment:
   sdk: ^3.12.2
