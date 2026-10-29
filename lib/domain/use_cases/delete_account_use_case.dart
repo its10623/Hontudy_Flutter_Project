@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hontudy/domain/models/user.dart';
 import 'package:hontudy/domain/repositories/diagnosis_repository.dart';
 import 'package:hontudy/domain/repositories/user_repository.dart';
@@ -35,7 +36,10 @@ class DeleteAccountUseCase {
     (await _noteRepository.deleteSolvedRecordHistory()).getOrThrow();
     (await _userRepository.deleteUserData()).getOrThrow();
     if (appleRevokeToken != null) {
-      (await _userRepository.revokeAppleToken(appleRevokeToken)).getOrThrow();
+      final revokeResult = await _userRepository.revokeAppleToken(
+        appleRevokeToken,
+      );
+      if (revokeResult.isError()) debugPrint('Apple 연결 해제 실패 ${revokeResult.exceptionOrNull()}');
     }
     (await _userRepository.deleteAccount()).getOrThrow();
   }
