@@ -177,7 +177,7 @@ class _NoteDetailBodyState extends State<_NoteDetailBody> {
       NoteRecordFilter.correct => widget._noteDetail.correctRecords,
     };
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -359,9 +359,9 @@ class _NoteQuizCardState extends State<_NoteQuizCard>
               borderRadius: AppShape.card,
               boxShadow: [
                 BoxShadow(
-                  color: context.colors.outline.withAlpha(150),
-                  blurRadius: 30,
-                  offset: const Offset(0, 4),
+                  color: context.colors.shadow.withAlpha(31),
+                  blurRadius: 40,
+                  offset: const Offset(0, 18),
                 ),
               ],
             ),
@@ -552,7 +552,7 @@ class _MyAnswerSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: context.colors.outlineVariant.withAlpha(100),
         borderRadius: AppShape.widgetCard,
@@ -562,18 +562,14 @@ class _MyAnswerSection extends StatelessWidget {
         children: [
           Text(
             '내 답',
-            style: TextType.captionSmall.copyWith(
-              fontWeight: FontWeight.w600,
-              color: context.colors.outline,
-            ),
+            style: context.captionSmall.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           switch (record.quiz.quizContent) {
             ShortAnswerContent() => Text(
               record.userAnswer,
-              style: TextType.captionMedium.copyWith(
+              style: context.captionMedium.copyWith(
                 fontWeight: FontWeight.w700,
-                color: context.colors.outline,
               ),
             ),
             SingleChoiceContent(:final options) => _ChoiceOptions(
@@ -690,7 +686,7 @@ class _NoteDetailSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -794,7 +790,7 @@ class _SkeletonQuizCard extends StatelessWidget {
               child: SkeletonBox(
                 width: double.infinity,
                 height: double.infinity,
-                borderRadius: AppShape.widgetCard,
+                borderRadius: AppShape.button,
               ),
             ),
           ],
