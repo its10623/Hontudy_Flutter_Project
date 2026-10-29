@@ -1,11 +1,11 @@
 {
-    "name": "hontudy",
-    "short_name": "hontudy",
+    "name": "혼터디",
+    "short_name": "혼터디",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "플러터 개인 프로젝트 입니다.",
+    "background_color": "#3366FF",
+    "theme_color": "#3366FF",
+    "description": "AI와 대화로 IT 지식 수준을 진단하고 맞춤 문제를 풀어 보는 학습 앱",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
