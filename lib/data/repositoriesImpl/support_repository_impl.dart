@@ -5,7 +5,7 @@ import 'package:hontudy/data/services/local/email_service.dart';
 import 'package:hontudy/domain/repositories/support_repository.dart';
 import 'package:result_dart/result_dart.dart';
 
-const _supportEmail = 'smoothsm.dev@gmail.com';
+const _supportEmail = 'smoothsm.dev@hontudy.com';
 const _subject = '[혼터디] 문의';
 
 class SupportRepositoryImpl implements SupportRepository {

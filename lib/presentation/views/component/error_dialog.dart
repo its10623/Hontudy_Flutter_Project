@@ -23,7 +23,7 @@ class ErrorDialog {
       NotSignedInException() => ('로그인 오류', '다시 로그인해 주세요'),
       MailAppUnavailableException() => (
         '메일 앱을 찾을 수 없어요',
-        'smoothsm.dev@gmail.com으로 보내 주세요',
+        'smoothsm.dev@hontudy.com으로 보내 주세요',
       ),
       WebPopupBlockedException() => (
         '팝업이 차단됐어요',
