@@ -5,6 +5,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hontudy/di/service_providers.dart';
 import 'package:hontudy/firebase_options.dart';
@@ -20,7 +21,11 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await _activateAppCheck();
   if (_useFunctionsEmulator) _connectFunctionsEmulator();
-  runApp(const ProviderScope(retry: _noRetry, child: MyApp()));
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]).then((_) {
+    runApp(const ProviderScope(retry: _noRetry, child: MyApp()));
+  });
 }
 
 /// AI 프록시 함수는 App Check 토큰이 없으면 거절한다.
@@ -34,12 +39,21 @@ Future<void> _activateAppCheck() {
     providerApple: kDebugMode
         ? const AppleDebugProvider()
         : const AppleAppAttestWithDeviceCheckFallbackProvider(),
+    providerWeb: kDebugMode
+        ? WebDebugProvider(
+            debugToken: const String.fromEnvironment(
+              'APP_CHECK_WEB_DEBUG_TOKEN',
+            ),
+          )
+        : ReCaptchaEnterpriseProvider(
+            '6LfQGQQuAAAAAGRUzozNnyeSRJrBFElLgY4uCEcz',
+          ),
   );
 }
 
 void _connectFunctionsEmulator() {
   // 안드로이드 에뮬레이터에서 호스트 PC의 localhost는 10.0.2.2다.
-  final host = Platform.isAndroid ? '10.0.2.2' : 'localhost';
+  final host = !kIsWeb && Platform.isAndroid ? '10.0.2.2' : 'localhost';
   FirebaseFunctions.instanceFor(
     region: functionsRegion,
   ).useFunctionsEmulator(host, 5001);
