@@ -4,13 +4,11 @@ part 'diagnosis_turn.freezed.dart';
 
 @freezed
 class DiagnosisTurn with _$DiagnosisTurn {
-  final int confidence;
   final DiagnosisNextAction nextAction;
   final String questionText;
   final DiagnosisContent diagnosisContent;
 
   const DiagnosisTurn({
-    required this.confidence,
     required this.nextAction,
     required this.questionText,
     required this.diagnosisContent,

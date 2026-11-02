@@ -126,7 +126,7 @@ ${_constraints([
       '한 번에 하나의 질문만 하세요',
       '혼터디는 IT·CS 학습 앱입니다. 사용자 답변이 IT·CS 학습이나 진단 질문과 무관하면(잡담, 음식 추천, 외국어 공부 등) next_action을 off_topic으로 하고, widget_type은 free_text_input, question_text는 빈 문자열로 두세요',
       '사용자가 아직 답하지 않은 정보만 물으세요',
-      '배경/난이도/목적 태그를 섣불리 단정짓지 말고, 확신도가 낮으면 계속 질문하세요',
+      '배경/난이도/목적 태그를 섣불리 단정짓지 말고, 판단 근거가 부족하면 계속 질문하세요',
       '대화 이력({conversation_history})을 참고해 이미 물은 질문은 반복하지 마세요',
       '대화 이력에서 이미 사용한 문장 구조·어투를 반복하지 말고, 매 턴 다른 표현으로 질문하세요',
       '질문 성격에 맞는 위젯 타입을 다양하게 활용하고, 직전 턴들에서 이미 사용한 위젯 타입에 치우치지 마세요',
@@ -137,10 +137,9 @@ ${_encapsulateUserInput('conversation_history', _serializeHistory(history))}
 ${_encapsulateUserInput('user_response', userInput.answerText)}
 ${_orderDeduction('''다음 순서로 답하세요:
 ① 지금까지의 답변으로 배경/난이도 스코어/목적 태그가 각각 어느 쪽에 가까운지 판단 근거를 1~2줄로 정리
-② 그 판단의 확신도(0~100)를 매기세요''')}
+② 그 근거를 바탕으로 다음 행동과 질문을 정하세요''')}
 ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
       'reasoning': 'string (근거 1~2줄)',
-      'confidence': 'number (0~100)',
       'next_action': 'continue_diagnosis | ready_to_classify | user_requested_problem | off_topic',
       'widget_type': 'free_text_input | choice_chips | single_choice_list | summary_confirm',
       'question_text': 'string',
@@ -161,8 +160,7 @@ ${_constraints([
       'difficulty_score는 1~5 사이 정수 하나만',
       'purpose_tags는 기준표의 5개 태그 중 1개 이상 선택 (다중 선택 가능)',
       'purpose_tags에 "입문 학습"이 포함되면 difficulty_score는 1~2를 벗어나면 안 됨',
-      '애매하면 가장 근접한 값 선택 후 confidence를 낮게 표시 (억지로 단정짓지 않음) (background 제외)',
-      '확신도가 낮아도(임계치 미달) 가장 근접한 값을 반드시 출력 (difficulty_score는 추정치 ±1 범위, purpose_tags는 가장 유력한 것 1개만) (background 제외)',
+      '근거가 애매해도 가장 근접한 값을 반드시 출력 (difficulty_score는 추정치 ±1 범위, purpose_tags는 가장 유력한 것 1개만) (background 제외)',
       'reasoning은 사용자에게 그대로 노출될 수 있으므로, "difficulty_score=2로 판단" 같은 내부 변수명 언급 없이 자연스러운 문장으로 작성',
       'background_detail은 대화에서 언급된 구체적 경험을 짧게 요약. 언급된 게 없으면 null',
       'weak_areas는 category_catalog의 메인 카테고리 중에서만 1~3개 선택. 화이트리스트 밖의 값은 출력 금지. 확인되지 않으면 null',
@@ -173,7 +171,7 @@ ${_serializeCategoryCatalog()}''')}
 ${_encapsulateUserInput('conversation_history', _serializeHistory(history))}
 ${_orderDeduction('''다음 순서로 답하세요: 
 ① 판단 근거 1~2줄 정리 → 
-② background/difficulty_score/purpose_tags 및 확신도 출력''')}
+② background/difficulty_score/purpose_tags 출력''')}
 ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
       'reasoning': 'string',
       'background': '비전공자 | 전공자 | null',
@@ -181,7 +179,6 @@ ${_forceFormattedOutput('아래 JSON 형식으로만 응답하세요:', {
       'difficulty_score': 'number (1~5)',
       'purpose_tags': ['string', '...'],
       'weak_areas': ['string', '...'],
-      'confidence': 'number (0~100)',
     })}
 ''';
   }

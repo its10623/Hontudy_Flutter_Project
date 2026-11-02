@@ -117,7 +117,7 @@ class DiagnosisViewModel extends _$DiagnosisViewModel {
     }
     if (kDebugMode) {
       debugPrint(
-        '[Diagnosis]현재 턴: ${state.turnCount + 1} 현재 확신도: ${turn.confidence} 다음 행동: ${turn.nextAction}',
+        '[Diagnosis]현재 턴: ${state.turnCount + 1} 다음 행동: ${turn.nextAction}',
       );
     }
 

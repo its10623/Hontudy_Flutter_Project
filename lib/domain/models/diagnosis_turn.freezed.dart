@@ -27,20 +27,20 @@ $DiagnosisTurnCopyWith<DiagnosisTurn> get copyWith => _$DiagnosisTurnCopyWithImp
 @override
 bool operator ==(Object other) {
   final _this = this as DiagnosisTurn;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiagnosisTurn&&(identical(other.confidence, _this.confidence) || other.confidence == _this.confidence)&&(identical(other.nextAction, _this.nextAction) || other.nextAction == _this.nextAction)&&(identical(other.questionText, _this.questionText) || other.questionText == _this.questionText)&&(identical(other.diagnosisContent, _this.diagnosisContent) || other.diagnosisContent == _this.diagnosisContent));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiagnosisTurn&&(identical(other.nextAction, _this.nextAction) || other.nextAction == _this.nextAction)&&(identical(other.questionText, _this.questionText) || other.questionText == _this.questionText)&&(identical(other.diagnosisContent, _this.diagnosisContent) || other.diagnosisContent == _this.diagnosisContent));
 }
 
 
 @override
 int get hashCode {
   final _this = this as DiagnosisTurn;
-  return Object.hash(runtimeType,_this.confidence,_this.nextAction,_this.questionText,_this.diagnosisContent);
+  return Object.hash(runtimeType,_this.nextAction,_this.questionText,_this.diagnosisContent);
 }
 
 @override
 String toString() {
   final _this = this as DiagnosisTurn;
-  return 'DiagnosisTurn(confidence: ${_this.confidence}, nextAction: ${_this.nextAction}, questionText: ${_this.questionText}, diagnosisContent: ${_this.diagnosisContent})';
+  return 'DiagnosisTurn(nextAction: ${_this.nextAction}, questionText: ${_this.questionText}, diagnosisContent: ${_this.diagnosisContent})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $DiagnosisTurnCopyWith<$Res>  {
   factory $DiagnosisTurnCopyWith(DiagnosisTurn value, $Res Function(DiagnosisTurn) _then) = _$DiagnosisTurnCopyWithImpl;
 @useResult
 $Res call({
- int confidence, DiagnosisNextAction nextAction, String questionText, DiagnosisContent diagnosisContent
+ DiagnosisNextAction nextAction, String questionText, DiagnosisContent diagnosisContent
 });
 
 
@@ -68,10 +68,9 @@ class _$DiagnosisTurnCopyWithImpl<$Res>
 
 /// Create a copy of DiagnosisTurn
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? confidence = null,Object? nextAction = null,Object? questionText = null,Object? diagnosisContent = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? nextAction = null,Object? questionText = null,Object? diagnosisContent = null,}) {
   return _then(DiagnosisTurn(
-confidence: null == confidence ? _self.confidence : confidence // ignore: cast_nullable_to_non_nullable
-as int,nextAction: null == nextAction ? _self.nextAction : nextAction // ignore: cast_nullable_to_non_nullable
+nextAction: null == nextAction ? _self.nextAction : nextAction // ignore: cast_nullable_to_non_nullable
 as DiagnosisNextAction,questionText: null == questionText ? _self.questionText : questionText // ignore: cast_nullable_to_non_nullable
 as String,diagnosisContent: null == diagnosisContent ? _self.diagnosisContent : diagnosisContent // ignore: cast_nullable_to_non_nullable
 as DiagnosisContent,

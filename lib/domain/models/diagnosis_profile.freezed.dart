@@ -221,20 +221,20 @@ $DiagnosisResultCopyWith<DiagnosisResult> get copyWith => _$DiagnosisResultCopyW
 @override
 bool operator ==(Object other) {
   final _this = this as DiagnosisResult;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiagnosisResult&&(identical(other.profile, _this.profile) || other.profile == _this.profile)&&(identical(other.backgroundDetail, _this.backgroundDetail) || other.backgroundDetail == _this.backgroundDetail)&&(identical(other.reasoning, _this.reasoning) || other.reasoning == _this.reasoning)&&(identical(other.confidence, _this.confidence) || other.confidence == _this.confidence));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiagnosisResult&&(identical(other.profile, _this.profile) || other.profile == _this.profile)&&(identical(other.backgroundDetail, _this.backgroundDetail) || other.backgroundDetail == _this.backgroundDetail)&&(identical(other.reasoning, _this.reasoning) || other.reasoning == _this.reasoning));
 }
 
 
 @override
 int get hashCode {
   final _this = this as DiagnosisResult;
-  return Object.hash(runtimeType,_this.profile,_this.backgroundDetail,_this.reasoning,_this.confidence);
+  return Object.hash(runtimeType,_this.profile,_this.backgroundDetail,_this.reasoning);
 }
 
 @override
 String toString() {
   final _this = this as DiagnosisResult;
-  return 'DiagnosisResult(profile: ${_this.profile}, backgroundDetail: ${_this.backgroundDetail}, reasoning: ${_this.reasoning}, confidence: ${_this.confidence})';
+  return 'DiagnosisResult(profile: ${_this.profile}, backgroundDetail: ${_this.backgroundDetail}, reasoning: ${_this.reasoning})';
 }
 
 
@@ -245,7 +245,7 @@ abstract mixin class $DiagnosisResultCopyWith<$Res>  {
   factory $DiagnosisResultCopyWith(DiagnosisResult value, $Res Function(DiagnosisResult) _then) = _$DiagnosisResultCopyWithImpl;
 @useResult
 $Res call({
- DiagnosisProfile profile, String? backgroundDetail, String reasoning, int confidence
+ DiagnosisProfile profile, String? backgroundDetail, String reasoning
 });
 
 
@@ -262,13 +262,12 @@ class _$DiagnosisResultCopyWithImpl<$Res>
 
 /// Create a copy of DiagnosisResult
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? profile = null,Object? backgroundDetail = freezed,Object? reasoning = null,Object? confidence = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? profile = null,Object? backgroundDetail = freezed,Object? reasoning = null,}) {
   return _then(DiagnosisResult(
 profile: null == profile ? _self.profile : profile // ignore: cast_nullable_to_non_nullable
 as DiagnosisProfile,backgroundDetail: freezed == backgroundDetail ? _self.backgroundDetail : backgroundDetail // ignore: cast_nullable_to_non_nullable
 as String?,reasoning: null == reasoning ? _self.reasoning : reasoning // ignore: cast_nullable_to_non_nullable
-as String,confidence: null == confidence ? _self.confidence : confidence // ignore: cast_nullable_to_non_nullable
-as int,
+as String,
   ));
 }
 

@@ -164,10 +164,6 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
       ),
       backgroundDetail: json['background_detail'] as String?,
       reasoning: json['reasoning'] as String,
-      confidence: _parseInt(
-        json['confidence'],
-        field: 'confidence',
-      ).clamp(0, 100),
     );
   }
 
@@ -178,10 +174,6 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
       orElse: () => throw FormatException('모르는 NextAction 값: $raw'),
     );
     return DiagnosisTurn(
-      confidence: _parseInt(
-        json['confidence'],
-        field: 'confidence',
-      ).clamp(0, 100),
       nextAction: nextAction,
       questionText: json['question_text'] as String,
       diagnosisContent: switch (json['widget_type']) {
