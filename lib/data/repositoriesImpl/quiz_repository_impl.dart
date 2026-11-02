@@ -36,7 +36,6 @@ class QuizRepositoryImpl implements QuizRepository {
         messages: [
           {'role': 'user', 'content': prompt},
         ],
-        temperature: 0.2,
       );
 
       if (json['is_exhausted'] == true) {
@@ -61,7 +60,6 @@ class QuizRepositoryImpl implements QuizRepository {
         messages: [
           {'role': 'user', 'content': prompt},
         ],
-        temperature: 0.2,
       );
       return await _quizFeedbackFromJson(json);
     });

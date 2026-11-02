@@ -44,7 +44,6 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
         messages: [
           {'role': 'user', 'content': prompt},
         ],
-        temperature: 0.2,
       );
       return _diagnosisResultFromJson(json);
     });
@@ -66,7 +65,6 @@ class DiagnosisRepositoryImpl implements DiagnosisRepository {
         messages: [
           {'role': 'user', 'content': prompt},
         ],
-        temperature: 0.2,
       );
       return _diagnosisTurnFromJson(json);
     });

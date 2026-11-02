@@ -19,10 +19,9 @@ class AiFunctionsService {
   /// LLM 응답 본문(JSON 문자열)을 Map으로 파싱해 반환
   Future<Map<String, dynamic>> sendPrompt({
     required List<Map<String, String>> messages,
-    required double temperature,
   }) async {
     final result = await _callable('chatCompletion').call<Map<String, dynamic>>(
-      {'messages': messages, 'temperature': temperature},
+      {'messages': messages},
     );
     final content = result.data['content'] as String;
     return jsonDecode(content) as Map<String, dynamic>;
