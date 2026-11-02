@@ -5,7 +5,11 @@
 ![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter)
 ![Dart](https://img.shields.io/badge/Dart-3.12-0175C2?logo=dart)
 ![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20Firestore%20%7C%20Functions-FFCA28?logo=firebase)
-![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-lightgrey)
+![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web-lightgrey)
+
+[![App Store](https://img.shields.io/badge/App%20Store-다운로드-0D96F6?style=for-the-badge&logo=appstore&logoColor=white)](https://apps.apple.com/kr/app/%ED%98%BC%ED%84%B0%EB%94%94/id6819966224)
+[![Google Play](https://img.shields.io/badge/Google%20Play-다운로드-34A853?style=for-the-badge&logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=com.smoothsm.hontudy&hl=ko)
+[![Web](https://img.shields.io/badge/웹에서%20체험-hontudy.com-3366FF?style=for-the-badge&logo=googlechrome&logoColor=white)](https://hontudy.com/)
 
 |                             AI 진단                             |                          문제 풀이                           |                              노트 요약                               |                              노트 상세                              |
 |:---------------------------------------------------------------:|:------------------------------------------------------------:|:--------------------------------------------------------------------:|:-------------------------------------------------------------------:|
@@ -13,7 +17,7 @@
 
 > 데모는 AI 응답 대기 구간을 잘라내고 일부 배속했습니다. 실제 속도는 아래 [전체 시연 영상](#전체-시연-영상)에서 볼 수 있습니다.
 
-- **배포 상태**: iOS App Store · Android Play Store 출시 (1.0.2, 2026-10-29)
+- **배포 상태**: iOS App Store · Android Play Store · Web 출시 (2026-10-29)
 - **개발 기간**: 2026.08 ~ (1인 개발: 기획·디자인·앱·서버)
 
 <br>
@@ -220,6 +224,6 @@ functions/             # Cloud Functions (TypeScript) — AI 프록시와 호출
 ## 🚀 다음 단계
 
 - **알려진 한계 — 프롬프트가 아직 앱에 있음**: 1단계에서 키만 서버로 옮기고 프롬프트 이전은 의도적으로 미뤘습니다. 지금은 로그인한 사용자가 하루 한도 안에서 임의
-  프롬프트를 보낼 수 있고, 프롬프트 내용도 APK에서 보입니다. 공개 배포 전에 기능별 서버 함수로 옮겨 앱은 사용자 입력만 보내도록 바꿀 예정입니다.
+  프롬프트를 보낼 수 있고, 프롬프트 내용도 APK에서 보입니다. 다음 업데이트에서 기능별 서버 함수로 옮겨 앱은 사용자 입력만 보내도록 바꿀 예정입니다.
 - 음성 입력 UI 연결 (서버 Whisper 전사 함수는 구현 완료)
 - 성장 대시보드 (홈 탭), 카테고리 확장
