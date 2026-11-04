@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hontudy/data/prompt_builder.dart';
 
 class AiFunctionsService {
@@ -20,11 +21,23 @@ class AiFunctionsService {
   Future<Map<String, dynamic>> sendPrompt({
     required List<Map<String, String>> messages,
   }) async {
-    final result = await _callable('chatCompletion').call<Map<String, dynamic>>(
-      {'messages': messages},
-    );
-    final content = result.data['content'] as String;
-    return jsonDecode(content) as Map<String, dynamic>;
+    final startedAt = DateTime.now().toUtc();
+    final stopwatch = Stopwatch()..start();
+    try {
+      final result = await _callable('chatCompletion')
+          .call<Map<String, dynamic>>(
+            {'messages': messages},
+          );
+      final content = result.data['content'] as String;
+      final json = jsonDecode(content) as Map<String, dynamic>;
+      return json;
+    } finally {
+      if (!kReleaseMode) {
+        debugPrint(
+          '[AI] chatCompletion 시작 $startedAt, ${stopwatch.elapsedMilliseconds}ms',
+        );
+      }
+    }
   }
 
   /// 녹음 파일을 Whisper로
