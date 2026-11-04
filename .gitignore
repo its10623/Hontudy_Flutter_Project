@@ -74,3 +74,5 @@ functions/.env.local
 firebase-debug.log
 firebase-debug.*.log
 .firebase/
+# Widget Preview related
+.widget_preview/
