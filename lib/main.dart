@@ -29,17 +29,17 @@ Future<void> main() async {
 }
 
 /// AI 프록시 함수는 App Check 토큰이 없으면 거절한다.
-/// 디버그 빌드는 디버그 제공자(로그에 찍히는 디버그 토큰을 콘솔에 등록),
+/// 디버그·profile 빌드는 디버그 제공자(로그에 찍히는 디버그 토큰을 콘솔에 등록),
 /// 릴리스 빌드는 Play Integrity / App Attest(DeviceCheck 대체)를 쓴다.
 Future<void> _activateAppCheck() {
   return FirebaseAppCheck.instance.activate(
-    providerAndroid: kDebugMode
+    providerAndroid: !kReleaseMode
         ? const AndroidDebugProvider()
         : const AndroidPlayIntegrityProvider(),
-    providerApple: kDebugMode
+    providerApple: !kReleaseMode
         ? const AppleDebugProvider()
         : const AppleAppAttestWithDeviceCheckFallbackProvider(),
-    providerWeb: kDebugMode
+    providerWeb: !kReleaseMode
         ? WebDebugProvider(
             debugToken: const String.fromEnvironment(
               'APP_CHECK_WEB_DEBUG_TOKEN',
