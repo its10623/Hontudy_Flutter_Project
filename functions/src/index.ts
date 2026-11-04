@@ -235,6 +235,7 @@ export const chatCompletion = onCall(
 
     await consumeDailyQuota(uid);
 
+    const startedAt = Date.now();
     const response = await fetchUpstream(
       "OpenAI",
       `${OPENAI_BASE_URL}/chat/completions`,
@@ -256,7 +257,20 @@ export const chatCompletion = onCall(
 
     const json = (await response.json()) as {
       choices?: {message?: {content?: string}}[];
+      usage?: {
+        prompt_tokens?: number;
+        completion_tokens?: number;
+        completion_tokens_details?: {reasoning_tokens?: number};
+      };
     };
+    // 지연 원인 분석용. 사용자 원문은 남기지 않고 시간·토큰 수만 기록한다.
+    logger.info("OpenAI 응답", {
+      openaiMs: Date.now() - startedAt,
+      model: openaiModel.value(),
+      promptTokens: json.usage?.prompt_tokens,
+      completionTokens: json.usage?.completion_tokens,
+      reasoningTokens: json.usage?.completion_tokens_details?.reasoning_tokens,
+    });
     const content = json.choices?.[0]?.message?.content;
     if (typeof content !== "string") {
       throw new HttpsError("internal", "OpenAI 응답 형식이 올바르지 않습니다.");
