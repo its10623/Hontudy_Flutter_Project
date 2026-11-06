@@ -1,3 +1,4 @@
+import 'package:hontudy/data/dto/diagnosis_profile_dto.dart';
 import 'package:hontudy/domain/models/diagnosis_profile.dart';
 
 final testDateTime = DateTime(2026, 11, 1, 12, 30);
@@ -10,6 +11,22 @@ DiagnosisProfile testProfile({
   DateTime? timestamp,
 }) {
   return DiagnosisProfile(
+    background: background,
+    difficultyScore: difficultyScore,
+    purposeTags: purposeTags,
+    weakAreas: weakAreas,
+    timestamp: timestamp ?? testDateTime,
+  );
+}
+
+DiagnosisProfileDto testProfileDto({
+  String? background = '전공자',
+  int difficultyScore = 3,
+  List<String> purposeTags = const ['실무 역량 강화', '취업·이직 준비'],
+  List<String> weakAreas = const ['네트워크', '데이터베이스'],
+  DateTime? timestamp,
+}) {
+  return DiagnosisProfileDto(
     background: background,
     difficultyScore: difficultyScore,
     purposeTags: purposeTags,
